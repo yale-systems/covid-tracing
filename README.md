@@ -10,8 +10,8 @@ the same versions.
 6. if port refused, make sure nothing is running on port 8080.
 7. You can now access the api! Call endpoint getone (ie: localhost:8080/getone) to retrieve a random piece of dummy 
 data. Call endpoint getrange with query parameter range (ie: localhost:8080/getrange?range=100) to retrieve a list of 
-size range entities from the api (up to 9000).
-#Contents
+size range entities from the api (up to 9000).  
+# Contents
 This section hosts information on the different directories within the Spring Frameworks. A general flow of the 
 application is a\) an endpoint is called in the controller b\) That end attempts to process the request through its
 respective service c\) that service uses a repository to retrieve the data d\) that data is stored in the entity that
@@ -28,22 +28,22 @@ A standard relation may be an entity representing a simple row in a database, bu
 **Do Not** directly manipulate entities unless you are just receiving them from database retrieval, updating an entry in the
 database, inserting an entry, or deleting one. These should only perfectly reflect the mapping between the program and
 database. Any other transformation should be processed in DTO.
-###Repositories
+### Repositories
 Repositories are a Spring Frameworks abstraction over Java Persistence API, the defined suite of APIs for ORM. Well
 JPA defines the APIs, its just a specification. There exists different implementation of Java JPA. The one currently
 implemented under the hood of the repositories interface is hibernate.
-###Services
+### Services
 Services actually defines what actions the service called can do. More specifically, it's where we run the actions the
 controller needs to retrieve the expected payload.
-###DTOs
+### DTOs
 This is the object we either retrieve from the client or return to them, depending on the type of operation. We don't
 want to return the actual entity, as that allows direct exposure to our database. Often, we might want different subsets
 of the entity for different client certifications. One client may have permission to view more tracing information than
 another, even though the information exists in the same underlying entity. It can also be useful if we want to make
 transformation to the entity data to return to the client that we never want persisted to the database.
-#TODOS
+# TODOS
 For any tasks assigned to you, please create a new branch from the master. **Do not commit to master**.
--[ ] Establish a connection with a postgresql database. You'll need to change the application.properties file under
+1. Establish a connection with a postgresql database. You'll need to change the application.properties file under
 resources to something similar to this:
 spring.datasource.url=jdbc:postgresql://localhost:5432/registry  
 spring.datasource.username=apiclient  
@@ -58,10 +58,10 @@ spring.session.store-type=none
 spring.session.jdbc.initialize-schema=never  
 I'll modify gradle to have the Java dependencies on the API end, just establish via the log that the connection was 
 successful. (ALEX)
--[ ] Extend postgres with postgis and create triggers within postgres to first retrieve the longitude and latitude 
+2. Extend postgres with postgis and create triggers within postgres to first retrieve the longitude and latitude 
 within a certain radius of a specified point. I have the command history I used to make a finalized schema, but I have
 to transfer it into a sql script and will send it out tomorrow. Start with the previous task. (ALEX)
--[ ] Create an insertion operation that will apply jitter to a longitude and latitude in a dto and then insert it into
+3. Create an insertion operation that will apply jitter to a longitude and latitude in a dto and then insert it into
 the dummy database. Just make an endpoint and ignore the input to it. Right now, don't worry about processing physical
 request, just make an hard-coded DTO when the endpoint is called, add random jitter to it of a constant radius, and
 insert into database. You can verify insertion by logging into the h2 console at localhost:8080/h2-console. Enable it
