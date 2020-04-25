@@ -10,12 +10,12 @@ import java.util.Random;
 import java.util.List;
 
 @RestController
-public class MvcController {
+public class TracingController {
     private TracingService tracingService;
 
 
     @Autowired
-    public MvcController(TracingService tracingService){
+    public TracingController(TracingService tracingService){
         this.tracingService = tracingService;
     }
 
