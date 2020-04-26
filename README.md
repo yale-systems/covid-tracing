@@ -19,10 +19,10 @@ represents said data and returned to the service e\) the service translates the 
 transfer object \(DTO\) as to not directly expose access to any underlying databases f\) the DTOs are returned to the
 controller which responds to the client with the payload if the request is not fualty. Responds with a non-200 http
 status otherwise.
-###Controllers
+### Controllers
 This is where we host our actual endpoints. From here we control direct communication with the client and retrieve
 request payloads.
-###Entities
+### Entities
 Entities are an object oriented way of representing database relations as classes via object relational mapping \(ORM\).
 A standard relation may be an entity representing a simple row in a database, but they can be much more complex.
 **Do Not** directly manipulate entities unless you are just receiving them from database retrieval, updating an entry in the
