@@ -29,11 +29,18 @@ public class TracingController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TracingDTO getOne() throws Exception{
+    @RequestMapping(value = "/getonerandom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TracingDTO getOneRandom() throws Exception{
         Random idGenerator = new Random();
         Long id = new Long(idGenerator.nextInt(9000) + 1);
         return tracingService.getResearchOpportunity(id);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/getone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TracingDTO getOne(@RequestParam Integer id) throws Exception{
+        Long idLong = new Long(id);
+        return tracingService.getResearchOpportunity(idLong);
     }
 
     @CrossOrigin
