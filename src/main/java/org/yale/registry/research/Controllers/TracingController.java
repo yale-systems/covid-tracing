@@ -1,10 +1,13 @@
-package org.yale.registry.research;
+package org.yale.registry.research.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.services.TracingService;
+
+import java.util.Date;
 import java.util.Random;
 
 import java.util.List;
@@ -31,6 +34,13 @@ public class TracingController {
         Random idGenerator = new Random();
         Long id = new Long(idGenerator.nextInt(9000) + 1);
         return tracingService.getResearchOpportunity(id);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    ResponseEntity<TracingDTO> insert(@RequestBody TracingDTO tracingDTO){
+        tracingService.insertEntity(tracingDTO);
+        return ResponseEntity.ok().build();
     }
 
 //    @RequestMapping(value = "/edit", method = RequestMethod.GET)
