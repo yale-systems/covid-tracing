@@ -1,6 +1,7 @@
 package org.yale.registry.research.DTOs;
 
 import java.util.Date;
+import java.util.Random;
 
 public class TracingDTO {
 
@@ -77,5 +78,4 @@ public class TracingDTO {
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
-
 }

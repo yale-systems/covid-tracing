@@ -47,6 +47,16 @@ public class TracingService {
         return entityToDTO(tracingEntity);
     }
 
+    private Float jitterLat(Float latitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 100.0) + latitude));
+    }
+
+    private Float jitterLong(Float longitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 500.0) + longitude));
+    }
+
 //    public void insertOrUpdateResearchEntity(TracingEntity researchEntity){
 //        tracingRepository.save(researchEntity);
 //    }

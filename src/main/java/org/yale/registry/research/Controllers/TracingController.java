@@ -5,8 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.services.TracingService;
-import java.util.Random;
-
+// import java.util.Random;
+// import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,6 +32,14 @@ public class TracingController {
         Long id = new Long(idGenerator.nextInt(9000) + 1);
         return tracingService.getResearchOpportunity(id);
     }
+
+    // @CrossOrigin
+    // @RequestMapping(value = "/makeAjitter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    // public TracingDTO makeAjitter() throws Exception{
+    //     TracingDTO dto = new TracingDTO(11111, new Date(), new Float(116.00000), new Float(39.00000), new Date(), false);
+    //     return tracingService.insertDTO(dto);
+    // }
+
 
 //    @RequestMapping(value = "/edit", method = RequestMethod.GET)
 //    public ModelAndView edit(@RequestParam(required = false) Long id) throws Exception {
