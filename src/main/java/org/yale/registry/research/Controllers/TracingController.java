@@ -9,7 +9,6 @@ import org.yale.registry.research.services.TracingService;
 
 import java.util.Date;
 import java.util.Random;
-
 import java.util.List;
 
 @RestController

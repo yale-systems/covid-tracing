@@ -77,8 +77,17 @@ public class TracingService {
     }
 
     private TracingEntity DTOToEntity(TracingDTO tracingDTO){
-        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), tracingDTO.getLatitude(),
-                tracingDTO.getLongitude(), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
+        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), jitterLat(tracingDTO.getLatitude()),
+                jitterLong(tracingDTO.getLongitude()), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
     }
 
+    private Float jitterLat(Float latitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 100.0) + latitude));
+    }
+
+    private Float jitterLong(Float longitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 500.0) + longitude));
+    }
 }
