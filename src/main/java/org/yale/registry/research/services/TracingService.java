@@ -53,12 +53,6 @@ public class TracingService {
         tracingRepository.save(tracingEntity);
     }
 
-    // public TracingDTO testInsert(TracingDTO toInsert){
-    //     TracingEntity tracingEntity = DTOToEntity(jitterDTO(toInsert));
-    //     tracingRepository.save(tracingEntity);
-    //     return entityToDTO(tracingEntity);
-    // }
-
 //    public void insertOrUpdateResearchEntity(TracingEntity researchEntity){
 //        tracingRepository.save(researchEntity);
 //    }
@@ -83,8 +77,8 @@ public class TracingService {
     }
 
     private TracingEntity DTOToEntity(TracingDTO tracingDTO){
-        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), tracingDTO.getLatitude(),
-                tracingDTO.getLongitude(), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
+        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), jitterLat(tracingDTO.getLatitude()),
+                jitterLong(tracingDTO.getLongitude()), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
     }
 
     private Float jitterLat(Float latitude){
@@ -95,10 +89,5 @@ public class TracingService {
     private Float jitterLong(Float longitude){
         Random rand = new Random();
         return new Float((((rand.nextFloat() * 2 - 1) / 500.0) + longitude));
-    }
-
-    private TracingDTO jitterDTO(TracingDTO dto){
-        return new TracingDTO(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), jitterLat(tracingDTO.getLatitude()),
-                jitterLong(tracingDTO.getLongitude()), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
     }
 }

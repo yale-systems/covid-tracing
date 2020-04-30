@@ -35,7 +35,7 @@ public class TracingController {
         return tracingService.getResearchOpportunity(id);
     }
 
-
+    @CrossOrigin
     @RequestMapping(value = "/getone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public TracingDTO getOne(@RequestParam Integer id) throws Exception{
         Long idLong = new Long(id);
@@ -48,14 +48,6 @@ public class TracingController {
         tracingService.insertEntity(tracingDTO);
         return ResponseEntity.ok().build();
     }
-
-    // @RequestMapping(value = "/makeAjitter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    // public TracingDTO makeAjitter() throws Exception{
-    //     TracingDTO jittered = new TracingDTO(10000, new Date(), new Float(100), new Float(200), new Date(), false);
-    //     tracingService.insertEntity(jittered);
-    //     ResponseEntity.ok().build();
-    //     return jittered;
-    // }
 
 //    @RequestMapping(value = "/edit", method = RequestMethod.GET)
 //    public ModelAndView edit(@RequestParam(required = false) Long id) throws Exception {
