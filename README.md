@@ -11,15 +11,16 @@ This is the backend repository for Yale's Covid Tracing project using Spring Fra
 4. cd to build/libs
 5. there should be a war file in there. Run java -jar warfilename.
 6. if port refused, make sure nothing is running on port 8080.
-7. You can now access the api! Call endpoint getone (ie: localhost:8080/getone) to retrieve a random piece of dummy
+7. You can now access the api! Call endpoint getone (ie: localhost:8080/getonerandom) to retrieve a random piece of dummy
    data. Call endpoint getrange with query parameter range (ie: localhost:8080/getrange?range=100) to retrieve a list of
-   size range entities from the api (up to 9000).
+   size range entities from the api (up to 9000). You can now also inset with the insert endpoint and use the getone 
+   endpoint to retrieve a record by id.
 
 ## Docker
 
 1. Build Docker Image `docker build -t tracing .`
 2. Run `docker run -p 8080:8080 tracing`
-3. Test `http://localhost:8080/getone`
+3. Test `http://localhost:8080/getonerandom`
 
 # Contents
 
