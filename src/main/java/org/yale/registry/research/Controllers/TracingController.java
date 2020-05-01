@@ -15,9 +15,8 @@ import java.util.List;
 public class TracingController {
     private TracingService tracingService;
 
-
     @Autowired
-    public TracingController(TracingService tracingService){
+    public TracingController(TracingService tracingService) {
         this.tracingService = tracingService;
     }
 
