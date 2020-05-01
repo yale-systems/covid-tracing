@@ -10,7 +10,6 @@ public class TracingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private Integer trace_id;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -25,7 +24,16 @@ public class TracingEntity {
 
     private Boolean confirmed;
 
+    public TracingEntity(){}
 
+    public TracingEntity(Integer trace_id, Date start_time, Float latitude, Float longitude, Date end_time, Boolean confirmed) {
+        this.trace_id = trace_id;
+        this.start_time = start_time;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.end_time = end_time;
+        this.confirmed = confirmed;
+    }
 
     public Long getId() {
         return id;
@@ -59,7 +67,6 @@ public class TracingEntity {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public void setTrace_id(Integer trace_id) {
         this.trace_id = trace_id;

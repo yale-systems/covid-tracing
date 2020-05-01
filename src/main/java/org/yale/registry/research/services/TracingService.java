@@ -6,6 +6,7 @@ import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.entities.TracingEntity;
 import org.yale.registry.research.repositories.TracingRepository;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +48,11 @@ public class TracingService {
         return entityToDTO(tracingEntity);
     }
 
+    public void insertEntity(TracingDTO toInsert){
+        TracingEntity tracingEntity = DTOToEntity(toInsert);
+        tracingRepository.save(tracingEntity);
+    }
+
 //    public void insertOrUpdateResearchEntity(TracingEntity researchEntity){
 //        tracingRepository.save(researchEntity);
 //    }
@@ -70,4 +76,18 @@ public class TracingService {
                 tracingEntity.getEnd_time(), tracingEntity.getConfirmed());
     }
 
+    private TracingEntity DTOToEntity(TracingDTO tracingDTO){
+        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), jitterLat(tracingDTO.getLatitude()),
+                jitterLong(tracingDTO.getLongitude()), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
+    }
+
+    private Float jitterLat(Float latitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 100.0) + latitude));
+    }
+
+    private Float jitterLong(Float longitude){
+        Random rand = new Random();
+        return new Float((((rand.nextFloat() * 2 - 1) / 500.0) + longitude));
+    }
 }

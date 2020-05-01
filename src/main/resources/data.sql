@@ -1,4 +1,4 @@
-INSERT INTO dummy_data (trace_id, start_time, latitude, longitude, end_time, confirmed) VALUES
+INSERT INTO dummy_data (trace_id, start_time, longitude, latitude, end_time, confirmed) VALUES
 ('10176','2008-02-08 01:42:55','116.28665','39.90602','2008-02-08 01:44:55','FALSE'),
 ('10176','2008-02-08 01:46:59','116.30434','39.88355','2008-02-08 01:48:59','TRUE'),
 ('10176','2008-02-08 01:47:57','116.30561','39.87258','2008-02-08 01:49:57','FALSE'),
