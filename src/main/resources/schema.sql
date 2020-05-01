@@ -8,4 +8,6 @@ CREATE TABLE dummy_data (
   confirmed BOOLEAN,
 );
 
+--INSERT INTO test_data (data) VALUES ('automatically inserted');
+
 

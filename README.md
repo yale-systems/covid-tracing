@@ -67,3 +67,28 @@ request, just make an hard-coded DTO when the endpoint is called, add random jit
 insert into database. You can verify insertion by logging into the h2 console at localhost:8080/h2-console. Enable it
 in applications.properties first, though (it's commented out). (HAO)  
 If we could get some of these task done by monday, we'd be in great shape!
+
+
+
+What I (Alex) have done:
+1. Set up a local postgres instance:
+
+```
+brew services start postgres
+```
+
+Initialize a database called 'registry', as well as an authorized user as outlined in src/main/resources/application.properties. Install postgis with brew and follow the instructions in the 'enabling postgis' section of https://postgis.net/install/
+
+Afterwards feed the dump file to initialize the dummy data: 
+
+```
+psql registry < dummy_data_dump.sql
+```
+
+I use the psql to interact with the database:
+
+```
+psql registry
+```
+
+The changes in the schema.sql script in src/main/resources are to try to add a piece of data (a string) to another table I created called test_data. Right now it's commented out. 
