@@ -7,8 +7,9 @@ import java.util.Date;
 @Table(name = "dummy_data")
 public class TracingEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @SequenceGenerator(name = "tracing_generator", sequenceName = "dummy_data_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tracing_generator")
+    private Integer id;
 
     private Integer trace_id;
 
@@ -35,7 +36,7 @@ public class TracingEntity {
         this.confirmed = confirmed;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -64,7 +65,7 @@ public class TracingEntity {
     }
 
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
