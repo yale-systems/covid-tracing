@@ -1,5 +1,7 @@
 package org.yale.registry.research.entities;
 
+import org.locationtech.jts.geom.Point;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -9,34 +11,31 @@ public class TracingEntity {
     @Id
     @SequenceGenerator(name = "tracing_generator", sequenceName = "dummy_data_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tracing_generator")
-    private Integer id;
+    private Long id;
 
     private Integer trace_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
 
-    private Float latitude;
-
-    private Float longitude;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date end_time;
 
     private Boolean confirmed;
 
+    private Point geom;
+
     public TracingEntity(){}
 
-    public TracingEntity(Integer trace_id, Date start_time, Float latitude, Float longitude, Date end_time, Boolean confirmed) {
+    public TracingEntity(Integer trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
         this.trace_id = trace_id;
         this.start_time = start_time;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.end_time = end_time;
         this.confirmed = confirmed;
+        this.geom = geom;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -48,24 +47,20 @@ public class TracingEntity {
         return start_time;
     }
 
-    public Float getLatitude() {
-        return latitude;
-    }
-
-    public Float getLongitude() {
-        return longitude;
-    }
-
     public Date getEnd_time() {
         return end_time;
     }
 
-    public Boolean getConfirmed() {
+    public Boolean isConfirmed() {
         return confirmed;
     }
 
+    public Point getGeom(){
+        return geom;
+    }
 
-    public void setId(Integer id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -77,21 +72,16 @@ public class TracingEntity {
         this.start_time = start_time;
     }
 
-    public void setLatitude(Float latitude) {
-        this.latitude = latitude;
-    }
-
-
-    public void setLongitude(Float longitude) {
-        this.longitude = longitude;
-    }
-
     public void setEnd_time(Date end_time) {
         this.end_time = end_time;
     }
 
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public void setGeom(Point geom){
+        this.geom = geom;
     }
 
 }

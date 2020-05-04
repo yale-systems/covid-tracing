@@ -24,8 +24,8 @@ SET default_tablespace = '';
 
 CREATE TABLE public.dummy_mini_subset_geom (
     id integer,
-    date timestamp without time zone,
-    date_end timestamp without time zone,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
     confirmed boolean,
     geom public.geometry(Point,4326)
 );
@@ -37,7 +37,7 @@ ALTER TABLE public.dummy_mini_subset_geom OWNER TO postgres;
 -- Data for Name: dummy_mini_subset_geom; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.dummy_mini_subset_geom (id, date, date_end, confirmed, geom) FROM stdin;
+COPY public.dummy_mini_subset_geom (id, start_time, end_time, confirmed, geom) FROM stdin;
 10176	2008-02-08 01:42:55	2008-02-08 01:44:55	f	0101000020E61000007FD93D7958125D40CEC29E76F8F34340
 10176	2008-02-08 01:46:59	2008-02-08 01:48:59	t	0101000020E610000056B77A4E7A135D40BE30992A18F14340
 10176	2008-02-08 01:47:57	2008-02-08 01:49:57	f	0101000020E610000028D53E1D8F135D40649291B3B0EF4340

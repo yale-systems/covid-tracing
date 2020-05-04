@@ -6,7 +6,6 @@ import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.entities.TracingEntity;
 import org.yale.registry.research.repositories.TracingRepository;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -72,13 +71,12 @@ public class TracingService {
 
     private TracingDTO entityToDTO(TracingEntity tracingEntity){
         return new TracingDTO(tracingEntity.getTrace_id(), tracingEntity.getStart_time(),
-                tracingEntity.getLatitude(), tracingEntity.getLongitude(),
-                tracingEntity.getEnd_time(), tracingEntity.getConfirmed());
+                tracingEntity.getEnd_time(), tracingEntity.isConfirmed(), tracingEntity.getGeom());
     }
 
     private TracingEntity DTOToEntity(TracingDTO tracingDTO){
-        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), tracingDTO.getLatitude(),
-                tracingDTO.getLongitude(), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
+        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(),
+                tracingDTO.getEnd_time(), tracingDTO.isConfirmed(), tracingDTO.getGeom());
     }
 
 }

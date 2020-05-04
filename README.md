@@ -59,7 +59,7 @@ spring.session.jdbc.initialize-schema=never
 I'll modify gradle to have the Java dependencies on the API end, just establish via the log that the connection was 
 successful. (ALEX)
 2. Extend postgres with postgis and create triggers within postgres to first retrieve the longitude and latitude 
-within a certain radius of a specified point. I have the command history I used to make a finalized schema, but I have
+within a certain radius of a specified geom. I have the command history I used to make a finalized schema, but I have
 to transfer it into a sql script and will send it out tomorrow. Start with the previous task. (ALEX)
 3. Create an insertion operation that will apply jitter to a longitude and latitude in a dto and then insert it into
 the dummy database. Just make an endpoint and ignore the input to it. Right now, don't worry about processing physical
