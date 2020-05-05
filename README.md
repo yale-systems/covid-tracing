@@ -4,7 +4,12 @@ This project is developing a database for storing contact tracing information, a
 
 ## Team
 
-1. [Avi Silberschatz](https://codex.cs.yale.edu/avi/)
+* [Avi Silberschatz](https://codex.cs.yale.edu/avi/)
+* [Robert Soul&eacute;](https://www.cs.yale.edu/homes/soule/)
+* Tom Coile
+* Ivy Fang 
+* David Foster
+* Tucker Moses
 
 ## Installation Instructions
 
