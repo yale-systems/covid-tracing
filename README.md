@@ -1,4 +1,4 @@
-![Yale COVID-19 Contact Tracing System](COVIDLogoNoYale.png)
+![Yale COVID-19 Contact Tracing System](NewLogo.png)
 
 The purpose of this project is to develop a database for storing contact tracing information, as well as information that can be used for predictive modeling, and accompanying infrastructure for visualization of the data. In addition, we aim to improve the data-input experience for contact tracing volunteers. Read more about each segment of the project below.
 
