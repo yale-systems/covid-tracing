@@ -1,6 +1,7 @@
-package org.yale.registry.research.controllers;
+package org.yale.registry.research.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,24 +22,24 @@ public class TracingController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getrange", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TracingDTO> getRange(@RequestParam(defaultValue = "10") Integer range) {
-        return tracingService.getRange(range);
+    @RequestMapping(value = "/getrange", method = RequestMethod.GET)
+    ResponseEntity<List<TracingDTO>> getRange(@RequestParam(defaultValue = "10") Integer range) {
+        return ResponseEntity.ok(tracingService.getRange(range));
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getonerandom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TracingDTO getOneRandom() throws Exception{
+    @RequestMapping(value = "/getonerandom", method = RequestMethod.GET)
+    ResponseEntity<TracingDTO> getOneRandom() throws Exception{
         Random idGenerator = new Random();
         Long id = new Long(idGenerator.nextInt(9000) + 1);
-        return tracingService.getResearchOpportunity(id);
+        return ResponseEntity.ok(tracingService.getResearchOpportunity(id));
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TracingDTO getOne(@RequestParam Integer id) throws Exception{
+    @RequestMapping(value = "/getone", method = RequestMethod.GET)
+    ResponseEntity<TracingDTO> getOne(@RequestParam Integer id) throws Exception{
         Long idLong = new Long(id);
-        return tracingService.getResearchOpportunity(idLong);
+        return ResponseEntity.ok(tracingService.getResearchOpportunity(idLong));
     }
 
     @CrossOrigin
@@ -48,6 +49,11 @@ public class TracingController {
         return ResponseEntity.ok().build();
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/**")
+    public ResponseEntity<String> error() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Webpage Not Found. Please try again.");
+    }
 //    @RequestMapping(value = "/edit", method = RequestMethod.GET)
 //    public ModelAndView edit(@RequestParam(required = false) Long id) throws Exception {
 //        ModelAndView mv = new ModelAndView("edit");
