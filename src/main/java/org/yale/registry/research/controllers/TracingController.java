@@ -1,6 +1,7 @@
 package org.yale.registry.research.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class TracingController {
     @CrossOrigin
     @RequestMapping(value = "/getrange", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TracingDTO> getRange(@RequestParam(defaultValue = "10") Integer range) {
-        return tracingService.getRange(range);
+        return tracingService.getByIDRange(range);
     }
 
     @CrossOrigin
@@ -41,6 +42,17 @@ public class TracingController {
     public TracingDTO getOne(@RequestParam Integer id) throws Exception{
         Long idLong = new Long(id);
         return tracingService.getResearchOpportunity(idLong);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/withinrange", method = RequestMethod.GET)
+    List<TracingDTO> getWithinRange(@RequestParam Double latitude, @RequestParam Double longitude,
+                                    /*@RequestParam("start_time")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                            Date startTime,
+                                    @RequestParam("end_time")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                            Date endTime,*/
+                                    @RequestParam(defaultValue = "10") Integer range){
+        return tracingService.getInRange(longitude, latitude, range);
     }
 
     @CrossOrigin

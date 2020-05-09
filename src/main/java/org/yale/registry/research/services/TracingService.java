@@ -1,5 +1,7 @@
 package org.yale.registry.research.services;
 
+import com.bedatadriven.jackson.datatype.jts.parsers.PointParser;
+import org.locationtech.jts.geom.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yale.registry.research.DTOs.TracingDTO;
@@ -16,14 +18,22 @@ import java.util.stream.StreamSupport;
 @Service
 public class TracingService {
     private TracingRepository tracingRepository;
-    static final int MAX_RANGE = 9000;
+    private GeometryFactory geometryFactory;
+    public static final int MAX_RANGE = 9000;
 
     @Autowired
-    public TracingService(TracingRepository tracingRepository){
+    public TracingService(TracingRepository tracingRepository, GeometryFactory geometryFactory){
         this.tracingRepository = tracingRepository;
+        this.geometryFactory = geometryFactory;
     }
 
-    public List<TracingDTO> getRange(int range){
+    public List<TracingDTO> getInRange(Double longitude, Double latitude, Integer range){
+        Point point = longLatToPoint(longitude, latitude);
+        List<TracingEntity> withinDistance = tracingRepository.findWithinDistance(point, range);
+        return dtoAggregator(withinDistance);
+    }
+
+    public List<TracingDTO> getByIDRange(int range){
         Iterable<TracingEntity> researchEntitiesIterable = tracingRepository.findAll();
         List<TracingEntity> researchEntitiesList = StreamSupport.stream(researchEntitiesIterable.spliterator(), false)
                 .collect(Collectors.toList());
@@ -77,6 +87,11 @@ public class TracingService {
     private TracingEntity DTOToEntity(TracingDTO tracingDTO){
         return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(),
                 tracingDTO.getEnd_time(), tracingDTO.isConfirmed(), tracingDTO.getGeom());
+    }
+
+    private Point longLatToPoint(Double longitude, Double latitude){
+        Coordinate coordinate = new Coordinate(longitude, latitude);
+        return geometryFactory.createPoint(coordinate);
     }
 
 }
