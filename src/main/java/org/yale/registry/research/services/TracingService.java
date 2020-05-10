@@ -8,10 +8,7 @@ import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.entities.TracingEntity;
 import org.yale.registry.research.repositories.TracingRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,9 +24,10 @@ public class TracingService {
         this.geometryFactory = geometryFactory;
     }
 
-    public List<TracingDTO> getInRange(Double longitude, Double latitude, Integer range){
+    public List<TracingDTO> getInRange(Double longitude, Double latitude,
+                                       Integer range, Date startTime){
         Point point = longLatToPoint(longitude, latitude);
-        List<TracingEntity> withinDistance = tracingRepository.findWithinDistance(point, range);
+        List<TracingEntity> withinDistance = tracingRepository.findWithinDistance(point, range, startTime);
         return dtoAggregator(withinDistance);
     }
 
