@@ -18,6 +18,10 @@ This is the backend repository for Yale's Covid Tracing project using Spring Fra
 
 ## Docker
 
+To run the database in a separate docker container
+1. Make sure the docker image is downloaded (only needed once per machine): `docker pull mdillon/postgis`
+2. In the db directory run `sh start_db.sh`
+
 1. Build Docker Image `docker build -t tracing .`
 2. Run `docker run -p 8080:8080 tracing`
 3. Test `http://localhost:8080/getonerandom`
