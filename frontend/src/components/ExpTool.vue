@@ -2,17 +2,16 @@
   <div>
     <b-card>
       <b-card>
-        <ExpForm :queryResults="foundResults" :submitted="resultsReturned"/>
+        <ExpForm v-model="flags"/>
       </b-card>
-      <component v-bind:is="cardName"> </component>
-      <div v-if="resultsReturned">
-      <b-card v-if="foundResults" title="You may have been exposed.">
+      <div v-if="flags.submitted">
+      <b-card v-if="flags.exposed" title="You may have been exposed.">
         Please refer to the CDC's guidelines and consider isolating yourself.
       </b-card>
-      <b-card v-if="!foundResults" title="There were no data points found near your location.">
+      <b-card v-if="!flags.exposed" title="There were no data points found near your location.">
       </b-card>
       </div>
-    </b-card>
+    </b-card>  
   </div>
 </template>
 
@@ -27,8 +26,16 @@ export default {
 
   data () {
     return {
-      foundResults : false,
-      resultsReturned : false
+      flags: {
+        exposed : false,
+        submitted : false
+      }
+    }
+  },
+
+  watch: {
+    submitted() {
+      console.log("form was submitted")
     }
   },
   methods : {

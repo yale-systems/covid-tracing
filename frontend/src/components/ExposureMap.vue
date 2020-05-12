@@ -54,10 +54,9 @@ export default {
 
     watch : {
         markers : function() {
-            console.log("setting this to false")
             // first we want to delete all prev markers 
             this.keepMarkers = false
-            setTimeout(() => {this.keepMarkers = true; this.oldMarkers = this.markers; console.log("changing new markers")}, 1 )
+            setTimeout(() => {this.keepMarkers = true; this.oldMarkers = this.markers}, 1 )
         }
     }
 }

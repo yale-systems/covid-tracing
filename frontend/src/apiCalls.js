@@ -14,11 +14,11 @@ export default {
             }
         })
             .then(function (response) {
-                //console.log(response);
+                console.log(response);
                 //for thing in data
                 for (var item in response.data) {
                     //console.log(item);
-                    res.push({position : {lng: response.data[item].latitude, lat: response.data[item].longitude}})
+                    res.push({position : {lng: response.data[item].geom.coordinates[0], lat: response.data[item].geom.coordinates[1]}})
                     counter = counter + 1;
                 }
                 //store time, positition
@@ -27,7 +27,7 @@ export default {
                 // handle error
                 console.log(error);
             })
-        console.log(res.length);
+        console.log(res);
         return res;
     },
 
@@ -44,23 +44,31 @@ export default {
 
     async expQuery(formInfo) {
         let url = baseurl + 'withinrange'
-        var d = new Date(formInfo.date)
-        d = encodeURIComponent(d.toISOString())
+        var d = formInfo.date + "T01:00:00.000Z"
+        // console.log(formInfo.date)
+        // var d = new Date(formInfo.date)
+        // d = d.toISOString()
         let params = {
-            longitude : formInfo.ll.lon,
+            longitude : formInfo.ll.lng,
             latitude : formInfo.ll.lat,
-            range : 1000,
+            range : 10000,
             start_time : d
         }
+
+        var exposed=false;
         await axios.get(url, {
             params: params
         })
             .then((response) => {
                 console.log("apicalls bananas")
                 console.log(response)
+                if(response.data.length > 0) {
+                    exposed = true;
+                }
             })
             .catch((error)=> {
                 console.log(error)
             })
+        return exposed;
     }
 }
