@@ -71,9 +71,12 @@ public class TracingDTO {
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
+<<<<<<< HEAD
+=======
 
     public void setGeom(Point geom){
         this.geom = geom;
     }
+>>>>>>> postgres_cxn
 }
 

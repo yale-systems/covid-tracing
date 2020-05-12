@@ -1,4 +1,43 @@
-COPY dummy_data (trace_id, start_time, end_time, confirmed, geom) FROM stdin;
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.12 (Ubuntu 10.12-2.pgdg16.04+1)
+-- Dumped by pg_dump version 12.2 (Ubuntu 12.2-2.pgdg16.04+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+--
+-- Name: dummy_mini_subset_geom; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.dummy_mini_subset_geom (
+    id integer,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    confirmed boolean,
+    geom public.geometry(Point,4326)
+);
+
+
+ALTER TABLE public.dummy_mini_subset_geom OWNER TO postgres;
+
+--
+-- Data for Name: dummy_mini_subset_geom; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.dummy_mini_subset_geom (id, start_time, end_time, confirmed, geom) FROM stdin;
 10176	2008-02-08 01:42:55	2008-02-08 01:44:55	f	0101000020E61000007FD93D7958125D40CEC29E76F8F34340
 10176	2008-02-08 01:46:59	2008-02-08 01:48:59	t	0101000020E610000056B77A4E7A135D40BE30992A18F14340
 10176	2008-02-08 01:47:57	2008-02-08 01:49:57	f	0101000020E610000028D53E1D8F135D40649291B3B0EF4340

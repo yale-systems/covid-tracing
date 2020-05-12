@@ -1,14 +1,26 @@
+<<<<<<< HEAD
+spring.datasource.url=jdbc:postgresql://localhost:5432/registry
+spring.datasource.username=registry_admin
+spring.datasource.password=password
+=======
 spring.datasource.url=jdbc:postgresql://localhost:5432/tracing
 spring.datasource.username=apiclient
 spring.datasource.password=testing
+>>>>>>> postgres_cxn
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.show-sql=true
 logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+<<<<<<< HEAD
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.session.store-type=none
+spring.session.jdbc.initialize-schema=never
+=======
 spring.jpa.properties.hibernate.dialect=org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
 spring.session.store-type=none
 #spring.session.jdbc.initialize-schema=never
 #spring.datasource.initialization-mode=always
 spring.datasource.initialization-mode=never
 spring.jpa.hibernate.ddl-auto=none
+>>>>>>> postgres_cxn

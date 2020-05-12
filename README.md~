@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ![Yale COVID-19 Contact Tracing System](NewLogo.png)
 
 The purpose of this project is to develop a database for storing contact tracing information, as well as information that can be used for predictive modeling, and accompanying infrastructure for visualization of the data. In addition, we aim to improve the data-input experience for contact tracing volunteers. Read more about each segment of the project below.
@@ -25,6 +26,7 @@ The goal of the centralized spacial database is to both provide a simple visuali
 ### **Long Term, University-Specific COVID-19 Tracking**
 Once the University begins to reopen, we hope to provide a proactive tracing system. This will help the population feel more comfortable opening and pull together contact tracing data to better track the virus if it appears on campus. This project could also aid in random testing on campus by making random selections more informed.
 
+=======
 # Covid_Tracing
 This is the backend repository for Yale's Covid Tracing project using Spring Frameworks.
 #Startup
@@ -68,6 +70,33 @@ want to return the actual entity, as that allows direct exposure to our database
 of the entity for different client certifications. One client may have permission to view more tracing information than
 another, even though the information exists in the same underlying entity. It can also be useful if we want to make
 transformation to the entity data to return to the client that we never want persisted to the database.
+# TODOS
+For any tasks assigned to you, please create a new branch from the master. **Do not commit to master**.
+1. Establish a connection with a postgresql database. You'll need to change the application.properties file under
+resources to something similar to this:
+spring.datasource.url=jdbc:postgresql://localhost:5432/registry  
+spring.datasource.username=apiclient  
+spring.datasource.password=testingrole  
+spring.datasource.driver-class-name=org.postgresql.Driver  
+spring.jpa.show-sql=true  
+logging.level.org.hibernate.SQL=DEBUG  
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE  
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true  
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect  
+spring.session.store-type=none  
+spring.session.jdbc.initialize-schema=never  
+I'll modify gradle to have the Java dependencies on the API end, just establish via the log that the connection was 
+successful. (ALEX)
+2. Extend postgres with postgis and create triggers within postgres to first retrieve the longitude and latitude 
+within a certain radius of a specified geom. I have the command history I used to make a finalized schema, but I have
+to transfer it into a sql script and will send it out tomorrow. Start with the previous task. (ALEX)
+3. Create an insertion operation that will apply jitter to a longitude and latitude in a dto and then insert it into
+the dummy database. Just make an endpoint and ignore the input to it. Right now, don't worry about processing physical
+request, just make an hard-coded DTO when the endpoint is called, add random jitter to it of a constant radius, and
+insert into database. You can verify insertion by logging into the h2 console at localhost:8080/h2-console. Enable it
+in applications.properties first, though (it's commented out). (HAO)  
+If we could get some of these task done by monday, we'd be in great shape!
+
 
 
 What I (Alex) have done:
@@ -92,3 +121,4 @@ psql registry
 ```
 
 The changes in the schema.sql script in src/main/resources are to try to add a piece of data (a string) to another table I created called test_data. Right now it's commented out. 
+>>>>>>> postgres_cxn

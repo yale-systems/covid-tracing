@@ -83,6 +83,10 @@ public class TracingService {
     }
 
     private TracingEntity DTOToEntity(TracingDTO tracingDTO){
+<<<<<<< HEAD
+        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(), jitterLat(tracingDTO.getLatitude()),
+                jitterLong(tracingDTO.getLongitude()), tracingDTO.getEnd_time(), tracingDTO.getConfirmed());
+=======
         return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(),
                 tracingDTO.getEnd_time(), tracingDTO.isConfirmed(), tracingDTO.getGeom());
     }
@@ -90,6 +94,7 @@ public class TracingService {
     private Point longLatToPoint(Double longitude, Double latitude){
         Coordinate coordinate = new Coordinate(longitude, latitude);
         return geometryFactory.createPoint(coordinate);
+>>>>>>> postgres_cxn
     }
 
     private Float jitterLat(Float latitude){
