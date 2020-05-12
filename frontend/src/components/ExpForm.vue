@@ -48,8 +48,7 @@ export default {
     SearchMap
   },
   props : {
-    queryResults : Boolean,
-    submitted : Boolean
+    value : Object
   },
 
   mixins: [formMixin],
@@ -85,9 +84,9 @@ export default {
       let res = await apiCalls.expQuery(this.formInfo)
       // if there are positive results
       if (res) {
-        this.queryResults = true
+        this.value.exposed = true
       }
-      this.submitted = true;
+      this.value.submitted = true;
     }
   }
 }

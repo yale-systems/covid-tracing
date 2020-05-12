@@ -13,7 +13,7 @@
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button type="submit" @click="onSubmit" variant="primary"> Submit </b-button>
+                <b-button @click="onSubmit" variant="primary"> Submit </b-button>
             </b-form>
         </b-container>
     </div>
@@ -65,10 +65,7 @@ export default {
             days: [], 
             // TODO: create a first form to choose starting day so this isn't hardcoded
             // then write function to convert between ISO and human readable
-            dayLabels: ["Monday, May 4", "Sunday, May 3", 
-                "Saturday, May 2", "Friday, May 1", 
-                "Thursday, April 30", "Wednesday, April 29",
-                "Tuesday, April 28", "Monday, April 27"]
+            dayLabels: ["2020-05-03", "2020-05-02", "2020-05-01"]
         }
     }, 
 
@@ -96,24 +93,62 @@ export default {
     },
 
     methods: {
-        onSubmit: function(button) {
+        onSubmit: async function(button) {
             button.preventDefault()
             // checks if there is any error in the form and scrolls to first error
             if(this.$v.$anyError) {
                 this.focusFirstStatus()
                 return
             }
+
+            var locations = this.getLocationArray(this.days);
+            console.log(locations);
+            
             // insert dummy marker for now
             // TODO: insert all markers into endpoint
-            apiCalls.insertMarker({
-                "trace_id": 4105,
-                "start_time": "2008-02-03T10:17:44.000+0000",
-                "latitude": 39.9070312,
-                "longitude": 116.43843,
-                "end_time": "2008-02-03T10:19:44.000+0000",
-                "confirmed": false
-            })
+            for (var location of locations) {
+                console.log(location)
+                await apiCalls.insertMarker(location);
+            }
+
             console.log(JSON.stringify(this.days))
+        },
+
+        /*
+            takes as input the form, creates an array of objects: 
+            {
+                "trace_id": dummyID
+                "start_time": beginning of day in ISO format
+                "latitude": latitude
+                "longitude": longitude
+                "end_time": end of day in ISO format
+                "confirmed": true
+            }
+            */
+        getLocationArray(dayArray) {
+            var locationArray = [];
+            let trace_id = 4103;
+            let confirmed = true;
+            for(var day of dayArray) {
+                var start_time = (day.date + "T00:00:00.000Z")
+                var end_time = (day.date + "T23:59:59.000Z")
+                for(var ev of day.events) {
+                    if(ev.event.latlon != null) {
+                        locationArray.push({
+                            "trace_id": trace_id,
+                            "start_time": start_time,
+                            "geom" : {
+                                "type" : "Point",
+                                "coordinates" : [ev.event.latlon.lat, ev.event.latlon.lng]
+                            },
+                            "end_time": end_time,
+                            "confirmed": confirmed
+                        })
+                    }
+                }
+            }
+            console.log(locationArray);
+            return locationArray;
         }
     }
 }

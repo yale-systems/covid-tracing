@@ -16,8 +16,8 @@ The purpose of this project is to develop a database for storing contact tracing
 
 ## **Installation Instructions**
 
-* [Backend](docs/backend.md)
-* [Frontend](docs/frontend.md)
+* [Backend](backend/backend.md)
+* [Frontend](frontend/frontend.md)
 
 ### **A Centralized Spatial Database**
 The goal of the centralized spacial database is to both provide a simple visualization tool for doctors, researchers, and the general public and to improve the ease of database entry. Additional factors considered include time and location, in addition to contacts. An informational risk-analysis system for the general public is built into the map visualization (to see what places are hot-spots). All data in the database is voluntarily provided and anonymous.

@@ -40,8 +40,8 @@ export default {
 
     watch: {
         mapCenter: function() {
-            // do nothing, don't want to change center
-            //this.map.setCenter(this.mapCenter);
+            // do something, do in fact want to change center
+            this.map.setCenter(this.mapCenter);
         }
     },
 

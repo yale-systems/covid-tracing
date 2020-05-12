@@ -5,6 +5,7 @@
 -- Dumped from database version 10.12 (Ubuntu 10.12-2.pgdg16.04+1)
 -- Dumped by pg_dump version 12.2 (Ubuntu 12.2-2.pgdg16.04+1)
 
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -9052,3 +9053,8 @@ CREATE INDEX geom_index ON public.dummy_mini_subset_geom USING gist (geom);
 -- PostgreSQL database dump complete
 --
 
+
+-- Create the api client user for the backend
+CREATE USER apiclient WITH PASSWORD 'testing';
+
+GRANT ALL PRIVILEGES ON public.dummy_mini_subset_geom TO apiclient;

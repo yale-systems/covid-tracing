@@ -57,7 +57,6 @@ export default {
         .then( function (response) {
             curr.$set(curr, "mapCenter", response[0].position);
             curr.$set(curr, "markers", response);
-            console.log(response[0]);
         });
     }
   }
