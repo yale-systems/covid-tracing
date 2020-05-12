@@ -1,35 +1,54 @@
-HELP.md
-.gradle
-build/
-bin/
+*.HELP.md
+*.gradle
+*build/
+*.bin/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
 
 ### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
+*..apt_generated
+*..classpath
+*..factorypath
+*..project
+*..settings
+*..springBeans
+*..sts4-cache 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
-out/
+*.out/
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+*./nbproject/private/
+*./nbbuild/
+*./dist/
+*./nbdist/
+*./.nb-gradle/
 
 ### VS Code ###
-.vscode/
+*..vscode/
 
-.DS_Store
+*.DS_Store
+/frontend/node_modules
+*./dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+*.logs
+*.log*
+
+# Editor directories and files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+#APIkey
+/frontend/src/constants/apiKey.js
