@@ -1,16 +1,15 @@
 <template>
     <div> 
         <br>
-        <h3 class="title">Timeline</h3>
+        <h3 class="large">Map and Timeline</h3><br>
         <b-container> 
           <vue-slider :adsorb="true" :max="14" 
             :marks="marks" :process="false" :height="8" :tooltip-style="{ backgroundColor: '#007BFE'}" 
             :dot-style="{ backgroundColor: '#007BFE'}" :value = 7 v-model= "value"></vue-slider> 
         </b-container>
         <br>
-        <br>
         <b-container fluid>
-          <ExposureMap class="exposure-map" :markers="markers" :mapCenter="mapCenter" /> 
+          <ExposureMap class="exposure-map large-padding" :markers="markers" :mapCenter="mapCenter" /> 
         </b-container>
     </div>
 </template>
@@ -66,7 +65,6 @@ export default {
 <style lang="scss" scoped>
 
   .title {
-    font-weight: bold;
     padding-left: 30px;
 
   }

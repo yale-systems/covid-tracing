@@ -4,7 +4,7 @@
         <!-- TODO: link stylesheet outside of template -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- TODO: style -->
-        <p class="large"> {{date}} </p>
+        <h3 class="large"> {{date}} </h3>
         <!-- make InterviewCard for each event, using v, which is $v passed in from the parent -->
         <InterviewCard
            class="icard" v-for="card in v.events.$each.$iter"
@@ -79,16 +79,6 @@ export default {
 
 <style scoped>
 
-.large {
-    font-size: larger;
-    color: white;
-    background-color: #1B3A71;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    padding-left: 10px;
-
-}
-
 .centered {
     justify-content: center;
     display: flex;
@@ -101,7 +91,4 @@ export default {
     cursor: pointer
 }
 
-.icard {
-    padding: 10px;
-}
 </style>

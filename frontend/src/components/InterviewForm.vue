@@ -13,7 +13,7 @@
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button @click="onSubmit" variant="primary"> Submit </b-button>
+                <b-button @click="onSubmit" class="navbar-custom"> Submit </b-button>
             </b-form>
         </b-container>
     </div>

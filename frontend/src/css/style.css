@@ -1,0 +1,27 @@
+/*
+SECTION 1: OVERALL RULES
+*/ 
+
+.large {
+    font-size: larger;
+    text-align: center;
+    color: white;
+    background-color: #286dc0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-right: 80%;
+
+
+}
+
+.icard {
+    padding: 10px;
+}
+
+.large-padding {
+    padding: 25px;
+}
+
+.navbar-custom { 
+    background-color: #1B3A71; 
+} 
