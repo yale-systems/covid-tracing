@@ -42,7 +42,7 @@
 import SearchMap from './SearchMap'
 import formMixin from '@/mixins/formMixin'
 import { required } from 'vuelidate/lib/validators'
-//import apiCalls from '@/apiCalls.js'
+import apiCalls from '@/apiCalls.js'
 
 export default {
   name: 'ExpForm',
@@ -83,14 +83,14 @@ export default {
       }
     },
     async makeQuery() {
-      //let res = await apiCalls.expQuery(this.formInfo)
+      let res = await apiCalls.expQuery(this.formInfo)
       // if there are positive results
-      //if (res) {
-      //  this.value.exposed = true
-      //}
-      //this.value.submitted = true;
+      if (res) {
+        this.value.exposed = true
+      }
       this.value.submitted = true;
-      this.value.exposed = true;
+     // this.value.submitted = true;
+      //this.value.exposed = true;
     }
   }
 }

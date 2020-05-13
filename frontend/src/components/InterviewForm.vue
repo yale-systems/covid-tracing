@@ -16,7 +16,7 @@
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button @click="onSubmit" class="navbar-custom submit"> Submit </b-button>
+                <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
     </div>
@@ -188,7 +188,8 @@ export default {
 }
 
 .submit {
-    margin-left: 85%;
-    margin-bottom: 20px;
+    position: fixed;
+     bottom: 20px;
+    right: 40px;
 }
 </style>

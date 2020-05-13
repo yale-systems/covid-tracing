@@ -136,8 +136,8 @@ export default {
 
 .card-margin {
   align-content: center;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
   z-index: 0;
 }
 

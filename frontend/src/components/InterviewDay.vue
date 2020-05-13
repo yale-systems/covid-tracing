@@ -4,7 +4,7 @@
         <!-- TODO: link stylesheet outside of template -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- TODO: style -->
-        <h3 class="card-date sticky"> {{date}} </h3>
+        <h3 class="card-date shadow sticky"> {{date}} </h3>
         <!-- make InterviewCard for each event, using v, which is $v passed in from the parent -->
         <InterviewCard
            class="icard card-background" v-for="card in v.events.$each.$iter"
@@ -87,8 +87,8 @@ export default {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 20px;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 .centered {
