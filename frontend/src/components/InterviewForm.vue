@@ -7,7 +7,7 @@
                 <!-- make an Interview Day for each day in $v. 
                 day.$model is double bound with the day arrays in our data. ie $v mirrors our data.
                 the perfect mirroring is crucial to validation. -->
-                <InterviewDay
+                <InterviewDay class="dayback"
                     v-for="day in $v.days.$each.$iter"
                     :key="day.$model.dayID"
                     :date="day.$model.date"

@@ -7,7 +7,7 @@
         <p class="large"> {{date}} </p>
         <!-- make InterviewCard for each event, using v, which is $v passed in from the parent -->
         <InterviewCard
-            v-for="card in v.events.$each.$iter"
+           class="icard" v-for="card in v.events.$each.$iter"
             :key="card.eventID.$model"
             :v="card.event"
             :defaultEventNum="card.eventID.$model + 1"
@@ -81,12 +81,19 @@ export default {
 
 .large {
     font-size: larger;
+    color: white;
+    background-color: #1B3A71;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+
 }
 
 .centered {
     justify-content: center;
     display: flex;
     align-items:center;
+    padding-bottom: 10px;
 }
 
 .material-icons:hover{
@@ -94,4 +101,7 @@ export default {
     cursor: pointer
 }
 
+.icard {
+    padding: 10px;
+}
 </style>

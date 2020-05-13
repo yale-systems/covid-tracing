@@ -103,6 +103,7 @@ export default {
 .error {
   color : firebrick;
   font-size : smaller;
-  line-height : 50%
+  line-height : 50%;
+  padding-top : 15px;
 } 
 </style>
