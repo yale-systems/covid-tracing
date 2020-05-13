@@ -4,8 +4,8 @@
 
 -- Dumped from database version 12.2
 -- Dumped by pg_dump version 12.2
-DROP IF EXISTS dummy_data;
-DROP IF EXISTS contacts;
+-- DROP IF EXISTS dummy_data;
+-- DROP IF EXISTS contacts;
 
 -- IF OBJECT_ID('dummy_data') IS NOT NULL
 --     DROP TABLE dummy_data;
