@@ -5,8 +5,11 @@
     <b-card>
         <b-form>
             <!-- TITLE FIELD --> 
-            <div contenteditable class="editableTitle title" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"><i class="material-icons">edit</i></div><br>
-    
+            <div class="row no-gutters justify-content-start">
+                <div contenteditable class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
+                <div class="space col-md-auto"><i class="material-icons">edit</i></div>
+            </div>
+        
             <!-- NAME FIELD -->
             <b-form-group label="Name:" :label-for="nameID">
                 <b-form-input :id="nameID" v-model.trim="v.name.$model" type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
@@ -131,8 +134,17 @@ export default {
 
 <style scoped>
 
+.no-gutters {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
 [contenteditable] {
     outline: 0px solid transparent;
+}
+
+.space {
+  margin-left: 10px;
 }
 
 .search-map {
@@ -149,9 +161,8 @@ export default {
     cursor : pointer
 }
 
-.material-icon{
+.material-icons {
     color : black;
-
 }
 
 .error {
