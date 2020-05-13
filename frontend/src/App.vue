@@ -26,6 +26,11 @@ export default {
     loggedIn : function () {
       return this.$store.state.loggedIn
     }
+  },
+  mounted () {
+    if (this.$cookies.isKey('user')) {
+      this.$store.commit('setUser', this.$cookies.get('user'))
+    }
   }
 }
 </script>

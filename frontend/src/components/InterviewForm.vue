@@ -95,7 +95,7 @@ export default {
         var counter = 0
         let day
         for (day of dates) { 
-            var dayID = day.getFullYear() +  "-" +  this.pad(day.getMonth()) + "-" + this.pad(day.getDay());
+            var dayID = day.getFullYear() +  "-" +  this.pad(day.getMonth()+1) + "-" + this.pad(day.getDate());
             var dateString = this.dateConstructor(day) // set this to be human readable nice string
             // this.$set triggers DOM update
             this.$set(this.days, counter, {
@@ -154,7 +154,7 @@ export default {
             */
         getLocationArray(dayArray) {
             var locationArray = [];
-            let trace_id = 4103;
+            let trace_id = 5;
             let confirmed = true;
             for(var day of dayArray) {
                 var start_time = (day.dayID + "T00:00:00.000Z")
