@@ -16,7 +16,13 @@ This is the backend repository for Yale's Covid Tracing project using Spring Fra
    size range entities from the api (up to 9000). You can now also inset with the insert endpoint and use the getone 
    endpoint to retrieve a record by id.
 
-## Postgres Docker
+## To run the backend + database, do either (1) or (2a) then (2b).
+
+## 1. Docker for Backend + Database
+1. From backend directory: `./host_start_backend.sh`
+2. To stop: `Ctrl-c`
+
+## 2a. Postgres Docker (Individual)
 
 To run the database in a separate docker container
 1. `cd backend/db`
@@ -24,7 +30,7 @@ To run the database in a separate docker container
 3. `./start.sh`
 4. To stop the docker container: `./stop.sh`
 
-## Backend Docker
+## 2b. Backend Docker (Individual)
 
 1. Build Docker Image `docker build -t tracing .`
 2. Run `docker run -p 8080:8080 tracing`
