@@ -6,6 +6,7 @@
             <b-nav-item to="/map"> Map </b-nav-item>
             <b-nav-item to="/form"> Interview Form </b-nav-item>
             <b-nav-item to="/tool"> Exposure Tool </b-nav-item>
+            <b-nav-item to="/login"> Login Dev </b-nav-item>
           </b-navbar-nav>
         </b-navbar>
         <router-view></router-view>

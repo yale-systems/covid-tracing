@@ -9,27 +9,27 @@
     
             <!-- NAME FIELD -->
             <b-form-group label="Name:" :label-for="nameID">
-                <b-form-input :id="nameID" v-model.trim="v.name.$model" type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
+                <b-form-input :id="nameID" :value="v.name.$model" @change.native="v.name.$model = $event.target.value"  type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
             </b-form-group>
             <div class="error" v-if="!v.name.isName"> Name must only include alphabetic characters and spaces.</div><br>
 
             <!-- EMAIL FIELD -->
-            <!-- TODO: validate lazily, so users are punished late -->
             <b-form-group label="Email:" :label-for="emailID">
-                <b-form-input :id="emailID" v-model.trim="v.email.$model" type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
+                <b-form-input :id="emailID" :value="v.email.$model" @change.native="v.email.$model = $event.target.value" 
+                 type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
             </b-form-group>
             <div class="error" v-if="!v.email.email"> Please enter a valid email address in the form of <i>name@email.com</i>.</div><br>
 
             <!-- PHONE FIELD -->
             <b-form-group label="Phone:" :label-for="phoneID">
-                <b-form-input :id="phoneID" v-model.trim="v.phone.$model" type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
+                <b-form-input :id="phoneID" :value="v.phone.$model" @change.native="v.phone.$model = $event.target.value"  type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
             </b-form-group>
             <div class="error" v-if="!v.phone.numeric"> Please only enter numbers. </div><br>
 
             <!-- LOCATION FIELD -->
                 <b-form-group label="Location:" :label-for="locationID">
                     <b-input-group>
-                        <b-form-input :id="locationID" v-model.trim="value.location" type="text" disabled ></b-form-input>
+                        <b-form-input :id="locationID" v-model.trim="value.location" type="text" disabled :state="getState(true, value.location)"></b-form-input>
                             <b-input-group-append>
                                 <b-button variant="primary" v-on:click="showMap"> Map </b-button>
                             </b-input-group-append>
