@@ -79,6 +79,10 @@ export default {
     },
 
     mounted: function() {
+        if (!this.$store.state.loggedIn) {
+            this.$cookies.set('from', "InterviewForm")
+            this.$router.push({ name: 'LoginPage' });
+        }
         // create array of past dates
         var dates = [];
         var date = new Date(); // this is today! 
@@ -182,11 +186,9 @@ export default {
 .bold {
     font-weight : bold;
 }
-
 .day-margins {
     margin-bottom: 5px;
 }
-
 .submit {
     position: fixed;
      bottom: 20px;
