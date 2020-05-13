@@ -26,6 +26,10 @@ const store = new Vuex.Store({
       state.username = name
       state.loggedIn = true
     },
+    logout(state) {
+      state.username = ""
+      state.loggedIn = false
+    }
   }
 })
 

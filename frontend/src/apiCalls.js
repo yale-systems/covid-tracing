@@ -45,22 +45,20 @@ export default {
     async expQuery(formInfo) {
         let url = baseurl + 'withinrange'
         console.log(formInfo.ll)
-        // var d = formInfo.date + "T01:00:00.000Z"
-        // console.log(formInfo.date)
-        // var d = new Date(formInfo.date)
-        // d = d.toISOString()
-        // let params = {
-        //     longitude : formInfo.ll.lng,
-        //     latitude : formInfo.ll.lat,
-        //     range : 10000,
-        //     start_time : d
-        // }
+        var d = formInfo.date + "T01:00:00.000Z"
+        console.log(formInfo.date)
         let params = {
-            start_time: "2020-05-03T00:00:00.000Z",
-            longitude: 116.7193,
-            latitude: 40.13087,
-            range : 1
+            longitude : formInfo.ll.lng,
+            latitude : formInfo.ll.lat,
+            range : 10000,
+            start_time : d
         }
+        // let params = {
+        //     start_time: "2020-05-03T00:00:00.000Z",
+        //     longitude: 116.7193,
+        //     latitude: 40.13087,
+        //     range : 1
+        // }
 
         var exposed=false;
         await axios.get(url, {
