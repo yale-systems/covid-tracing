@@ -40,6 +40,7 @@ export default {
       if(this.$cookies.isKey('user')) {
         this.$cookies.remove('user')
       }
+      this.$router.push({ name : 'MapVisualization'})
       this.$store.commit("logout")
     }
   }

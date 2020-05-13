@@ -166,7 +166,7 @@ export default {
                             "start_time": start_time,
                             "geom" : {
                                 "type" : "Point",
-                                "coordinates" : [ev.event.latlon.lat, ev.event.latlon.lng]
+                                "coordinates" : [ev.event.latlon.lng, ev.event.latlon.lat]
                             },
                             "end_time": end_time,
                             "confirmed": confirmed
