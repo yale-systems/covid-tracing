@@ -13,7 +13,7 @@ public class TracingEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tracing_generator")
     private Long id;
 
-    private Integer trace_id;
+    private Long trace_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
@@ -27,7 +27,7 @@ public class TracingEntity {
 
     public TracingEntity(){}
 
-    public TracingEntity(Integer trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
+    public TracingEntity(Long trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
         this.trace_id = trace_id;
         this.start_time = start_time;
         this.end_time = end_time;
@@ -39,7 +39,7 @@ public class TracingEntity {
         return id;
     }
 
-    public Integer getTrace_id() {
+    public Long getTrace_id() {
         return trace_id;
     }
 
@@ -64,7 +64,7 @@ public class TracingEntity {
         this.id = id;
     }
 
-    public void setTrace_id(Integer trace_id) {
+    public void setTrace_id(Long trace_id) {
         this.trace_id = trace_id;
     }
 

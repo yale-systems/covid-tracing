@@ -13,7 +13,7 @@ public class TracingConfiguration {
 
     @Bean
     GeometryFactory geometryFactory(){
-       PrecisionModel precisionModel = new PrecisionModel(DECIMAL_TO_ROUND_TO);
+       PrecisionModel precisionModel = new PrecisionModel();
        return new GeometryFactory(precisionModel, 4326);
     }
     @Bean

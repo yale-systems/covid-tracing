@@ -4,21 +4,10 @@
 
 -- Dumped from database version 12.2
 -- Dumped by pg_dump version 12.2
--- DROP IF EXISTS dummy_data;
--- DROP IF EXISTS contacts;
 
--- IF OBJECT_ID('dummy_data') IS NOT NULL
---     DROP TABLE dummy_data;
--- GO
--- IF OBJECT_ID('contacts') IS NOT NULL
---     DROP TABLE contacts;
--- GO
-
-DROP TABLE IF EXISTS public.dummy_data;
-DROP TABLE IF EXISTS public.contacts;
+DROP TABLE IF EXISTS dummy_data;
 
 CREATE USER apiclient WITH PASSWORD 'testing';
-
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -33,42 +22,7 @@ SET row_security = off;
 
 SET default_tablespace = '';
 
-
---
--- Name: contacts; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.contacts (
-    trace_id integer NOT NULL,
-    name text,
-    email text,
-    address text
-);
-
-
-ALTER TABLE public.contacts OWNER TO apiclient;
-
---
--- Name: contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.contacts_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.contacts_id_seq OWNER TO apiclient;
-
---
--- Name: contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.contacts_id_seq OWNED BY public.contacts.trace_id;
-
+--SET default_table_access_method = heap;
 
 --
 -- Name: dummy_data; Type: TABLE; Schema: public; Owner: apiclient
@@ -76,7 +30,7 @@ ALTER SEQUENCE public.contacts_id_seq OWNED BY public.contacts.trace_id;
 
 CREATE TABLE public.dummy_data (
     id integer NOT NULL,
-    trace_id integer,
+    trace_id integer REFERENCES public.contacts (trace_id),
     start_time timestamp without time zone,
     end_time timestamp without time zone,
     confirmed boolean,
@@ -109,222 +63,10 @@ ALTER SEQUENCE public.dummy_data_id_seq OWNED BY public.dummy_data.id;
 
 
 --
--- Name: contacts trace_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.contacts ALTER COLUMN trace_id SET DEFAULT nextval('public.contacts_id_seq'::regclass);
-
-
---
 -- Name: dummy_data id; Type: DEFAULT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.dummy_data ALTER COLUMN id SET DEFAULT nextval('public.dummy_data_id_seq'::regclass);
-
-
---
--- Data for Name: contacts; Type: TABLE DATA; Schema: public; Owner: apiclient
---
-
-COPY public.contacts (trace_id, name, email, address) FROM stdin;
-1	aa	aa@gmail.com	aa avenue
-2	ab	ab@gmail.com	ab avenue
-3	ac	ac@gmail.com	ac avenue
-4	ad	ad@gmail.com	ad avenue
-5	ae	ae@gmail.com	ae avenue
-6	af	af@gmail.com	af avenue
-7	ag	ag@gmail.com	ag avenue
-8	ah	ah@gmail.com	ah avenue
-9	ai	ai@gmail.com	ai avenue
-10	aj	aj@gmail.com	aj avenue
-11	ak	ak@gmail.com	ak avenue
-12	al	al@gmail.com	al avenue
-13	am	am@gmail.com	am avenue
-14	an	an@gmail.com	an avenue
-15	ao	ao@gmail.com	ao avenue
-16	ap	ap@gmail.com	ap avenue
-17	aq	aq@gmail.com	aq avenue
-18	ar	ar@gmail.com	ar avenue
-19	as	as@gmail.com	as avenue
-20	at	at@gmail.com	at avenue
-21	au	au@gmail.com	au avenue
-22	av	av@gmail.com	av avenue
-23	aw	aw@gmail.com	aw avenue
-24	ax	ax@gmail.com	ax avenue
-25	ay	ay@gmail.com	ay avenue
-26	az	az@gmail.com	az avenue
-27	ba	ba@gmail.com	ba avenue
-28	bb	bb@gmail.com	bb avenue
-29	bc	bc@gmail.com	bc avenue
-30	bd	bd@gmail.com	bd avenue
-31	be	be@gmail.com	be avenue
-32	bf	bf@gmail.com	bf avenue
-33	bg	bg@gmail.com	bg avenue
-34	bh	bh@gmail.com	bh avenue
-35	bi	bi@gmail.com	bi avenue
-36	bj	bj@gmail.com	bj avenue
-37	bk	bk@gmail.com	bk avenue
-38	bl	bl@gmail.com	bl avenue
-39	bm	bm@gmail.com	bm avenue
-40	bn	bn@gmail.com	bn avenue
-41	bo	bo@gmail.com	bo avenue
-42	bp	bp@gmail.com	bp avenue
-43	bq	bq@gmail.com	bq avenue
-44	br	br@gmail.com	br avenue
-45	bs	bs@gmail.com	bs avenue
-46	bt	bt@gmail.com	bt avenue
-47	bu	bu@gmail.com	bu avenue
-48	bv	bv@gmail.com	bv avenue
-49	bw	bw@gmail.com	bw avenue
-50	bx	bx@gmail.com	bx avenue
-51	by	by@gmail.com	by avenue
-52	bz	bz@gmail.com	bz avenue
-53	ca	ca@gmail.com	ca avenue
-54	cb	cb@gmail.com	cb avenue
-55	cc	cc@gmail.com	cc avenue
-56	cd	cd@gmail.com	cd avenue
-57	ce	ce@gmail.com	ce avenue
-58	cf	cf@gmail.com	cf avenue
-59	cg	cg@gmail.com	cg avenue
-60	ch	ch@gmail.com	ch avenue
-61	ci	ci@gmail.com	ci avenue
-62	cj	cj@gmail.com	cj avenue
-63	ck	ck@gmail.com	ck avenue
-64	cl	cl@gmail.com	cl avenue
-65	cm	cm@gmail.com	cm avenue
-66	cn	cn@gmail.com	cn avenue
-67	co	co@gmail.com	co avenue
-68	cp	cp@gmail.com	cp avenue
-69	cq	cq@gmail.com	cq avenue
-70	cr	cr@gmail.com	cr avenue
-71	cs	cs@gmail.com	cs avenue
-72	ct	ct@gmail.com	ct avenue
-73	cu	cu@gmail.com	cu avenue
-74	cv	cv@gmail.com	cv avenue
-75	cw	cw@gmail.com	cw avenue
-76	cx	cx@gmail.com	cx avenue
-77	cy	cy@gmail.com	cy avenue
-78	cz	cz@gmail.com	cz avenue
-79	da	da@gmail.com	da avenue
-80	db	db@gmail.com	db avenue
-81	dc	dc@gmail.com	dc avenue
-82	dd	dd@gmail.com	dd avenue
-83	de	de@gmail.com	de avenue
-84	df	df@gmail.com	df avenue
-85	dg	dg@gmail.com	dg avenue
-86	dh	dh@gmail.com	dh avenue
-87	di	di@gmail.com	di avenue
-88	dj	dj@gmail.com	dj avenue
-89	dk	dk@gmail.com	dk avenue
-90	dl	dl@gmail.com	dl avenue
-91	dm	dm@gmail.com	dm avenue
-92	dn	dn@gmail.com	dn avenue
-93	do	do@gmail.com	do avenue
-94	dp	dp@gmail.com	dp avenue
-95	dq	dq@gmail.com	dq avenue
-96	dr	dr@gmail.com	dr avenue
-97	ds	ds@gmail.com	ds avenue
-98	dt	dt@gmail.com	dt avenue
-99	du	du@gmail.com	du avenue
-100	dv	dv@gmail.com	dv avenue
-101	dw	dw@gmail.com	dw avenue
-102	dx	dx@gmail.com	dx avenue
-103	dy	dy@gmail.com	dy avenue
-104	dz	dz@gmail.com	dz avenue
-105	ea	ea@gmail.com	ea avenue
-106	eb	eb@gmail.com	eb avenue
-107	ec	ec@gmail.com	ec avenue
-108	ed	ed@gmail.com	ed avenue
-109	ee	ee@gmail.com	ee avenue
-110	ef	ef@gmail.com	ef avenue
-111	eg	eg@gmail.com	eg avenue
-112	eh	eh@gmail.com	eh avenue
-113	ei	ei@gmail.com	ei avenue
-114	ej	ej@gmail.com	ej avenue
-115	ek	ek@gmail.com	ek avenue
-116	el	el@gmail.com	el avenue
-117	em	em@gmail.com	em avenue
-118	en	en@gmail.com	en avenue
-119	eo	eo@gmail.com	eo avenue
-120	ep	ep@gmail.com	ep avenue
-121	eq	eq@gmail.com	eq avenue
-122	er	er@gmail.com	er avenue
-123	es	es@gmail.com	es avenue
-124	et	et@gmail.com	et avenue
-125	eu	eu@gmail.com	eu avenue
-126	ev	ev@gmail.com	ev avenue
-127	ew	ew@gmail.com	ew avenue
-128	ex	ex@gmail.com	ex avenue
-129	ey	ey@gmail.com	ey avenue
-130	ez	ez@gmail.com	ez avenue
-131	fa	fa@gmail.com	fa avenue
-132	fb	fb@gmail.com	fb avenue
-133	fc	fc@gmail.com	fc avenue
-134	fd	fd@gmail.com	fd avenue
-135	fe	fe@gmail.com	fe avenue
-136	ff	ff@gmail.com	ff avenue
-137	fg	fg@gmail.com	fg avenue
-138	fh	fh@gmail.com	fh avenue
-139	fi	fi@gmail.com	fi avenue
-140	fj	fj@gmail.com	fj avenue
-141	fk	fk@gmail.com	fk avenue
-142	fl	fl@gmail.com	fl avenue
-143	fm	fm@gmail.com	fm avenue
-144	fn	fn@gmail.com	fn avenue
-145	fo	fo@gmail.com	fo avenue
-146	fp	fp@gmail.com	fp avenue
-147	fq	fq@gmail.com	fq avenue
-148	fr	fr@gmail.com	fr avenue
-149	fs	fs@gmail.com	fs avenue
-150	ft	ft@gmail.com	ft avenue
-151	fu	fu@gmail.com	fu avenue
-152	fv	fv@gmail.com	fv avenue
-153	fw	fw@gmail.com	fw avenue
-154	fx	fx@gmail.com	fx avenue
-155	fy	fy@gmail.com	fy avenue
-156	fz	fz@gmail.com	fz avenue
-157	ga	ga@gmail.com	ga avenue
-158	gb	gb@gmail.com	gb avenue
-159	gc	gc@gmail.com	gc avenue
-160	gd	gd@gmail.com	gd avenue
-161	ge	ge@gmail.com	ge avenue
-162	gf	gf@gmail.com	gf avenue
-163	gg	gg@gmail.com	gg avenue
-164	gh	gh@gmail.com	gh avenue
-165	gi	gi@gmail.com	gi avenue
-166	gj	gj@gmail.com	gj avenue
-167	gk	gk@gmail.com	gk avenue
-168	gl	gl@gmail.com	gl avenue
-169	gm	gm@gmail.com	gm avenue
-170	gn	gn@gmail.com	gn avenue
-171	go	go@gmail.com	go avenue
-172	gp	gp@gmail.com	gp avenue
-173	gq	gq@gmail.com	gq avenue
-174	gr	gr@gmail.com	gr avenue
-175	gs	gs@gmail.com	gs avenue
-176	gt	gt@gmail.com	gt avenue
-177	gu	gu@gmail.com	gu avenue
-178	gv	gv@gmail.com	gv avenue
-179	gw	gw@gmail.com	gw avenue
-180	gx	gx@gmail.com	gx avenue
-181	gy	gy@gmail.com	gy avenue
-182	gz	gz@gmail.com	gz avenue
-183	ha	ha@gmail.com	ha avenue
-184	hb	hb@gmail.com	hb avenue
-185	hc	hc@gmail.com	hc avenue
-186	hd	hd@gmail.com	hd avenue
-187	he	he@gmail.com	he avenue
-188	hf	hf@gmail.com	hf avenue
-189	hg	hg@gmail.com	hg avenue
-190	hh	hh@gmail.com	hh avenue
-191	hi	hi@gmail.com	hi avenue
-192	hj	hj@gmail.com	hj avenue
-193	hk	hk@gmail.com	hk avenue
-194	hl	hl@gmail.com	hl avenue
-195	hm	hm@gmail.com	hm avenue
-196	hn	hn@gmail.com	hn avenue
-197	ho	ho@gmail.com	ho avenue
-\.
 
 
 --
@@ -9336,25 +9078,10 @@ COPY public.dummy_data (id, trace_id, start_time, end_time, confirmed, geom) FRO
 
 
 --
--- Name: contacts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.contacts_id_seq', 197, true);
-
-
---
 -- Name: dummy_data_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
 SELECT pg_catalog.setval('public.dummy_data_id_seq', 9000, true);
-
-
---
--- Name: contacts contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.contacts
-    ADD CONSTRAINT contacts_pkey PRIMARY KEY (trace_id);
 
 
 --
@@ -9377,21 +9104,6 @@ CREATE INDEX geog_index ON public.dummy_data USING gist (public.geography(geom))
 --
 
 CREATE INDEX geom_index ON public.dummy_data USING gist (public.st_transform(geom, 32618));
-
-
---
--- Name: name_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
-CREATE INDEX name_index ON public.contacts USING btree (name);
-
-
---
--- Name: dummy_data dummy_data_trace_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.dummy_data
-    ADD CONSTRAINT dummy_data_trace_id_fkey FOREIGN KEY (trace_id) REFERENCES public.contacts(trace_id);
 
 
 --
