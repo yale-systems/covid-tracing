@@ -17,15 +17,15 @@
       <b-input-group>
         <b-input-group-prepend>
           <b-button  v-on:click="showMap"> Map </b-button>
-        </b-input-group-prepend>
-        <b-form-input 
-          v-model="$v.formInfo.adr.$model" 
-          id="expLocation" 
-          type="text" 
-          disabled 
-          placeholder="use the map to select a location"
-          :state="getState(!$v.formInfo.adr.$error, formInfo.adr)"
-        ></b-form-input>
+        </b-input-group-prepend> 
+          <b-form-input 
+            v-model="$v.formInfo.adr.$model" 
+            id="expLocation" 
+            type="text" 
+            disabled 
+            placeholder="use the map to select a location"
+            :state="getState(!$v.formInfo.adr.$error, formInfo.adr)"
+          ></b-form-input>
       </b-input-group>
     </b-form-group>
     <b-button class="fsb" @click="submit"> Submit </b-button>

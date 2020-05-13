@@ -63,9 +63,7 @@ export default {
     data() {
         return {
             days: [], 
-            // TODO: create a first form to choose starting day so this isn't hardcoded
-            // then write function to convert between ISO and human readable
-            dayLabels: ["2020-05-03", "2020-05-02", "2020-05-01"]
+            // TODO: create a first form to choose starting day so this isn't hardcoded as current day
         }
     }, 
 
@@ -77,22 +75,44 @@ export default {
         }
     },
 
-    mounted() {
+    mounted: function() {
+        // create array of past dates
+        var dates = [];
+        var date = new Date(); // this is today! 
+        for (var i = 0; i < 7; i++) {
+            var tempDate = new Date();
+            tempDate.setDate(date.getDate() - i);
+            dates.push(tempDate)
+        } 
         // initialize empty days with dayID
         var counter = 0
         let day
-        for (day of this.dayLabels) {
+        for (day of dates) { 
+            var dayID = day.getFullYear() +  "-" +  this.pad(day.getMonth()) + "-" + this.pad(day.getDay());
+            var dateString = this.dateConstructor(day) // set this to be human readable nice string
             // this.$set triggers DOM update
             this.$set(this.days, counter, {
-                dayID: counter,
-                date: day, 
-                events: []
+                "dayID": dayID,
+                "date": dateString, 
+                "events": []
             })
             counter += 1
         }
     },
 
     methods: {
+        pad(n) {
+            return ((n < 10) ? ("0" + n) : n)
+        },
+        //takes as input a date object and returns a human-readable string
+        // of the form "Wednesday, March 6"
+        dateConstructor(day) {
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            var months = ["January", "February", "March", "April", "May", "June", "July", "August",
+                            "September", "October","November","December"]
+            return (days[day.getDay()] + ", " + months[day.getMonth()] + " " + day.getDate());
+        },
+        
         onSubmit: async function(button) {
             button.preventDefault()
             // checks if there is any error in the form and scrolls to first error
@@ -130,8 +150,8 @@ export default {
             let trace_id = 4103;
             let confirmed = true;
             for(var day of dayArray) {
-                var start_time = (day.date + "T00:00:00.000Z")
-                var end_time = (day.date + "T23:59:59.000Z")
+                var start_time = (day.dayID + "T00:00:00.000Z")
+                var end_time = (day.dayID + "T23:59:59.000Z")
                 for(var ev of day.events) {
                     if(ev.event.latlon != null) {
                         locationArray.push({
