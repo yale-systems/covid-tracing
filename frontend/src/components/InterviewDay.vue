@@ -11,6 +11,7 @@
             :key="card.eventID.$model"
             :v="card.event"
             :defaultEventNum="card.eventID.$model + 1"
+            @delete="removeCard"
             v-model="card.event.$model"/>
         <!-- add the plus sign -->
         <div class="centered">
@@ -45,7 +46,6 @@ export default {
 
     data: function () {
         return {
-            count: 0,
             newEvent: {
                 name: '',
                 email: '',
@@ -67,11 +67,18 @@ export default {
     methods: {
         // create new event on clicking plus button
         addEvent: function() {
-            this.$set(this.value, this.count, {
-                eventID: this.count, 
+            this.$set(this.value, this.value.length, {
+                eventID: this.value.length, 
                 event: Object.assign({}, this.newEvent)
             })
-            this.count += 1
+        },
+        removeCard(eventID){
+            console.log("trying to remove card with ID " + eventID)
+            for (var counter = 0; counter < this.value.length; counter++) {
+                if(this.value[counter].eventID == eventID) {
+                    this.value.splice(counter, 1)
+                }
+            }
         }
     },
 }
