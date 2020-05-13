@@ -1,12 +1,13 @@
 <template>
   <div>
-  <b-form>           
+  <b-card class="login-margins">
+    <b-form>           
     <label for="datepicker-buttons"> Date: </label>
     <b-form-datepicker
       id="datepicker-buttons"
       reset-button
       locale="en"
-      placeholder="please select a date"
+      placeholder="Please select a date"
       v-model="$v.formInfo.date.$model"
       :state="getState(!$v.formInfo.date.$error, formInfo.date)"
     ></b-form-datepicker>
@@ -16,23 +17,24 @@
     <b-form-group label="Location:" label-for="expLocation">
       <b-input-group>
         <b-input-group-prepend>
-          <b-button  v-on:click="showMap"> Map </b-button>
+          <b-button class="navbar-custom" v-on:click="showMap"> Map </b-button>
         </b-input-group-prepend> 
           <b-form-input 
             v-model="$v.formInfo.adr.$model" 
             id="expLocation" 
             type="text" 
             disabled 
-            placeholder="use the map to select a location"
+            placeholder="Use the map to select a location"
             :state="getState(!$v.formInfo.adr.$error, formInfo.adr)"
           ></b-form-input>
       </b-input-group>
     </b-form-group>
-    <b-button class="fsb" @click="submit"> Submit </b-button>
+    <b-button class="fsb navbar-custom" @click="submit"> Submit </b-button>
   </b-form>
   <b-modal id="expModal" :hide-header="true" size="lg" hide-backdrop content-class="shadow">
       <SearchMap class="search-map" v-model="this.formInfo"/>
   </b-modal>
+  </b-card>
  </div>
 </template>
 
@@ -87,6 +89,8 @@ export default {
         this.value.exposed = true
       }
       this.value.submitted = true;
+     // this.value.submitted = true;
+      //this.value.exposed = true;
     }
   }
 }

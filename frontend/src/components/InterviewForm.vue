@@ -1,19 +1,22 @@
 <template>
     <div class="bold">
     <br> 
+    
     <!-- TODO: ideally this break would be in css padding, but that is yet to come -->
         <b-container fluid>
+            <h3 class="large">Interview Form</h3>
+            <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
                 day.$model is double bound with the day arrays in our data. ie $v mirrors our data.
                 the perfect mirroring is crucial to validation. -->
-                <InterviewDay class="dayback"
+                <InterviewDay class="day-margins"
                     v-for="day in $v.days.$each.$iter"
                     :key="day.$model.dayID"
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button @click="onSubmit" class="navbar-custom"> Submit </b-button>
+                <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
     </div>
@@ -76,6 +79,10 @@ export default {
     },
 
     mounted: function() {
+        if (!this.$store.state.loggedIn) {
+            this.$cookies.set('from', "InterviewForm")
+            this.$router.push({ name: 'LoginPage' });
+        }
         // create array of past dates
         var dates = [];
         var date = new Date(); // this is today! 
@@ -179,5 +186,12 @@ export default {
 .bold {
     font-weight : bold;
 }
-
+.day-margins {
+    margin-bottom: 5px;
+}
+.submit {
+    position: fixed;
+     bottom: 20px;
+    right: 40px;
+}
 </style>

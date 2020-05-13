@@ -1,12 +1,14 @@
 <template>
   <div id="app">
         <b-navbar class="navbar-custom" type ="dark">
-          <b-navbar-brand style="white" > COVID-19 Contact Tracing </b-navbar-brand>
+          <b-navbar-brand style="white" to="/map"> COVID-19 Contact Tracing </b-navbar-brand>
           <b-navbar-nav>
             <b-nav-item to="/map"> Map </b-nav-item>
             <b-nav-item to="/form"> Interview Form </b-nav-item>
             <b-nav-item to="/tool"> Exposure Tool </b-nav-item>
-            <b-nav-item to="/login"> Login Dev </b-nav-item>
+          </b-navbar-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-text v-if="loggedIn"> {{"Welcome, " + username}} </b-nav-text>
           </b-navbar-nav>
         </b-navbar>
         <router-view></router-view>
@@ -16,7 +18,15 @@
 <script>
 
 export default {
-  name: 'App'
+  name: 'App',
+  computed : {
+    username : function() {
+      return this.$store.state.username
+    },
+    loggedIn : function () {
+      return this.$store.state.loggedIn
+    }
+  }
 }
 </script>
 

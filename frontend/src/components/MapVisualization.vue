@@ -1,14 +1,13 @@
 <template>
     <div> 
-        <br>
-        <h3 class="large">Map and Timeline</h3><br>
-        <b-container> 
-          <vue-slider :adsorb="true" :max="14" 
-            :marks="marks" :process="false" :height="8" :tooltip-style="{ backgroundColor: '#007BFE'}" 
-            :dot-style="{ backgroundColor: '#007BFE'}" :value = 7 v-model= "value"></vue-slider> 
+        <b-container fluid> 
+          <br>
+          <h3 class="large">Map and Timeline</h3><br>
         </b-container>
-        <br>
-        <b-container fluid>
+        <b-container>
+          <vue-slider :adsorb="true" :max="14" 
+                :marks="marks" :process="false" :height="8" :tooltip-style="{ backgroundColor: '#1B3A71'}" 
+                :dot-style="{ backgroundColor: '#1B3A71'}" :value = 7 v-model= "value" class="slide"></vue-slider><br>
           <ExposureMap class="exposure-map large-padding" :markers="markers" :mapCenter="mapCenter" /> 
         </b-container>
     </div>
@@ -63,12 +62,14 @@ export default {
 </script> 
 
 <style lang="scss" scoped>
-
+  .slide {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
   .title {
     padding-left: 30px;
 
   }
-  
   .exposure-map {
     height : 600px;
   }

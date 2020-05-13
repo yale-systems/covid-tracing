@@ -39,13 +39,15 @@ export default {
             })
         },
         // wrapper function for validation and feedback in input (makes field red or green)
-        // TODO: handle in CSS
-        getState(flag, type){
+        // TODO: rewrite some of this lol
+        getState(flag, input){
             if (flag) {
-                if (type != "") return true
+                if (input != "") return true
                 return null
             } 
             return false
         },
+
+        
     }
 }
