@@ -1,7 +1,7 @@
 <template>
   <div id="app">
         <b-navbar class="navbar-custom" type ="dark">
-          <b-navbar-brand style="white" > COVID-19 Contact Tracing </b-navbar-brand>
+          <b-navbar-brand style="white" to="/map"> COVID-19 Contact Tracing </b-navbar-brand>
           <b-navbar-nav>
             <b-nav-item to="/map"> Map </b-nav-item>
             <b-nav-item to="/form"> Interview Form </b-nav-item>

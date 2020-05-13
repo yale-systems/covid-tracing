@@ -4,10 +4,10 @@
         <!-- TODO: link stylesheet outside of template -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- TODO: style -->
-        <h3 class="large"> {{date}} </h3>
+        <h3 class="card-date sticky"> {{date}} </h3>
         <!-- make InterviewCard for each event, using v, which is $v passed in from the parent -->
         <InterviewCard
-           class="icard" v-for="card in v.events.$each.$iter"
+           class="icard card-background" v-for="card in v.events.$each.$iter"
             :key="card.eventID.$model"
             :v="card.event"
             :defaultEventNum="card.eventID.$model + 1"
@@ -79,16 +79,36 @@ export default {
 
 <style scoped>
 
+.card-date {
+    font-size: 24px;
+    text-align: left;
+    color: black;
+    background-color: rgb(148, 174, 219);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
 .centered {
     justify-content: center;
     display: flex;
     align-items:center;
     padding-bottom: 10px;
+    padding-top: 8px;
 }
 
 .material-icons:hover{
     color: darkgray;
     cursor: pointer
+}
+
+.sticky {
+position: sticky;
+  left: 0px;
+  top: 0px;
+  z-index: 1;
 }
 
 </style>

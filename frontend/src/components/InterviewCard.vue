@@ -2,7 +2,7 @@
     <div>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <b-card>
+    <b-card class="card-margin card-custom">
         <b-form>
             <!-- TITLE FIELD --> 
             <div class="row no-gutters justify-content-start">
@@ -14,27 +14,27 @@
             <b-form-group label="Name:" :label-for="nameID">
                 <b-form-input :id="nameID" :value="v.name.$model" @change.native="v.name.$model = $event.target.value"  type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
             </b-form-group>
-            <div class="error" v-if="!v.name.isName"> Name must only include alphabetic characters and spaces.</div><br>
+            <div class="error" v-if="!v.name.isName">Name must only include alphabetic characters and spaces.</div>
 
             <!-- EMAIL FIELD -->
             <b-form-group label="Email:" :label-for="emailID">
                 <b-form-input :id="emailID" :value="v.email.$model" @change.native="v.email.$model = $event.target.value" 
                  type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
             </b-form-group>
-            <div class="error" v-if="!v.email.email"> Please enter a valid email address in the form of <i>name@email.com</i>.</div><br>
+            <div class="error" v-if="!v.email.email">Please enter a valid email address in the form of <i>name@email.com</i>.</div>
 
             <!-- PHONE FIELD -->
             <b-form-group label="Phone:" :label-for="phoneID">
                 <b-form-input :id="phoneID" :value="v.phone.$model" @change.native="v.phone.$model = $event.target.value"  type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
             </b-form-group>
-            <div class="error" v-if="!v.phone.numeric"> Please only enter numbers. </div><br>
+            <div class="error" v-if="!v.phone.numeric">Please only enter numbers.</div>
 
             <!-- LOCATION FIELD -->
                 <b-form-group label="Location:" :label-for="locationID">
                     <b-input-group>
                         <b-form-input :id="locationID" v-model.trim="value.location" type="text" disabled :state="getState(true, value.location)"></b-form-input>
                             <b-input-group-append>
-                                <b-button variant="primary" v-on:click="showMap"> Map </b-button>
+                                <b-button class="navbar-custom" v-on:click="showMap"> Map </b-button>
                             </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
@@ -134,6 +134,13 @@ export default {
 
 <style scoped>
 
+.card-margin {
+  align-content: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  z-index: 0;
+}
+
 .no-gutters {
   margin-right: 0px;
   margin-left: 0px;
@@ -168,8 +175,13 @@ export default {
 .error {
         color : firebrick;
         font-size : smaller;
-        line-height : 50%
+        line-height : 50%;
+        padding-bottom: 10px;
 }    
 
+.card-custom { 
+    background-color: rgba(27, 59, 113, 0); 
+    border: rgba(27, 59, 113, 0);
+} 
 
 </style>

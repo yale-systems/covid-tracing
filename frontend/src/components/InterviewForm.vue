@@ -1,19 +1,22 @@
 <template>
     <div class="bold">
     <br> 
+    
     <!-- TODO: ideally this break would be in css padding, but that is yet to come -->
         <b-container fluid>
+            <h3 class="large">Interview Form</h3>
+            <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
                 day.$model is double bound with the day arrays in our data. ie $v mirrors our data.
                 the perfect mirroring is crucial to validation. -->
-                <InterviewDay class="dayback"
+                <InterviewDay class="day-margins"
                     v-for="day in $v.days.$each.$iter"
                     :key="day.$model.dayID"
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button @click="onSubmit" class="navbar-custom"> Submit </b-button>
+                <b-button @click="onSubmit" class="navbar-custom submit"> Submit </b-button>
             </b-form>
         </b-container>
     </div>
@@ -180,4 +183,12 @@ export default {
     font-weight : bold;
 }
 
+.day-margins {
+    margin-bottom: 5px;
+}
+
+.submit {
+    margin-left: 85%;
+    margin-bottom: 20px;
+}
 </style>

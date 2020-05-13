@@ -2,20 +2,22 @@
 SECTION 1: OVERALL RULES
 */ 
 
+
 .large {
-    font-size: larger;
+    font-size: 30px;
     text-align: center;
-    color: white;
-    background-color: #286dc0;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    margin-right: 80%;
-
-
+    /*color: #286dc0;*/
+    color: black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+    background-color: rgb(148, 174, 219);
+    /*background-image: linear-gradient(to right,rgba(27, 59, 113, 0), #1B3A71,rgba(27, 59, 113, 0));*/
 }
 
 .icard {
-    padding: 10px;
+    padding: 1px;
+    z-index: -1;
 }
 
 .large-padding {
@@ -25,3 +27,15 @@ SECTION 1: OVERALL RULES
 .navbar-custom { 
     background-color: #1B3A71; 
 } 
+
+.login-margins{
+    margin-right: 250px;
+    margin-left: 250px;
+    margin-top: 30px;
+}
+
+.card-background {
+    background-color: rgb(211, 221, 238);
+    margin-left: 10%;
+    margin-right: 10%;
+}
