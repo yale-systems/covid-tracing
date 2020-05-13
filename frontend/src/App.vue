@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-        <b-navbar variant ="primary" type ="dark">
+        <b-navbar class="navbar-custom" type ="dark">
           <b-navbar-brand style="white" > COVID-19 Contact Tracing </b-navbar-brand>
           <b-navbar-nav>
             <b-nav-item to="/map"> Map </b-nav-item>
@@ -21,6 +21,18 @@ export default {
 </script>
 
 <style scoped>
+
+/*
+.navbar-dark .navbar-nav  {
+  background-color :#1B3A71;
+}
+
+
+.custom-class {
+  color: var(#1B3A71);
+  background-color: var(#1B3A71);
+}
+*/
 
 </style>
 
