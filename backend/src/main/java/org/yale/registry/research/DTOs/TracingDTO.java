@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.locationtech.jts.geom.Point;
 
 import java.util.Date;
-import java.util.Random;
 
 public class TracingDTO {
 
 
-    private Integer trace_id;
+    private Long trace_id;
 
     private Date start_time;
 
@@ -27,7 +26,7 @@ public class TracingDTO {
     public TracingDTO() {
     }
 
-    public TracingDTO(Integer trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
+    public TracingDTO(Long trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
         this.trace_id = trace_id;
         this.start_time = start_time;
         this.end_time = end_time;
@@ -36,7 +35,7 @@ public class TracingDTO {
     }
 
 
-    public Integer getTrace_id() {
+    public Long getTrace_id() {
         return trace_id;
     }
 
@@ -56,7 +55,7 @@ public class TracingDTO {
         return geom;
     }
 
-    public void setTrace_id(Integer trace_id) {
+    public void setTrace_id(Long trace_id) {
         this.trace_id = trace_id;
     }
 

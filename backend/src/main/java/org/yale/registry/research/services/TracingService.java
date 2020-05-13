@@ -1,12 +1,12 @@
 package org.yale.registry.research.services;
 
-import com.bedatadriven.jackson.datatype.jts.parsers.PointParser;
 import org.locationtech.jts.geom.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yale.registry.research.DTOs.TracingDTO;
 import org.yale.registry.research.entities.TracingEntity;
 import org.yale.registry.research.repositories.TracingRepository;
+import org.yale.registry.research.utilities.DTOUtility;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class TracingService {
                                        Integer range, Date startTime){
         Point point = longLatToPoint(longitude, latitude);
         List<TracingEntity> withinDistance = tracingRepository.findWithinDistance(point, range, startTime);
-        return dtoAggregator(withinDistance);
+        return DTOUtility.tracingDTOAggregator(withinDistance);
     }
 
     public List<TracingDTO> getByIDRange(int range){
@@ -43,7 +43,7 @@ public class TracingService {
         else { startIndex = idGenerator.nextInt(9000 - range); }
 
         List<TracingEntity> researchEntitiesSubList = researchEntitiesList.subList(startIndex, startIndex + range);
-        return dtoAggregator(researchEntitiesSubList);
+        return DTOUtility.tracingDTOAggregator(researchEntitiesSubList);
     }
 
     public TracingDTO getResearchOpportunity(Long id) throws Exception {
@@ -52,11 +52,11 @@ public class TracingService {
             return null;
         }
         TracingEntity tracingEntity = optionalResearchEntity.get();
-        return entityToDTO(tracingEntity);
+        return DTOUtility.tracingEntityToDTO(tracingEntity);
     }
 
     public void insertEntity(TracingDTO toInsert){
-        TracingEntity tracingEntity = DTOToEntity(toInsert);
+        TracingEntity tracingEntity = DTOUtility.tracingDTOToEntity(toInsert);
         tracingRepository.save(tracingEntity);
     }
 
@@ -68,24 +68,6 @@ public class TracingService {
 //        tracingRepository.deleteById(id);
 //    }
 
-    private List<TracingDTO> dtoAggregator(List<TracingEntity> tracingEntityList){
-        List<TracingDTO> dtoAggregate = new ArrayList<>();
-        int listSize = tracingEntityList.size();
-        for(TracingEntity cur: tracingEntityList){
-            dtoAggregate.add(entityToDTO(cur));
-        }
-        return dtoAggregate;
-    }
-
-    private TracingDTO entityToDTO(TracingEntity tracingEntity){
-        return new TracingDTO(tracingEntity.getTrace_id(), tracingEntity.getStart_time(),
-                tracingEntity.getEnd_time(), tracingEntity.isConfirmed(), tracingEntity.getGeom());
-    }
-
-    private TracingEntity DTOToEntity(TracingDTO tracingDTO){
-        return new TracingEntity(tracingDTO.getTrace_id(), tracingDTO.getStart_time(),
-                tracingDTO.getEnd_time(), tracingDTO.isConfirmed(), tracingDTO.getGeom());
-    }
 
     private Point longLatToPoint(Double longitude, Double latitude){
         Coordinate coordinate = new Coordinate(longitude, latitude);

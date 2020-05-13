@@ -44,11 +44,13 @@ public class TracingController {
 
     @CrossOrigin
     @RequestMapping(value = "/withinrange", method = RequestMethod.GET)
-    List<TracingDTO> getWithinRange(@RequestParam Double latitude, @RequestParam Double longitude,
+    List<TracingDTO> getWithinRange(@RequestParam String latitude, @RequestParam String longitude,
                                     @RequestParam("start_time")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                             Date startTime,
                                     @RequestParam(defaultValue = "10") Integer range){
-        return tracingService.getInRange(longitude, latitude, range, startTime);
+        Double doubleLong = Double.parseDouble(longitude);
+        Double doubleLat = Double.parseDouble(latitude);
+        return tracingService.getInRange(doubleLong, doubleLat, range, startTime);
     }
 
     @CrossOrigin
