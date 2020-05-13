@@ -7,6 +7,16 @@
 DROP IF EXISTS dummy_data;
 DROP IF EXISTS contacts;
 
+-- IF OBJECT_ID('dummy_data') IS NOT NULL
+--     DROP TABLE dummy_data;
+-- GO
+-- IF OBJECT_ID('contacts') IS NOT NULL
+--     DROP TABLE contacts;
+-- GO
+
+DROP TABLE IF EXISTS public.dummy_data;
+DROP TABLE IF EXISTS public.contacts;
+
 CREATE USER apiclient WITH PASSWORD 'testing';
 
 
