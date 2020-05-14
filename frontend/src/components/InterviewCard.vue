@@ -2,42 +2,58 @@
     <div>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <b-card>
+    <b-card class="card-margin card-custom">
         <b-form>
             <!-- TITLE FIELD --> 
             <div class="row no-gutters justify-content-start">
-                <div contenteditable class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
-                <div class="space col-md-auto"><i class="material-icons">edit</i></div>
+                <div :contenteditable="editTitle" :id="titleID" onfocus="document.execCommand('selectAll', false, null);"
+                    class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
+                <div class="space col-md-auto"><i class="material-icons" @click="beginEdit">edit</i></div>
+                <div> <i class="material-icons" @click="toggleCollapse">expand_less</i> </div>
             </div>
-        
-            <!-- NAME FIELD -->
-            <b-form-group label="Name:" :label-for="nameID">
-                <b-form-input :id="nameID" :value="v.name.$model" @change.native="v.name.$model = $event.target.value"  type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
-            </b-form-group>
-            <div class="error" v-if="!v.name.isName"> Name must only include alphabetic characters and spaces.</div><br>
-
-            <!-- EMAIL FIELD -->
-            <b-form-group label="Email:" :label-for="emailID">
-                <b-form-input :id="emailID" :value="v.email.$model" @change.native="v.email.$model = $event.target.value" 
-                 type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
-            </b-form-group>
-            <div class="error" v-if="!v.email.email"> Please enter a valid email address in the form of <i>name@email.com</i>.</div><br>
-
-            <!-- PHONE FIELD -->
-            <b-form-group label="Phone:" :label-for="phoneID">
-                <b-form-input :id="phoneID" :value="v.phone.$model" @change.native="v.phone.$model = $event.target.value"  type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
-            </b-form-group>
-            <div class="error" v-if="!v.phone.numeric"> Please only enter numbers. </div><br>
-
-            <!-- LOCATION FIELD -->
-                <b-form-group label="Location:" :label-for="locationID">
-                    <b-input-group>
-                        <b-form-input :id="locationID" v-model.trim="value.location" type="text" disabled :state="getState(true, value.location)"></b-form-input>
-                            <b-input-group-append>
-                                <b-button variant="primary" v-on:click="showMap"> Map </b-button>
-                            </b-input-group-append>
-                    </b-input-group>
+    
+            <b-collapse v-model="cardExpanded">
+                <!-- NAME FIELD -->
+                <b-form-group label="Name:" :label-for="nameID">
+                    <b-form-input :id="nameID" :value="v.name.$model" @change.native="v.name.$model = $event.target.value"  type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
                 </b-form-group>
+                <div class="error" v-if="!v.name.isName">Name must only include alphabetic characters and spaces.</div>
+
+                <!-- EMAIL FIELD -->
+                <b-form-group label="Email:" :label-for="emailID">
+                    <b-form-input :id="emailID" :value="v.email.$model" @change.native="v.email.$model = $event.target.value" 
+                    type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
+                </b-form-group>
+                <div class="error" v-if="!v.email.email">Please enter a valid email address in the form of <i>name@email.com</i>.</div>
+
+                <!-- PHONE FIELD -->
+                <b-form-group label="Phone:" :label-for="phoneID">
+                    <b-form-input :id="phoneID" :value="v.phone.$model" @change.native="v.phone.$model = $event.target.value"  type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
+                </b-form-group>
+                <div class="error" v-if="!v.phone.numeric">Please only enter numbers.</div>
+
+                <!-- LOCATION FIELD -->
+                    <b-form-group label="Location:" :label-for="locationID">
+                        <b-input-group>
+                            
+                            <b-input-group-prepend>
+                                    <b-button class="navbar-custom" v-on:click="showMap"> Map </b-button>
+                            </b-input-group-prepend>
+                            
+
+                            <b-form-input :id="locationID" v-model.trim="value.location" type="text" disabled 
+                            :state="getState(true, value.location)" placeholder="Use the map to select a location"></b-form-input>
+                            <div v-if="clearMapOpt">
+                                <b-input-group-append>
+                                    <!-- the below is a nicer x button but uh is kinda ugly altogether... -->
+                                    <!-- <i class="material-icons" @click="clearLocationInfo">clear</i> -->
+                                    <b-button v-on:click="clearLocationInfo"> Clear </b-button>
+                                </b-input-group-append>
+                            </div>
+                        </b-input-group>
+                    </b-form-group>
+                <b-button class="fsb navbar-custom" @click="$emit('delete', (defaultEventNum-1))">Remove Event</b-button> 
+                </b-collapse> 
             </b-form>  
         </b-card>
         <!-- Modal to show map for location -->
@@ -68,7 +84,7 @@ export default {
             required: true
         },
         // gives default ID for event
-        defaultEventNum: Number
+        defaultEventNum: Number,
     },
 
     data: function() {
@@ -80,10 +96,14 @@ export default {
             phoneID: "phone-",
             locationID: "location-",
             modalID: "modal-",
+            titleID: "title-",
             addressInfo : {
                 adr: '',
                 ll: null
-            }
+            },
+            editTitle: false,
+            cardExpanded: true,
+            clearMapOpt: false
         }
     },
 
@@ -103,10 +123,18 @@ export default {
         this.phoneID = this.phoneID + this._uid
         this.locationID = this.locationID + this._uid
         this.modalID = this.modalID + this._uid
+        this.titleID = this.titleID + this._uid
     },
 
     methods: {
         //these handle the title of each event
+        beginEdit(){
+            var element = document.getElementById(this.titleID);
+            this.editTitle = true;
+            this.$nextTick(() => {
+                element.focus();
+            }) 
+        },
         onEdit(title) {
             if (title.target.innerText.length > 0) {
                 this.txt = title.target.innerText
@@ -114,10 +142,12 @@ export default {
                 title.target.innerText = this.defaultText
                 this.txt = this.defaultText
             }
+            this.editTitle = false;
         },
         // blur the title field when enter is pressed
         endEdit() {
             this.$el.querySelector('.editableTitle').blur()
+            this.editTitle = false;
         },
         // show map 
         showMap() {
@@ -127,12 +157,31 @@ export default {
         handleOk() {
             this.value.location = this.addressInfo.adr
             this.value.latlon = this.addressInfo.ll
+            this.clearMapOpt = true
+        },
+        toggleCollapse(element){
+            element.target.innerText = (element.target.innerText == "expand_less") ? "expand_more" : "expand_less";
+            this.cardExpanded = !this.cardExpanded;
+        },
+        clearLocationInfo() {
+            this.value.location = ""
+            this.value.latlon.lat = null
+            this.value.latlon.lng = null
+            this.clearMapOpt = false
         }
+        
     }
 }
 </script>
 
 <style scoped>
+
+.card-margin {
+  align-content: center;
+  margin-left: 5%;
+  margin-right: 5%;
+  z-index: 0;
+}
 
 .no-gutters {
   margin-right: 0px;
@@ -168,8 +217,13 @@ export default {
 .error {
         color : firebrick;
         font-size : smaller;
-        line-height : 50%
+        line-height : 50%;
+        padding-bottom: 10px;
 }    
 
+.card-custom { 
+    background-color: rgba(27, 59, 113, 0); 
+    border: rgba(27, 59, 113, 0);
+} 
 
 </style>

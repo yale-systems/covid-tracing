@@ -1,5 +1,5 @@
 <template>
-        <input id="searchInput" ref="searchInput" placeholder="find a place">
+        <input id="searchInput" ref="searchInput" placeholder="Click here to choose a location">
 </template>
 
 <script>

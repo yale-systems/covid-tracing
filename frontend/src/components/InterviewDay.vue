@@ -4,13 +4,14 @@
         <!-- TODO: link stylesheet outside of template -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- TODO: style -->
-        <h3 class="large"> {{date}} </h3>
+        <h3 class="card-date shadow sticky"> {{date}} </h3>
         <!-- make InterviewCard for each event, using v, which is $v passed in from the parent -->
         <InterviewCard
-           class="icard" v-for="card in v.events.$each.$iter"
+           class="icard card-background" v-for="card in v.events.$each.$iter"
             :key="card.eventID.$model"
             :v="card.event"
             :defaultEventNum="card.eventID.$model + 1"
+            @delete="removeCard"
             v-model="card.event.$model"/>
         <!-- add the plus sign -->
         <div class="centered">
@@ -45,7 +46,6 @@ export default {
 
     data: function () {
         return {
-            count: 0,
             newEvent: {
                 name: '',
                 email: '',
@@ -67,11 +67,18 @@ export default {
     methods: {
         // create new event on clicking plus button
         addEvent: function() {
-            this.$set(this.value, this.count, {
-                eventID: this.count, 
+            this.$set(this.value, this.value.length, {
+                eventID: this.value.length, 
                 event: Object.assign({}, this.newEvent)
             })
-            this.count += 1
+        },
+        removeCard(eventID){
+            console.log("trying to remove card with ID " + eventID)
+            for (var counter = 0; counter < this.value.length; counter++) {
+                if(this.value[counter].eventID == eventID) {
+                    this.value.splice(counter, 1)
+                }
+            }
         }
     },
 }
@@ -79,16 +86,36 @@ export default {
 
 <style scoped>
 
+.card-date {
+    font-size: 24px;
+    text-align: left;
+    color: black;
+    background-color: rgb(148, 174, 219);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
 .centered {
     justify-content: center;
     display: flex;
     align-items:center;
     padding-bottom: 10px;
+    padding-top: 8px;
 }
 
 .material-icons:hover{
     color: darkgray;
     cursor: pointer
+}
+
+.sticky {
+position: sticky;
+  left: 0px;
+  top: 0px;
+  z-index: 1;
 }
 
 </style>

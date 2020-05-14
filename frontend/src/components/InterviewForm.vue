@@ -1,19 +1,22 @@
 <template>
     <div class="bold">
     <br> 
+    
     <!-- TODO: ideally this break would be in css padding, but that is yet to come -->
         <b-container fluid>
+            <h3 class="large">Interview Form</h3>
+            <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
                 day.$model is double bound with the day arrays in our data. ie $v mirrors our data.
                 the perfect mirroring is crucial to validation. -->
-                <InterviewDay class="dayback"
+                <InterviewDay class="day-margins"
                     v-for="day in $v.days.$each.$iter"
                     :key="day.$model.dayID"
                     :date="day.$model.date"
                     :v="day"
                     v-model="day.$model.events" />
-                <b-button @click="onSubmit" class="navbar-custom"> Submit </b-button>
+                <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
     </div>
@@ -76,6 +79,10 @@ export default {
     },
 
     mounted: function() {
+        if (!this.$store.state.loggedIn) {
+            this.$cookies.set('from', "InterviewForm")
+            this.$router.push({ name: 'LoginPage' });
+        }
         // create array of past dates
         var dates = [];
         var date = new Date(); // this is today! 
@@ -88,7 +95,7 @@ export default {
         var counter = 0
         let day
         for (day of dates) { 
-            var dayID = day.getFullYear() +  "-" +  this.pad(day.getMonth()) + "-" + this.pad(day.getDay());
+            var dayID = day.getFullYear() +  "-" +  this.pad(day.getMonth()+1) + "-" + this.pad(day.getDate());
             var dateString = this.dateConstructor(day) // set this to be human readable nice string
             // this.$set triggers DOM update
             this.$set(this.days, counter, {
@@ -147,7 +154,7 @@ export default {
             */
         getLocationArray(dayArray) {
             var locationArray = [];
-            let trace_id = 4103;
+            let trace_id = 5;
             let confirmed = true;
             for(var day of dayArray) {
                 var start_time = (day.dayID + "T00:00:00.000Z")
@@ -159,7 +166,7 @@ export default {
                             "start_time": start_time,
                             "geom" : {
                                 "type" : "Point",
-                                "coordinates" : [ev.event.latlon.lat, ev.event.latlon.lng]
+                                "coordinates" : [ev.event.latlon.lng, ev.event.latlon.lat]
                             },
                             "end_time": end_time,
                             "confirmed": confirmed
@@ -179,5 +186,12 @@ export default {
 .bold {
     font-weight : bold;
 }
-
+.day-margins {
+    margin-bottom: 5px;
+}
+.submit {
+    position: fixed;
+     bottom: 20px;
+    right: 40px;
+}
 </style>
