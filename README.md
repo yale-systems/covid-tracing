@@ -2,13 +2,15 @@
 
 The purpose of this project is to develop a database for storing contact tracing information, as well as information that can be used for predictive modeling, and accompanying infrastructure for visualization of the data. In addition, we aim to improve the data-input experience for contact tracing volunteers. Read more about each segment of the project below.
 
+Please visit [here] (http://oasis.cs.yale.edu:8081) to see a demo of our website.
+
 ## **Team**
 
 * [Avi Silberschatz](https://codex.cs.yale.edu/avi/)
 * [Robert Soul&eacute;](https://www.cs.yale.edu/homes/soule/)
 * Alex Briasco-Stewart
 * Tom Coile
-* Ivy Fang 
+* Ivy Fan 
 * David Foster
 * Hao Li
 * Tucker Moses
