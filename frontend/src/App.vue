@@ -8,14 +8,11 @@
             <b-nav-item to="/tool"> Exposure Tool </b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
-<<<<<<< HEAD
+
             <b-nav-item to="/login" v-if="!loggedIn"> Login </b-nav-item>
             <b-nav-text v-if="loggedIn"> {{"Welcome, " + username}} </b-nav-text>
             <b-nav-item @click="logout" v-if="loggedIn"> Logout </b-nav-item>
                 <!-- <b-dropdown-item @click="logout"> Logout </b-dropdown-item> -->
-=======
-            <b-nav-text v-if="loggedIn"> {{"Welcome, " + username}} </b-nav-text>
->>>>>>> login
           </b-navbar-nav>
         </b-navbar>
         <router-view></router-view>
@@ -33,7 +30,6 @@ export default {
     loggedIn : function () {
       return this.$store.state.loggedIn
     }
-<<<<<<< HEAD
   },
   mounted () {
     if (this.$cookies.isKey('user')) {
@@ -48,8 +44,6 @@ export default {
       this.$router.push({ name : 'MapVisualization'})
       this.$store.commit("logout")
     }
-=======
->>>>>>> login
   }
 }
 </script>

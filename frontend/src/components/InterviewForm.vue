@@ -3,7 +3,7 @@
     <br> 
     
     <!-- TODO: ideally this break would be in css padding, but that is yet to come -->
-        <b-container fluid>
+        <b-container fluid v-if="!submitSuccess">
             <h3 class="large">Interview Form</h3>
             <hr class="line">
             <br>
@@ -20,6 +20,10 @@
                 <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
+        <div class="login-margins" v-if="submitSuccess">
+            <b-card> Thank you for your time! </b-card>
+          <br><b-button class="navbar-custom" v-on:click="refill"> Edit Response </b-button>
+        </div>
     </div>
 </template>
 
@@ -67,6 +71,7 @@ export default {
     data() {
         return {
             days: [], 
+            submitSuccess : false
             // TODO: create a first form to choose starting day so this isn't hardcoded as current day
         }
     }, 
@@ -80,10 +85,10 @@ export default {
     },
 
     mounted: function() {
-        if (!this.$store.state.loggedIn) {
+        this.$nextTick(()=> {if (!this.$store.state.loggedIn) {
             this.$cookies.set('from', "InterviewForm")
             this.$router.push({ name: 'LoginPage' });
-        }
+        }})
         // create array of past dates
         var dates = [];
         var date = new Date(); // this is today! 
@@ -140,6 +145,10 @@ export default {
             }
 
             console.log(JSON.stringify(this.days))
+            // give some feedback saying submission was a success
+            if (locations.length > 0) {
+                this.submitSuccess = true
+            }
         },
 
         /*
@@ -177,6 +186,10 @@ export default {
             }
             console.log(locationArray);
             return locationArray;
+        },
+        refill() {
+            this.submitSuccess = false
+            window.location.reload()
         }
     }
 }

@@ -50,7 +50,7 @@ export default {
         let params = {
             longitude : formInfo.ll.lng,
             latitude : formInfo.ll.lat,
-            range : 10000,
+            range : 50,
             start_time : d
         }
         // let params = {
