@@ -2,22 +2,31 @@
 SECTION 1: OVERALL RULES
 */ 
 
+.line {
+    /* border: 2px solid #1B3A71; */
+    margin-left: 20px;
+    margin-right: 50%;
+    margin-top: -1px;
+    height: 2px;
+    background-color: #1B3A71;
+    /* background-image: linear-gradient(to left,#1B3A71, #1B3A71,rgba(27, 59, 113, 0)); */
+}
 
 .large {
     font-size: 30px;
-    text-align: center;
+    text-align: left;
     /*color: #286dc0;*/
     color: black;
     padding-top: 10px;
-    padding-bottom: 10px;
-    align-items: center;
-    background-color: rgb(148, 174, 219);
+    align-items: left;
+    padding-left: 20px;
+    /* background-color: rgb(148, 174, 219); */
     /*background-image: linear-gradient(to right,rgba(27, 59, 113, 0), #1B3A71,rgba(27, 59, 113, 0));*/
 }
 
 .icard {
     padding: 1px;
-    z-index: -1;
+    z-index: -2;
 }
 
 .large-padding {

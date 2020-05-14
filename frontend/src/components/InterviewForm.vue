@@ -5,6 +5,7 @@
     <!-- TODO: ideally this break would be in css padding, but that is yet to come -->
         <b-container fluid>
             <h3 class="large">Interview Form</h3>
+            <hr class="line">
             <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
