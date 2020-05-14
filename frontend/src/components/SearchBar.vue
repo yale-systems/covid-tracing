@@ -84,7 +84,7 @@ export default {
         },
         // event is the clicked location. Places marker there & reverse geocodes to find address
         markerToSearch(event) {
-            console.log("m2s")
+            console.log(event.latLng.toJSON())
             this.value.ll = event.latLng.toJSON()
             this.marker.setPosition(event.latLng)
             this.marker.setVisible(true)
