@@ -2,6 +2,7 @@
   <div class="bold">
      <b-container fluid>
         <br><h3 class="large">Exposure Tool</h3> 
+        <hr class="line">
         <div v-if="!flags.submitted"> 
           <div>
             <ExpForm v-model="flags"/>

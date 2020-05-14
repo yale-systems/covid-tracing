@@ -8,11 +8,9 @@
             <div class="row no-gutters justify-content-start">
                 <div :contenteditable="editTitle" :id="titleID" onfocus="document.execCommand('selectAll', false, null);"
                     class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
-                <div class="space col-lg"><i class="material-icons" @click="beginEdit">edit</i></div>
-            <!-- <div class="col-md-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i> </div> -->
-                <div class="space col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
-                <div class="square" @click="toggleCollapse"></div>
-
+                <div class="space col-lg"><i v-if="cardExpanded" class="material-icons" @click="beginEdit">edit</i></div>
+                <div id="lessMargins" class="col-md-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i> </div>
+            <!-- <div class="square" @click="toggleCollapse"></div> -->
             </div>
     
             <b-collapse v-model="cardExpanded">
@@ -55,6 +53,7 @@
                             </div>
                         </b-input-group>
                     </b-form-group>
+                                        <div class="trash col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
                 </b-collapse> 
             </b-form>  
         </b-card>
@@ -215,6 +214,8 @@ export default {
 
 .material-icons {
     color : gray;
+    line-height: 10px;
+    margin-top: 10px;
 }
 
 .error {
@@ -230,11 +231,19 @@ export default {
 } 
 
 .material-icons.md-18 { 
-    font-size: 30px;
+    font-size: 35px;
     color: gray;
 }
 
-.square {
+.trash {
+    margin-left: 93%;
+}
+
+#lessMargins {
+    margin-bottom: -9px;
+}
+
+/* .square {
   position: absolute;
   height: 50px;
   width: 75%;
@@ -242,6 +251,6 @@ export default {
   color: rgb(211, 221, 238, 0);
   z-index: 1;
   margin-left: 15%;
-}
+} */
 
 </style>

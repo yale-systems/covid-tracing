@@ -2,12 +2,14 @@
     <div> 
         <b-container fluid> 
           <br>
-          <h3 class="large">Map and Timeline</h3><br>
+          <h3 class="large">Map and Timeline</h3>
+          <hr class="line">
+          <br>
         </b-container>
-        <b-container>
+        <b-container class="slide">
           <vue-slider :adsorb="true" :max="14" 
                 :marks="marks" :process="false" :height="8" :tooltip-style="{ backgroundColor: '#1B3A71'}" 
-                :dot-style="{ backgroundColor: '#1B3A71'}" :value = 7 v-model= "value" class="slide"></vue-slider><br>
+                :dot-style="{ backgroundColor: '#1B3A71'}" :value = 7 v-model= "value"></vue-slider><br>
           <ExposureMap class="exposure-map large-padding" :markers="markers" :mapCenter="mapCenter" /> 
         </b-container>
     </div>
