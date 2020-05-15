@@ -7,9 +7,9 @@
             <!-- TITLE FIELD --> 
             <div class="row no-gutters justify-content-start">
                 <div :contenteditable="editTitle" :id="titleID" onfocus="document.execCommand('selectAll', false, null);"
-                    class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
-                <div class="space col-lg"><i v-if="cardExpanded" class="material-icons" @click="beginEdit">edit</i></div>
-                <div id="lessMargins" class="col-md-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i> </div>
+                    class="editableTitle title col col-sm-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
+                <div class="space col-sm"><i v-if="cardExpanded" class="material-icons" @click="beginEdit">edit</i></div>
+                <div id="lessMargins" class="col-sm-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i></div>
             <!-- <div class="square" @click="toggleCollapse"></div> -->
             </div>
     
@@ -53,7 +53,7 @@
                             </div>
                         </b-input-group>
                     </b-form-group>
-                                        <div class="trash col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
+                    <div class="trash col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
                 </b-collapse> 
             </b-form>  
         </b-card>
@@ -193,7 +193,7 @@ export default {
 }
 
 .material-icons.md-18 { 
-    font-size: 35px;
+    font-size: 30px;
     color: gray;
 }
 
