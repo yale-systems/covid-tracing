@@ -60,6 +60,14 @@
         <!-- Modal to show map for location -->
         <b-modal :id="modalID" :hide-header="true" size="lg" hide-backdrop content-class="shadow" @ok="handleOk">
             <SearchMap class="search-map" v-model="this.addressInfo"/>
+            <template v-slot:modal-footer="{ok, cancel}">
+              <b-button size="sm" class="navbar-custom" @click="ok()">
+                OK
+              </b-button>
+              <b-button size="sm" @click="cancel()">
+                Cancel
+              </b-button>
+            </template> 
         </b-modal>
     </div>  
 </template>
