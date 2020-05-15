@@ -12,29 +12,29 @@ import { Deck } from "@deck.gl/core"
 import { ScatterplotLayer } from "@deck.gl/layers"
 
 export default {
-    name: "DeckMapLoader",
-
+    name: "ExposureMap",
+    props: {
+      markers: {
+        type: Array,
+        default: () => []
+      }
+    },
     data: function() {
         return {
-          map : null,
-          deck : null,
             viewState: {
-              zoom: 5,
+              zoom: 9,
               pitch: 0,
               bearing: 0,
-              latitude: 41.309177,
-              longitude: -72.928562
+              latitude: 41.7658,
+              longitude: -72.6734
             },
-          markers : [
-            [-72.844716,41.681735],[-72.84622600000002,41.691475000000004],[-72.83480600000001,41.708285000000004],[-72.82274600000001,41.714785],[-72.81858600000001,41.723895],[-72.80810600000001,41.724265]
-          ]
         }
     },
-  created() {
-    this.map = null;
-    this.deck = null;
-  },
-  mounted() {
+    created() {
+      this.map = null; // map and deck canNOT be reactive!! at ALL!! 
+      this.deck = null;
+    },
+   mounted() {
     // create the map
     this.map = new mapboxgl.Map({
       accessToken: mbToken,
@@ -63,51 +63,43 @@ export default {
           pitch : viewState.pitch
         });
       },
-      layers: [ new ScatterplotLayer({
-        id: 'scatterplot',
-        getFillColor: () => [0, 128, 255],
-        getRadius: () => 5,
-        getPosition: d => d,
-        opacity: 1,
-        filled: true,
-        pickable: true,
-        radiusMinPixels: 30,
-        radiusMaxPixels: 50,
-        data: this.markers
-      }) ]
     });
+    this.renderLayers(this.getScatterplot);
   },
-  // computed : {
-  //   getLayers() {
-  //     const scatter = new ScatterplotLayer({
-  //       id: 'scatterplot',
-  //       getFillColor: [0, 128, 255],
-  //       getRadius: 5,
-  //       opacity: 1,
-  //       filled: true,
-  //       pickable: true,
-  //       radiusMinPixels: 30,
-  //       radiusMaxPixels: 50,
-  //       data: this.markers
-  //     });
-  //     console.log("making new layer")
-  //     console.log(scatter)
-  //     return [scatter];
-  //   }
-  // },
-  // methods : {
-  //   renderLayers(layers) {
-  //     this.deck.setProps({
-  //       layers: []
-  //     })
-  //   }
-  // },
-  // watch : {
-  //   getLayers(scatter) {
-  //     console.log("adding layer")
-  //     this.renderLayers(scatter);
-  //   }
-  // }
+
+  computed: {
+    getScatterplot() { 
+      const scatter = new ScatterplotLayer({
+          id: 'scatterplot',
+          getFillColor: () => [0, 128, 255],
+          getRadius: () => 5,
+          getPosition: d => [d.position.lng, d.position.lat],
+          opacity: 0.4,
+          filled: true,
+          pickable: true,
+          radiusMinPixels: 15,
+          radiusMaxPixels: 30,
+          data: this.markers
+        });
+        return [scatter]
+    }
+  },
+
+  watch: { 
+    markers() {
+        this.renderLayers(this.getScatterplot)
+    }
+  },
+
+  methods : {
+    renderLayers(newLayer) {
+      console.log("trying to render")
+      this.deck.setProps({
+        layers: [...newLayer]
+      })
+      console.log(this.deck)
+    }
+  }
 }
 </script>
 
