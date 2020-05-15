@@ -44,7 +44,7 @@ public class TracingController {
 
     @CrossOrigin
     @RequestMapping(value = "/withinrange", method = RequestMethod.GET)
-    List<TracingDTO> getWithinRange(@RequestParam String latitude, @RequestParam String longitude,
+    public List<TracingDTO> getWithinRange(@RequestParam String latitude, @RequestParam String longitude,
                                     @RequestParam("start_time")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                             Date startTime,
                                     @RequestParam(defaultValue = "10") Integer range){
@@ -55,7 +55,7 @@ public class TracingController {
 
     @CrossOrigin
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    ResponseEntity<TracingDTO> insert(@RequestBody TracingDTO tracingDTO){
+    public ResponseEntity<TracingDTO> insert(@RequestBody TracingDTO tracingDTO){
         tracingService.insertEntity(tracingDTO);
         return ResponseEntity.ok().build();
     }
