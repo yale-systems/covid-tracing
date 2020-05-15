@@ -6,6 +6,7 @@
         <b-container fluid v-if="!submitSuccess">
             <h3 class="large">Interview Form</h3>
             <hr class="line">
+            <div class="instructions"><i>Please use the form below to include as much information as possible about locations you've traveled to and people you've had contact with. You may leave any space blank as appropriate. Ignore the top three fields if you did not meet anyone at the location you traveled to.</i></div>
             <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
@@ -197,15 +198,4 @@ export default {
 
 <style lang="scss" scoped>
 
-.bold {
-    font-weight : bold;
-}
-.day-margins {
-    margin-bottom: 5px;
-}
-.submit {
-    position: fixed;
-     bottom: 20px;
-    right: 40px;
-}
 </style>

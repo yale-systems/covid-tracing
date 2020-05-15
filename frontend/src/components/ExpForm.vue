@@ -98,16 +98,8 @@ export default {
 
 <style scoped>
 
-.search-map {
-  height : 400px;
-}
 .fsb {
   float: right
 }
-.error {
-  color : firebrick;
-  font-size : smaller;
-  line-height : 50%;
-  padding-top : 15px;
-} 
+
 </style>

@@ -64,16 +64,10 @@ export default {
 </script> 
 
 <style lang="scss" scoped>
-  .slide {
-    padding-right: 5%;
-    padding-left: 5%;
-  }
-  .title {
-    padding-left: 30px;
-
-  }
+  
   .exposure-map {
     height : 600px;
   }
+
 </style>
 
