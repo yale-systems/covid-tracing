@@ -55,7 +55,4 @@ export default {
 
 <style scoped>
 
-.bold {
-    font-weight : bold;
-}
 </style>

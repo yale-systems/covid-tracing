@@ -31,7 +31,7 @@ export default {
       return this.$store.state.loggedIn
     }
   },
-  mounted () {
+  created () {
     if (this.$cookies.isKey('user')) {
       this.$store.commit('setUser', this.$cookies.get('user'))
     }

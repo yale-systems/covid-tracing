@@ -1,8 +1,9 @@
 <template>
-    <div>
+    <div class="bold">
         <b-container fluid>
         <div v-if="!loggedIn">
             <br><h3 class="large">Please Log In</h3>
+            <hr class="line">
                 <b-card class="login-margins">
                     <b-form>
                         <b-form-group label="Username" label-for="username">
@@ -12,7 +13,7 @@
                                 :state="getState(!$v.loginInfo.username.$error, loginInfo.username)"
                             > </b-form-input>
                         </b-form-group>
-                        <div class="error" v-if="$v.loginInfo.username.$error"> A username is required </div>
+                        <div class="error errorMargin" v-if="$v.loginInfo.username.$error"> A username is required </div>
                         <b-form-group label="Password" label-for="password">
                             <b-form-input 
                                 v-model="$v.loginInfo.password.$model" 
@@ -21,9 +22,9 @@
                                 :state="getState(!$v.loginInfo.password.$error, loginInfo.password)"
                             > </b-form-input>
                         </b-form-group>
-                        <p class="error" v-if="$v.loginInfo.password.$error"> A password is required </p>
-
-                        <b-button class="navbar-custom" @click="handleSubmit">Login</b-button>
+                        <div class="error errorMargin" v-if="$v.loginInfo.password.$error"> A password is required </div>
+                        
+                        <b-button class="navbar-custom largerMargin" @click="handleSubmit">Login</b-button>
                     </b-form>
                 </b-card>
         </div>
@@ -84,17 +85,5 @@ export default {
 </script>
 
 <style scoped>
-.centered {
-    justify-content: center;
-    display: flex;
-    align-items:center;
-    padding-bottom: 10px;
-    padding-top: 8px;
-}
-.error {
-  color : firebrick;
-  font-size : smaller;
-  line-height : 50%;
-  padding-top : 15px;
-} 
+
 </style>

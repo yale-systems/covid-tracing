@@ -86,36 +86,9 @@ export default {
 
 <style scoped>
 
-.card-date {
-    font-size: 24px;
-    text-align: left;
-    color: black;
-    background-color: rgb(148, 174, 219);
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 20px;
-    margin-left: 15%;
-    margin-right: 15%;
-}
-
-.centered {
-    justify-content: center;
-    display: flex;
-    align-items:center;
-    padding-bottom: 10px;
-    padding-top: 8px;
-}
-
 .material-icons:hover{
     color: darkgray;
     cursor: pointer
-}
-
-.sticky {
-position: sticky;
-  left: 0px;
-  top: 0px;
-  z-index: 2;
 }
 
 </style>

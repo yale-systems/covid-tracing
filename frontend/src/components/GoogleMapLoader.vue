@@ -44,8 +44,7 @@ export default {
             this.map.setCenter(this.mapCenter);
         }
     },
-
-    async mounted() {
+    async created() {
         const googleMapApi = await GoogleMapsApiLoader({
             libraries: ['places'],
             apiKey: apiKey
@@ -53,9 +52,7 @@ export default {
         this.google = googleMapApi
         this.initializeMap()
     },
-
-
-    methods: {
+  methods: {
         initializeMap() {
             const mapContainer = this.$refs.googleMap
             this.map = new this.google.maps.Map(mapContainer, this.mapConfig)
