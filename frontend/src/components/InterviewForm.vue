@@ -86,10 +86,10 @@ export default {
     },
 
     mounted: function() {
-        this.$nextTick(()=> {if (!this.$store.state.loggedIn) {
+        if (!this.$store.state.loggedIn) {
             this.$cookies.set('from', "InterviewForm")
             this.$router.push({ name: 'LoginPage' });
-        }})
+        }
         // create array of past dates
         var dates = [];
         var date = new Date(); // this is today! 
