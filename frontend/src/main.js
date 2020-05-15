@@ -9,6 +9,12 @@ import router from './router'
 import VueCookies from 'vue-cookies'
 import Vuex from 'vuex'
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'bootstrap-slider/dist/css/bootstrap-slider.css'
+import './css/style.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
+
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 Vue.use(VueCookies)
