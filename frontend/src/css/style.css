@@ -75,6 +75,9 @@ SECTION 2: INTERVIEWFORM
     bottom: 20px;
     right: 40px;
 }
+.spaceLeft {
+    margin-left: 2%;
+}
 
 /* 
 SECTION 3: INTERVIEWDAY
@@ -83,12 +86,23 @@ SECTION 3: INTERVIEWDAY
     font-size: 24px;
     text-align: left;
     color: black;
-    background-color: rgb(148, 174, 219);
     padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 20px;
+    padding-bottom: 5px;
+    margin-left: 2%;
+}
+.date-background {
+    background-color: rgb(148, 174, 219);
     margin-left: 15%;
     margin-right: 15%;
+    max-width: 70%;
+}
+.plus {
+    font-size: 24px;
+    text-align: right;
+    color: black;
+    padding-top: 15px;
+    margin-left: 36.5%;
+    margin-right: 2%;
 }
 .centered {
     justify-content: center;
@@ -101,6 +115,7 @@ SECTION 3: INTERVIEWDAY
 position: sticky;
   left: 0px;
   top: 0px;
+  right: 0px;
   z-index: 2;
 }
 
@@ -120,11 +135,15 @@ SECTION 4: INTERVIEWCARD
 .space {
     margin-left: 10px;
 }
-
 .title {
           font-weight : bold;
           font-size : larger;
           color : black;
+}
+.title:hover{
+    font-weight : bold;
+    font-size : larger;
+    color : gray;
 }
 .card-custom { 
       background-color: rgba(27, 59, 113, 0); 
@@ -135,6 +154,10 @@ SECTION 4: INTERVIEWCARD
 }
 #lessMargins {
     margin-bottom: -9px;
+}
+.chevron {
+    text-align: right;
+    padding-bottom: 5px;
 }
 
 /* 

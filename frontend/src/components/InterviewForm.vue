@@ -21,10 +21,15 @@
                 <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
-        <div class="login-margins" v-if="submitSuccess">
-            <b-card> Thank you for your time! </b-card>
-          <br><b-button class="navbar-custom" v-on:click="refill"> Edit Response </b-button>
-        </div>
+        <b-container fluid v-if="submitSuccess">
+            <h3 class="large">Interview Form</h3>
+            <hr class="line">
+            <div class="login-margins">
+                <b-card> Thank you for your time and your help in stopping COVID-19! </b-card>
+                <br><b-button class="navbar-custom" v-on:click="refill"> Edit Response </b-button>
+                <b-button class="navbar-custom spaceLeft" v-on:click="newResponse"> Submit a New Response </b-button>
+            </div>
+        </b-container>
     </div>
 </template>
 
@@ -189,6 +194,10 @@ export default {
             return locationArray;
         },
         refill() {
+            this.submitSuccess = false
+            window.location.reload()
+        },
+        newResponse() {
             this.submitSuccess = false
             window.location.reload()
         }

@@ -7,9 +7,8 @@
             <!-- TITLE FIELD --> 
             <div class="row no-gutters justify-content-start">
                 <div :contenteditable="editTitle" :id="titleID" onfocus="document.execCommand('selectAll', false, null);"
-                    class="editableTitle title col col-sm-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
-                <div class="space col-sm"><i v-if="cardExpanded" class="material-icons" @click="beginEdit">edit</i></div>
-                <div id="lessMargins" class="col-sm-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i></div>
+                    class="editableTitle title col col-sm-auto" v-text="txt" @blur="onEdit" @click="beginEdit" @keydown.enter="endEdit"></div>
+                <div id="lessMargins" class="col-sm chevron"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i></div>
             <!-- <div class="square" @click="toggleCollapse"></div> -->
             </div>
     
@@ -61,11 +60,11 @@
         <b-modal :id="modalID" :hide-header="true" size="lg" hide-backdrop content-class="shadow" @ok="handleOk">
             <SearchMap class="search-map" v-model="this.addressInfo"/>
             <template v-slot:modal-footer="{ok, cancel}">
-              <b-button size="sm" class="navbar-custom" @click="ok()">
-                OK
-              </b-button>
               <b-button size="sm" @click="cancel()">
                 Cancel
+              </b-button>
+              <b-button size="sm" class="navbar-custom" @click="ok()">
+                OK
               </b-button>
             </template> 
         </b-modal>
