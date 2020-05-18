@@ -9,19 +9,30 @@ import router from './router'
 import VueCookies from 'vue-cookies'
 import Vuex from 'vuex'
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'bootstrap-slider/dist/css/bootstrap-slider.css'
+import './css/style.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
+
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 Vue.use(VueCookies)
 Vue.use(Vuex)
 
 Vue.config.productionTip = false
-
+/*
+Creating a Vuex Store. 
+State: holds username and whether or not you're logged in. 
+Mutations: methods that modify state
+*/
 const store = new Vuex.Store({
-  state : {
-    username : '',
-    loggedIn : false
+  //state is the key, {username, loggedIn} is the value
+  state: {
+    username: '', //username is the key, '' is the value
+    loggedIn: false
   },
-  mutations : {
+  mutations: {
     setUser(state, name) {
       state.username = name
       state.loggedIn = true

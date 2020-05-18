@@ -8,11 +8,9 @@
             <b-nav-item to="/tool"> Exposure Tool </b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
-
             <b-nav-item to="/login" v-if="!loggedIn"> Login </b-nav-item>
             <b-nav-text v-if="loggedIn"> {{"Welcome, " + username}} </b-nav-text>
             <b-nav-item @click="logout" v-if="loggedIn"> Logout </b-nav-item>
-                <!-- <b-dropdown-item @click="logout"> Logout </b-dropdown-item> -->
           </b-navbar-nav>
         </b-navbar>
         <router-view></router-view>
@@ -23,10 +21,17 @@
 
 export default {
   name: 'App',
+  /*
+    username and loggedIn are shorthand aliases for this.$store. values of username
+    and loggedIn
+  */ 
   computed : {
     username : function() {
+      //this refers to the component named "App" aka the component we're currently in
+      //$store is our vuex store
       return this.$store.state.username
     },
+      //loggedIn is a shorthand allias for this.$store.state.loggedIn
     loggedIn : function () {
       return this.$store.state.loggedIn
     }
@@ -36,7 +41,11 @@ export default {
       this.$store.commit('setUser', this.$cookies.get('user'))
     }
   },
-  methods : {
+ 
+ methods : {
+    //if "logout" is pressed, username is removed 
+    //(both from cookie, and from global store)
+    //page is redirected to MapVisualization
     logout() {
       if(this.$cookies.isKey('user')) {
         this.$cookies.remove('user')

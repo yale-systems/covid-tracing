@@ -2,6 +2,12 @@
   <div class="deck-container">
     <div id="map" ref="map"> </div>
     <canvas id="deck-canvas" ref="canvas"></canvas>
+    <template v-if="Boolean(this.map) && Boolean(this.deck)" >
+      <slot
+        :mapbox="map"
+        :deck="deck"
+      />
+    </template>
   </div>
 </template>
 
@@ -9,39 +15,35 @@
 import mapboxgl from "mapbox-gl"
 import { mbToken } from "@/constants/apiKey.js"
 import { Deck } from "@deck.gl/core"
-import { ScatterplotLayer } from "@deck.gl/layers"
 
 export default {
-    name: "ExposureMap",
-    props: {
-      markers: {
-        type: Array,
-        default: () => []
-      }
-    },
+    name: "DeckMapLoader",
+
     data: function() {
         return {
+          map : null,
+          deck : null,
             viewState: {
-              zoom: 9,
+              zoom: 5,
               pitch: 0,
               bearing: 0,
-              latitude: 41.7658,
-              longitude: -72.6734
-            },
+              latitude: 41.309177,
+              longitude: -72.928562
+          }
         }
     },
-    created() {
-      this.map = null; // map and deck canNOT be reactive!! at ALL!! 
-      this.deck = null;
-    },
-   mounted() {
+  created() {
+    this.map = null;
+    this.deck = null;
+  },
+  mounted() {
     // create the map
     this.map = new mapboxgl.Map({
       accessToken: mbToken,
       container : this.$refs.map,
       interactive : false,
       style :
-      "mapbox://styles/mapbox/light-v10",
+        this.mapStyle || "mapbox://styles/mapbox/streets-v11",
       center: [this.viewState.longitude, this.viewState.latitude],
       zoom : this.viewState.zoom,
       pitch : this.viewState.pitch,
@@ -64,41 +66,6 @@ export default {
         });
       },
     });
-    this.renderLayers(this.getScatterplot);
-  },
-
-  computed: {
-    getScatterplot() { 
-      const scatter = new ScatterplotLayer({
-          id: 'scatterplot',
-          getFillColor: () => [0, 128, 255],
-          getRadius: () => 5,
-          getPosition: d => [d.position.lng, d.position.lat],
-          opacity: 0.4,
-          filled: true,
-          pickable: true,
-          radiusMinPixels: 15,
-          radiusMaxPixels: 30,
-          data: this.markers
-        });
-        return [scatter]
-    }
-  },
-
-  watch: { 
-    markers() {
-        this.renderLayers(this.getScatterplot)
-    }
-  },
-
-  methods : {
-    renderLayers(newLayer) {
-      console.log("trying to render")
-      this.deck.setProps({
-        layers: [...newLayer]
-      })
-      console.log(this.deck)
-    }
   }
 }
 </script>
