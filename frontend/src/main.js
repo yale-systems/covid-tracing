@@ -21,13 +21,18 @@ Vue.use(VueCookies)
 Vue.use(Vuex)
 
 Vue.config.productionTip = false
-
+/*
+Creating a Vuex Store. 
+State: holds username and whether or not you're logged in. 
+Mutations: methods that modify state
+*/
 const store = new Vuex.Store({
-  state : {
-    username : '',
-    loggedIn : false
+  //state is the key, {username, loggedIn} is the value
+  state: {
+    username: '', //username is the key, '' is the value
+    loggedIn: false
   },
-  mutations : {
+  mutations: {
     setUser(state, name) {
       state.username = name
       state.loggedIn = true
