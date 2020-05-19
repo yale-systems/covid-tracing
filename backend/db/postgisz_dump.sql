@@ -9500,25 +9500,6 @@ ALTER TABLE ONLY public.dummy_data
     ADD CONSTRAINT dummy_data_pkey PRIMARY KEY (id);
 
 
---
--- Name: geog_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
-CREATE INDEX geog_index ON public.dummy_data USING gist (public.geography(geom));
-
-
---
--- Name: geom_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
-CREATE INDEX geom_index ON public.dummy_data USING gist (public.st_transform(geom, 32618));
-
-
---
--- Name: name_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
-CREATE INDEX name_index ON public.contacts USING btree (name);
 
 
 --
@@ -14034,6 +14015,8 @@ COPY public.patient_locations (id, patient_id, start_time, end_time, confirmed, 
 4350	100	2008-02-04 00:52:34	2008-02-04 00:54:34	f	0101000020E6100000C88157CB9D3152C0C7F484251ED64440
 \.
 
+CREATE INDEX patient_locations_geom_index ON public.patient_locations USING gist (public.st_transform(geom, 32618));
+
 COPY public.public_users (public_user_id, username, password, name, email) FROM stdin;
 1	pub_user1.username	pub_user1.pw	pub_user1.name	pub_user1@public_example.com
 2	pub_user2.username	pub_user2.pw	pub_user2.name	pub_user2@public_example.com
@@ -14133,6 +14116,8 @@ COPY public.public_users (public_user_id, username, password, name, email) FROM 
 96	pub_user96.username	pub_user96.pw	pub_user96.name	pub_user96@public_example.com
 97	pub_user97.username	pub_user97.pw	pub_user97.name	pub_user97@public_example.com
 \.
+
+
 
 COPY public.public_users_locations (id, public_user_id, start_time, end_time, confirmed, geom) FROM stdin;
 1	1	2008-02-02 23:32:47	2008-02-02 23:34:47	f	0101000020E6100000418864C8B13552C00D37E0F3C3E24440
@@ -18787,6 +18772,7 @@ COPY public.public_users_locations (id, public_user_id, start_time, end_time, co
 4650	97	2008-02-05 01:31:11	2008-02-05 01:33:11	f	0101000020E610000070F1F09E031952C02927DA5548CF4440
 \.
 
+CREATE INDEX public_users_locations_geom_index ON public.public_users_locations USING gist (public.st_transform(geom, 32618));
 --
 -- PostgreSQL database dump complete
 --
