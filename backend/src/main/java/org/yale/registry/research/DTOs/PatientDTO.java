@@ -1,26 +1,24 @@
 package org.yale.registry.research.DTOs;
 
-import org.yale.registry.research.repositories.TracingRepository;
-
 import java.util.List;
 
-public class ContactsDTO {
+public class PatientDTO {
     private String name;
 
     private String email;
 
     private String address;
 
-    private List<TracingDTO> tracingDTOS;
+    private List<PatientLocationDTO> patientLocationDTOS;
 
-    public ContactsDTO(){
+    public PatientDTO(){
     }
 
-    public ContactsDTO(String name, String email, String address, List<TracingDTO> tracingDTOS) {
+    public PatientDTO(String name, String email, String address, List<PatientLocationDTO> patientLocationDTOS) {
         this.name = name;
         this.email = email;
         this.address = address;
-        this.tracingDTOS = tracingDTOS;
+        this.patientLocationDTOS = patientLocationDTOS;
     }
 
     public String getName() {
@@ -47,11 +45,11 @@ public class ContactsDTO {
         this.address = address;
     }
 
-    public List<TracingDTO> getTracingDTOS() {
-        return tracingDTOS;
+    public List<PatientLocationDTO> getPatientLocationDTOS() {
+        return patientLocationDTOS;
     }
 
-    public void setTracingDTOS(List<TracingDTO> tracingDTOS) {
-        this.tracingDTOS = tracingDTOS;
+    public void setPatientLocationDTOS(List<PatientLocationDTO> patientLocationDTOS) {
+        this.patientLocationDTOS = patientLocationDTOS;
     }
 }

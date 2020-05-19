@@ -1,18 +1,15 @@
 package org.yale.registry.research.entities;
 
-import org.locationtech.jts.geom.Point;
-
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "contacts")
-public class ContactsEntity {
+@Table(name = "patients")
+public class PatientEntity {
     @Id
-    @SequenceGenerator(name = "contacts_generator", sequenceName = "contacts_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contacts_generator")
-    private Long trace_id;
+    @SequenceGenerator(name = "patients_generator", sequenceName = "patients_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patients_generator")
+    private Long patient_id;
 
     private String name;
 
@@ -21,12 +18,12 @@ public class ContactsEntity {
     private String address;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name="trace_id")
-    private Set<TracingEntity> tracings;
+    @JoinColumn(name="patient_id")
+    private Set<PatientLocationEntity> tracings;
 
-    public ContactsEntity(){}
+    public PatientEntity(){}
 
-    public ContactsEntity(String name, String email, String address, Set<TracingEntity> tracings) {
+    public PatientEntity(String name, String email, String address, Set<PatientLocationEntity> tracings) {
         this.name = name;
         this.email = email;
         this.address = address;
@@ -34,8 +31,8 @@ public class ContactsEntity {
     }
 
 
-    public Long getTrace_id() {
-        return trace_id;
+    public Long getPatient_id() {
+        return patient_id;
     }
 
     public String getName() {
@@ -50,12 +47,12 @@ public class ContactsEntity {
         return address;
     }
 
-    public Set<TracingEntity> getTracings() {
+    public Set<PatientLocationEntity> getTracings() {
         return tracings;
     }
 
-    public void setTrace_id(Long trace_id) {
-        this.trace_id = trace_id;
+    public void setPatient_id(Long trace_id) {
+        this.patient_id = trace_id;
     }
 
     public void setName(String name) {
@@ -70,7 +67,7 @@ public class ContactsEntity {
         this.address = address;
     }
 
-    public void setTracings(Set<TracingEntity> tracings) {
+    public void setTracings(Set<PatientLocationEntity> tracings) {
         this.tracings = tracings;
     }
 }

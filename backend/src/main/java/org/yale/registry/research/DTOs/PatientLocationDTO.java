@@ -8,10 +8,11 @@ import org.locationtech.jts.geom.Point;
 
 import java.util.Date;
 
-public class TracingDTO {
+public class PatientLocationDTO {
 
+    private Long id;
 
-    private Long trace_id;
+    private Long patient_id;
 
     private Date start_time;
 
@@ -23,20 +24,24 @@ public class TracingDTO {
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Point geom;
 
-    public TracingDTO() {
+    public PatientLocationDTO() {
     }
 
-    public TracingDTO(Long trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
-        this.trace_id = trace_id;
+    public PatientLocationDTO(Long id, Long patient_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
+        this.id = id;
+        this.patient_id = patient_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
         this.geom = geom;
     }
 
+    public Long getId() {
+        return id;
+    }
 
-    public Long getTrace_id() {
-        return trace_id;
+    public Long getPatient_id() {
+        return patient_id;
     }
 
     public Date getStart_time() {
@@ -55,8 +60,11 @@ public class TracingDTO {
         return geom;
     }
 
-    public void setTrace_id(Long trace_id) {
-        this.trace_id = trace_id;
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
     }
 
     public void setStart_time(Date start_time) {

@@ -6,14 +6,14 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "dummy_data")
-public class TracingEntity {
+@Table(name = "patient_locations")
+public class PatientLocationEntity {
     @Id
-    @SequenceGenerator(name = "tracing_generator", sequenceName = "dummy_data_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tracing_generator")
+    @SequenceGenerator(name = "patient_locations_generator", sequenceName = "patient_locations_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_locations_generator")
     private Long id;
 
-    private Long trace_id;
+    private Long patient_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
@@ -25,10 +25,10 @@ public class TracingEntity {
 
     private Point geom;
 
-    public TracingEntity(){}
+    public PatientLocationEntity(){}
 
-    public TracingEntity(Long trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
-        this.trace_id = trace_id;
+    public PatientLocationEntity(Long patient_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
+        this.patient_id = patient_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -39,8 +39,8 @@ public class TracingEntity {
         return id;
     }
 
-    public Long getTrace_id() {
-        return trace_id;
+    public Long getPatient_id() {
+        return patient_id;
     }
 
     public Date getStart_time() {
@@ -64,8 +64,8 @@ public class TracingEntity {
         this.id = id;
     }
 
-    public void setTrace_id(Long trace_id) {
-        this.trace_id = trace_id;
+    public void setPatient_id(Long trace_id) {
+        this.patient_id = trace_id;
     }
 
     public void setStart_time(Date start_time) {
