@@ -7,28 +7,27 @@
             <!-- TITLE FIELD --> 
             <div class="row no-gutters justify-content-start">
                 <div :contenteditable="editTitle" :id="titleID" onfocus="document.execCommand('selectAll', false, null);"
-                    class="editableTitle title col col-md-auto" v-text="txt" @blur="onEdit" @keydown.enter="endEdit"></div>
-                <div class="space col-lg"><i v-if="cardExpanded" class="material-icons" @click="beginEdit">edit</i></div>
-                <div id="lessMargins" class="col-md-auto"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i> </div>
+                    class="editableTitle title col col-sm-auto" v-text="txt" @blur="onEdit" @click="beginEdit" @keydown.enter="endEdit"></div>
+                <div id="lessMargins" class="col-sm chevron"><i class="material-icons md-18" @click="toggleCollapse">expand_less</i></div>
             <!-- <div class="square" @click="toggleCollapse"></div> -->
             </div>
     
             <b-collapse v-model="cardExpanded">
                 <!-- NAME FIELD -->
-                <b-form-group label="Name:" :label-for="nameID">
+                <b-form-group label="Contact Name:" :label-for="nameID">
                     <b-form-input :id="nameID" :value="v.name.$model" @change.native="v.name.$model = $event.target.value"  type="text" :state="getState(v.name.isName, value.name)"></b-form-input>
                 </b-form-group>
                 <div class="error" v-if="!v.name.isName">Name must only include alphabetic characters and spaces.</div>
 
                 <!-- EMAIL FIELD -->
-                <b-form-group label="Email:" :label-for="emailID">
+                <b-form-group label="Contact Email:" :label-for="emailID">
                     <b-form-input :id="emailID" :value="v.email.$model" @change.native="v.email.$model = $event.target.value" 
                     type="email" :state="getState(v.email.email, value.email)" ></b-form-input>
                 </b-form-group>
                 <div class="error" v-if="!v.email.email">Please enter a valid email address in the form of <i>name@email.com</i>.</div>
 
                 <!-- PHONE FIELD -->
-                <b-form-group label="Phone:" :label-for="phoneID">
+                <b-form-group label="Contact Phone:" :label-for="phoneID">
                     <b-form-input :id="phoneID" :value="v.phone.$model" @change.native="v.phone.$model = $event.target.value"  type="tel" :state="getState(v.phone.numeric, value.phone)"></b-form-input>
                 </b-form-group>
                 <div class="error" v-if="!v.phone.numeric">Please only enter numbers.</div>
@@ -53,13 +52,21 @@
                             </div>
                         </b-input-group>
                     </b-form-group>
-                                        <div class="trash col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
+                    <div class="trash col-md-auto"><i class="material-icons md-18" @click="$emit('delete', (defaultEventNum-1))">delete</i></div> 
                 </b-collapse> 
             </b-form>  
         </b-card>
         <!-- Modal to show map for location -->
         <b-modal :id="modalID" :hide-header="true" size="lg" hide-backdrop content-class="shadow" @ok="handleOk">
             <SearchMap class="search-map" v-model="this.addressInfo"/>
+            <template v-slot:modal-footer="{ok, cancel}">
+              <b-button size="sm" @click="cancel()">
+                Cancel
+              </b-button>
+              <b-button size="sm" class="navbar-custom" @click="ok()">
+                OK
+              </b-button>
+            </template> 
         </b-modal>
     </div>  
 </template>
@@ -177,34 +184,8 @@ export default {
 
 <style scoped>
 
-.card-margin {
-  align-content: center;
-  margin-left: 5%;
-  margin-right: 5%;
-  z-index: 0;
-}
-
-.no-gutters {
-  margin-right: 0px;
-  margin-left: 0px;
-}
-
 [contenteditable] {
     outline: 0px solid transparent;
-}
-
-.space {
-  margin-left: 10px;
-}
-
-.search-map {
-        height : 400px
-    }
-
-.title {
-        font-weight : bold;
-        font-size : larger;
-        color : black;
 }
 
 .material-icons:hover{
@@ -218,29 +199,9 @@ export default {
     margin-top: 10px;
 }
 
-.error {
-        color : firebrick;
-        font-size : smaller;
-        line-height : 50%;
-        padding-bottom: 10px;
-}    
-
-.card-custom { 
-    background-color: rgba(27, 59, 113, 0); 
-    border: rgba(27, 59, 113, 0);
-} 
-
 .material-icons.md-18 { 
-    font-size: 35px;
+    font-size: 30px;
     color: gray;
-}
-
-.trash {
-    margin-left: 93%;
-}
-
-#lessMargins {
-    margin-bottom: -9px;
 }
 
 /* .square {

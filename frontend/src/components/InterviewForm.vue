@@ -6,6 +6,7 @@
         <b-container fluid v-if="!submitSuccess">
             <h3 class="large">Interview Form</h3>
             <hr class="line">
+            <div class="instructions"><i>Please use the form below to include as much information as possible about locations you've traveled to and people you've had contact with. You may leave any space blank as appropriate. Ignore the top three fields if you did not meet anyone at the location you traveled to.</i></div>
             <br>
             <b-form>
                 <!-- make an Interview Day for each day in $v. 
@@ -20,10 +21,15 @@
                 <b-button @click="onSubmit" class="navbar-custom submit shadow"> Submit </b-button>
             </b-form>
         </b-container>
-        <div class="login-margins" v-if="submitSuccess">
-            <b-card> Thank you for your time! </b-card>
-          <br><b-button class="navbar-custom" v-on:click="refill"> Edit Response </b-button>
-        </div>
+        <b-container fluid v-if="submitSuccess">
+            <h3 class="large">Interview Form</h3>
+            <hr class="line">
+            <div class="login-margins">
+                <b-card> Thank you for your time and your help in stopping COVID-19! </b-card>
+                <br><b-button class="navbar-custom" v-on:click="refill"> Edit Response </b-button>
+                <b-button class="navbar-custom spaceLeft" v-on:click="newResponse"> Submit a New Response </b-button>
+            </div>
+        </b-container>
     </div>
 </template>
 
@@ -190,6 +196,10 @@ export default {
         refill() {
             this.submitSuccess = false
             window.location.reload()
+        },
+        newResponse() {
+            this.submitSuccess = false
+            window.location.reload()
         }
     }
 }
@@ -197,15 +207,4 @@ export default {
 
 <style lang="scss" scoped>
 
-.bold {
-    font-weight : bold;
-}
-.day-margins {
-    margin-bottom: 5px;
-}
-.submit {
-    position: fixed;
-     bottom: 20px;
-    right: 40px;
-}
 </style>
