@@ -4,8 +4,7 @@
           <b-navbar-brand style="white" to="/map"> COVID-19 Contact Tracing </b-navbar-brand>
           <b-navbar-nav>
             <b-nav-item to="/map"> Map </b-nav-item>
-            <b-nav-item to="/form" v-if="loggedIn"> Interview Form </b-nav-item>
-            <b-nav-item to="/tool"> Exposure Tool </b-nav-item>
+            <b-nav-item to="/tool" v-if="loggedIn"> Exposure Tool </b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item to="/login" v-if="!loggedIn"> Login </b-nav-item>

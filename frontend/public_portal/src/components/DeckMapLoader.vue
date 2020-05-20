@@ -1,13 +1,7 @@
 <template>
-  <div class="deck-container">
+  <div class="map-container">
     <div id="map" ref="map"> </div>
     <canvas id="deck-canvas" ref="canvas"></canvas>
-    <template v-if="Boolean(this.map) && Boolean(this.deck)" >
-      <slot
-        :mapbox="map"
-        :deck="deck"
-      />
-    </template>
   </div>
 </template>
 
@@ -71,25 +65,26 @@ export default {
 </script>
 
 <style scoped>
-.deck-container {
-  width : 100%;
+.map-container {
+  width: 100%;
   height : 100%;
   position : relative;
 }
 #map {
   position : absolute;
-  top : 0;
-  left : 0;
-  width : 100%;
-  height : 100%;
-  background : #e5e9ec;
-  overflow : hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #e5e9ec;
+  overflow: hidden;
 }
 #deck-canvas {
-  position : absolute;
-  top : 0;
-  left : 0;
-  width : 100%;
-  height : 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
