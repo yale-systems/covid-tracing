@@ -11,7 +11,7 @@ The front end website currently consists of two parts:
 
 2. Inside the maps project, run `npm install` and `npm install node-sass`. This will install all the dependencies associated with the project (listed in package-lock.json)
 
-3. Add the file `apiKey.js` to the `/src/constants` directory (if you need this key, and cannot just obtain your own, email either tom.coile@yale.edu or ivy.fan@yale.edu). 
+3. Add the file `apiKey.js`, which should contain an API key for Google Maps, with Autocomplete and Geocoding services enabled, and a MapBox token, to the `/src/constants` directory (if you need this key, and cannot just obtain your own, email either tom.coile@yale.edu or ivy.fan@yale.edu). 
 
 4. Run `npm run serve` to start the app! 
 

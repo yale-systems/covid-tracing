@@ -10,7 +10,7 @@ export default {
 
         await axios.get(url, {
             params : {
-                range : 10
+                range : 1000
             }
         })
             .then(function (response) {
@@ -18,7 +18,15 @@ export default {
                 //for thing in data
                 for (var item in response.data) {
                     //console.log(item);
-                    res.push({position : {lng: response.data[item].geom.coordinates[0], lat: response.data[item].geom.coordinates[1]}})
+                    res.push(
+                        {position : {
+                            lng: response.data[item].geom.coordinates[0], 
+                            lat: response.data[item].geom.coordinates[1]
+                        },
+                        time : {
+                            start_time : response.data[item].start_time,
+                            end_time : response.data[item].end_time
+                        }})
                     counter = counter + 1;
                 }
                 //store time, positition

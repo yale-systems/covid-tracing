@@ -2,6 +2,7 @@
   <div class="deck-container">
     <div id="map" ref="map"> </div>
     <canvas id="deck-canvas" ref="canvas"></canvas>
+    <div id="tooltip" ref="tooltip"></div>
   </div>
 </template>
 
@@ -10,13 +11,16 @@ import mapboxgl from "mapbox-gl"
 import { mbToken } from "@/constants/apiKey.js"
 import { Deck } from "@deck.gl/core"
 import { ScatterplotLayer } from "@deck.gl/layers"
-
 export default {
     name: "ExposureMap",
     props: {
       markers: {
         type: Array,
         default: () => []
+      },
+      selectedDay : {
+        type : Number,
+        default : -1
       }
     },
     data: function() {
@@ -28,6 +32,7 @@ export default {
               latitude: 41.7658,
               longitude: -72.6734
             },
+            dayLayers : []
         }
     },
     created() {
@@ -64,40 +69,78 @@ export default {
         });
       },
     });
-    this.renderLayers(this.getScatterplot);
+    // console.log("render in mounted")
+    this.renderLayers(this.getScatterplot());
   },
-
   computed: {
-    getScatterplot() { 
+  },
+  watch: { 
+    selectedDay() {
+        // console.log("render on watch")
+        this.renderLayers(this.dayLayers[this.selectedDay])
+    },
+    markers() {
+      this.makeLayers()
+      this.renderLayers(this.dayLayers[this.selectedDay])
+      //this.renderLayers(this.getScatterplot())
+    }
+  },
+  methods : {
+    renderLayers(newLayer) {
+      // console.log("trying to render")
+      this.deck.setProps({
+        layers: [...newLayer]
+      })
+      // console.log(this.deck)
+    },
+    updateToolTip(message, x, y) {
+      const el = this.$refs.tooltip
+      el.innerText = message;
+      el.style.display = 'block';
+      el.style.left = x + 30 + 'px';
+      el.style.top = y + 30 + 'px';
+    },
+    makeLayers() {
+      var i;
+      for (i = 0; i < 7; i++) {
+        let layer = this.getScatterplot(i + 2)
+        this.dayLayers.push(layer)
+      }
+    },
+    getScatterplot(selectedDay) { 
+      let filterData = null
+      if (selectedDay < 0) {
+        filterData = this.markers
+      } else {
+        filterData = this.markers.filter(d => d.time.day == selectedDay)
+      }
+      console.log("this is filtered for day")
+      console.log(this.selectedDay + 2)
+      console.log(filterData)
       const scatter = new ScatterplotLayer({
           id: 'scatterplot',
           getFillColor: () => [0, 128, 255],
           getRadius: () => 5,
           getPosition: d => [d.position.lng, d.position.lat],
-          opacity: 0.4,
+          opacity: 0.2,
           filled: true,
           pickable: true,
-          radiusMinPixels: 15,
+          radiusMinPixels: 5,
           radiusMaxPixels: 30,
-          data: this.markers
+          data: filterData,
+          onHover : ({object, x, y}) => {
+            if (object) {
+              const tooltip = `${object.time.date}\n${object.time.start_time} - ${object.time.end_time}`
+              this.updateToolTip(tooltip, x, y)
+            } else {
+              this.$refs.tooltip.style.display = 'none'
+            }
+          }
         });
         return [scatter]
-    }
-  },
-
-  watch: { 
-    markers() {
-        this.renderLayers(this.getScatterplot)
-    }
-  },
-
-  methods : {
-    renderLayers(newLayer) {
-      console.log("trying to render")
-      this.deck.setProps({
-        layers: [...newLayer]
-      })
-      console.log(this.deck)
+    },
+    isSameDay(value) {
+      return value.time.day == this.selectedDay + 2
     }
   }
 }
@@ -124,5 +167,13 @@ export default {
   left : 0;
   width : 100%;
   height : 100%;
+} 
+#tooltip {
+  background: black;
+  position: absolute; 
+  z-index: 1; 
+  pointer-events: none;
+  padding : 5px;
+  color : white;
 }
 </style>
