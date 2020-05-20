@@ -34,6 +34,7 @@
 *.DS_Store
 /frontend/public_portal/node_modules
 /frontend/vol_portal/node_modules
+/frontend/patient_portal/node_modules
 *./dist
 
 # local env files
@@ -55,3 +56,4 @@
 /frontend/src/constants/apiKey.js
 /frontend/public_portal/src/constants/apiKey.js
 /frontend/vol_portal/src/constants/apiKey.js
+/frontend/patient_portal/src/constants/apiKey.js

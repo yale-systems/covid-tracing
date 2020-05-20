@@ -1,0 +1,196 @@
+/*
+SECTION 1: OVERALL RULES
+*/ 
+.bold {
+    font-weight : bold;
+}
+.centered {
+    justify-content: center;
+    display: flex;
+    align-items:center;
+    padding-bottom: 10px;
+    padding-top: 8px;
+}
+.error {
+  color : firebrick;
+  font-size : smaller;
+  line-height : 50%;
+  padding-top : 15px;
+} 
+.line {
+    /* border: 2px solid #1B3A71; */
+    margin-left: 20px;
+    margin-right: 50%;
+    margin-top: -1px;
+    height: 2px;
+    background-color: #1B3A71;
+    /* background-image: linear-gradient(to left,#1B3A71, #1B3A71,rgba(27, 59, 113, 0)); */
+}
+.large {
+    font-size: 30px;
+    text-align: left;
+    /*color: #286dc0;*/
+    color: black;
+    padding-top: 10px;
+    align-items: left;
+    padding-left: 20px;
+    /* background-color: rgb(148, 174, 219); */
+    /*background-image: linear-gradient(to right,rgba(27, 59, 113, 0), #1B3A71,rgba(27, 59, 113, 0));*/
+}
+.icard {
+    padding: 1px;
+    z-index: -2;
+}
+.large-padding {
+    padding: 25px;
+}
+.navbar-custom { 
+    background-color: #1B3A71; 
+} 
+.card-background {
+    background-color: rgb(211, 221, 238);
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 10px;
+}
+.shadow {
+    box-shadow: 0px 2px 8px #0c0a164f;
+}
+
+/* 
+SECTION 2: INTERVIEWFORM
+*/
+.instructions {
+    margin-top: -5px;
+    margin-left: 20px;
+    margin-right: 20%;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+.day-margins {
+    margin-bottom: 5px;
+}
+.submit {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+}
+.spaceLeft {
+    margin-left: 2%;
+}
+
+/* 
+SECTION 3: INTERVIEWDAY
+*/
+.card-date {
+    font-size: 24px;
+    text-align: left;
+    color: black;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-left: 2%;
+}
+.date-background {
+    background-color: rgb(148, 174, 219);
+    margin-left: 15%;
+    margin-right: 15%;
+    max-width: 70%;
+}
+.plus {
+    font-size: 24px;
+    text-align: right;
+    color: black;
+    padding-top: 15px;
+    margin-left: 36.5%;
+    margin-right: 2%;
+}
+.centered {
+    justify-content: center;
+    display: flex;
+    align-items:center;
+    padding-bottom: 10px;
+    padding-top: 8px;
+}
+.sticky {
+position: sticky;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  z-index: 2;
+}
+
+/* 
+SECTION 4: INTERVIEWCARD
+*/
+.card-margin {
+    align-content: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    z-index: 0;
+}
+.no-gutters {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.space {
+    margin-left: 10px;
+}
+.title {
+          font-weight : bold;
+          font-size : larger;
+          color : black;
+}
+.title:hover{
+    font-weight : bold;
+    font-size : larger;
+    color : gray;
+}
+.card-custom { 
+      background-color: rgba(27, 59, 113, 0); 
+      border: rgba(27, 59, 113, 0);
+} 
+.trash {
+    margin-left: 93%;
+}
+#lessMargins {
+    margin-bottom: -9px;
+}
+.chevron {
+    text-align: right;
+    padding-bottom: 5px;
+}
+
+/* 
+SECTION 5: MAPVISUALIZATION
+*/
+.slide {
+    padding-right: 5%;
+    padding-left: 5%;
+}
+
+/* 
+SECTION 6: LOGINPAGE
+*/
+.errorMargin {
+    margin-top: -20px;
+    margin-bottom: 10px;
+}
+.largerMargin {
+    margin-top: 8px;
+}
+
+/* 
+SECTION 7: EXPFORM AND INTERVIEWCARD
+*/
+.search-map {
+    height : 400px
+}
+
+/* 
+SECTION 8: LOGINPAGE AND EXPTOOL
+*/
+.login-margins{
+    margin-right: 20%;
+    margin-left: 20%;
+    margin-top: 30px;
+}

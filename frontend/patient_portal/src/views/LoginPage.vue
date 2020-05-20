@@ -42,6 +42,7 @@ import formMixin from '@/mixins/formMixin'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
+    name : "LoginPage",
     mixins: [formMixin],
 
     validations: {
