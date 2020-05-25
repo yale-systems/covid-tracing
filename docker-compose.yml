@@ -1,6 +1,6 @@
 version: "3.8"
 services: 
-  tracing_database:
+  database:
     build: ./database
     ports: 
       - 5432:5432
@@ -10,4 +10,10 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - tracing_database
+      - database
+  
+#  frontend:
+#    build: ./frontend
+#    ports:
+#      - 8081:8080 
+#
