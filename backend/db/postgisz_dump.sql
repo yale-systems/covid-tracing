@@ -107,42 +107,42 @@ ALTER TABLE public.public_users_locations OWNER TO apiclient;
 
 CREATE SEQUENCE public.managers_id_seq
     AS integer
-    START WITH 1
+    START WITH 5
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 CREATE SEQUENCE public.volunteers_id_seq
     AS integer
-    START WITH 1
+    START WITH 41
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 CREATE SEQUENCE public.patients_id_seq
     AS integer
-    START WITH 1
+    START WITH 101
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 CREATE SEQUENCE public.patient_locations_id_seq
     AS integer
-    START WITH 1
+    START WITH 4351
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 CREATE SEQUENCE public.public_users_id_seq
     AS integer
-    START WITH 1
+    START WITH 98
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 CREATE SEQUENCE public.public_users_locations_id_seq
     AS integer
-    START WITH 1
+    START WITH 4651
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
