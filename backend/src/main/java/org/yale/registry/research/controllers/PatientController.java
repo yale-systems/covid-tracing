@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.PatientDTO;
+import org.yale.registry.research.entities.PatientEntity;
 import org.yale.registry.research.services.PatientService;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -19,14 +21,14 @@ public class PatientController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getcontactbyid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PatientDTO getContactById(@RequestParam Long trace_id){
-        return patientService.getContactDTOById(trace_id);
+    @RequestMapping(value = "/getpatientbyid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PatientDTO getPatientById(@RequestParam Long patient_id, HttpSession httpSession){
+        return patientService.getPatientDTOById(patient_id);
     }
     @CrossOrigin
-    @RequestMapping(value = "/getcontactbyname", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientDTO> getContactByName(@RequestParam String name){
-        return patientService.getContactDTOsByName(name);
+    @RequestMapping(value = "/getpatientbyname", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientDTO> getPatientByName(@RequestParam String name){
+        return patientService.getPatientDTOsByName(name);
     }
 
 }

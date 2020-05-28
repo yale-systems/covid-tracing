@@ -7,17 +7,14 @@ public class PatientDTO {
 
     private String email;
 
-    private String address;
-
     private List<PatientLocationDTO> patientLocationDTOS;
 
     public PatientDTO(){
     }
 
-    public PatientDTO(String name, String email, String address, List<PatientLocationDTO> patientLocationDTOS) {
+    public PatientDTO(String name, String email, List<PatientLocationDTO> patientLocationDTOS) {
         this.name = name;
         this.email = email;
-        this.address = address;
         this.patientLocationDTOS = patientLocationDTOS;
     }
 
@@ -35,14 +32,6 @@ public class PatientDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public List<PatientLocationDTO> getPatientLocationDTOS() {

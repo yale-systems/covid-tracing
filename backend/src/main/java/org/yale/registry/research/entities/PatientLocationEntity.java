@@ -3,17 +3,20 @@ package org.yale.registry.research.entities;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "patient_locations")
-public class PatientLocationEntity {
+public class PatientLocationEntity implements Serializable {
     @Id
-    @SequenceGenerator(name = "patient_locations_generator", sequenceName = "patient_locations_id_seq", allocationSize = 1)
+    @SequenceGenerator(
+            name = "patient_locations_generator",
+            sequenceName = "patient_locations_id_seq",
+            allocationSize = 1
+    )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_locations_generator")
     private Long id;
-
-    private Long patient_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
@@ -25,10 +28,14 @@ public class PatientLocationEntity {
 
     private Point geom;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id")
+    private PatientEntity patient;
+
+
     public PatientLocationEntity(){}
 
-    public PatientLocationEntity(Long patient_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
-        this.patient_id = patient_id;
+    public PatientLocationEntity(Date start_time, Date end_time, Boolean confirmed, Point geom) {
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -37,10 +44,6 @@ public class PatientLocationEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getPatient_id() {
-        return patient_id;
     }
 
     public Date getStart_time() {
@@ -59,13 +62,12 @@ public class PatientLocationEntity {
         return geom;
     }
 
+    public PatientEntity getPatient() {
+        return patient;
+    }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setPatient_id(Long trace_id) {
-        this.patient_id = trace_id;
     }
 
     public void setStart_time(Date start_time) {
@@ -82,6 +84,10 @@ public class PatientLocationEntity {
 
     public void setGeom(Point geom){
         this.geom = geom;
+    }
+
+    public void setPatient(PatientEntity patient) {
+        this.patient = patient;
     }
 
 }

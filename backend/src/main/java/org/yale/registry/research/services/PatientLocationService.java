@@ -58,6 +58,8 @@ public class PatientLocationService {
     public void insertEntity(PatientLocationDTO toInsert){
         PatientLocationEntity patientLocationEntity = DTOUtility.patientLocationDTOToEntity(toInsert);
         patientLocationRepository.save(patientLocationEntity);
+        System.out.println("test");
+
     }
 
 //    public void insertOrUpdateResearchEntity(TracingEntity researchEntity){

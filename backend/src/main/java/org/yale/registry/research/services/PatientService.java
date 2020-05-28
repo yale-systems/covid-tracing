@@ -8,10 +8,12 @@ import org.yale.registry.research.entities.PatientEntity;
 import org.yale.registry.research.repositories.PatientRepository;
 import org.yale.registry.research.utilities.DTOUtility;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PatientService {
     private PatientRepository patientRepository;
     private GeometryFactory geometryFactory;
@@ -23,17 +25,17 @@ public class PatientService {
         this.geometryFactory = geometryFactory;
     }
 
-    public PatientDTO getContactDTOById(Long trace_id){
-        Optional<PatientEntity> optionalContactsEntity = patientRepository.findById(trace_id);
-        if(!optionalContactsEntity.isPresent()){
+    public PatientDTO getPatientDTOById(Long trace_id){
+        Optional<PatientEntity> optionalPatientEntity = patientRepository.findById(trace_id);
+        if(!optionalPatientEntity.isPresent()){
             return null;
         }
-        PatientEntity patientEntity = optionalContactsEntity.get();
-        return DTOUtility.contactsEntityToDTO(patientEntity);
+        PatientEntity patientEntity = optionalPatientEntity.get();
+        return DTOUtility.patientEntityToDTO(patientEntity);
     }
 
-    public List<PatientDTO> getContactDTOsByName(String name){
-        List<PatientEntity> contactsEntities = patientRepository.findContactsEntitiesByName(name);
-        return DTOUtility.contactsDTOAggregator(contactsEntities);
+    public List<PatientDTO> getPatientDTOsByName(String name){
+        List<PatientEntity> patientEntities = patientRepository.findPatientEntitiesByName(name);
+        return DTOUtility.patientDTOAggregator(patientEntities);
     }
 }

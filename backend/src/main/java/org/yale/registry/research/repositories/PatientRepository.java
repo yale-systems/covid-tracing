@@ -6,5 +6,5 @@ import org.yale.registry.research.entities.PatientEntity;
 import java.util.List;
 
 public interface PatientRepository extends PagingAndSortingRepository<PatientEntity, Long> {
-    List<PatientEntity> findContactsEntitiesByName(String name);
+    List<PatientEntity> findPatientEntitiesByName(String name);
 }

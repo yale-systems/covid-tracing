@@ -20,27 +20,26 @@ public class DTOUtility {
     }
 
     public static PatientLocationDTO patientLocationEntityToDTO(PatientLocationEntity patientLocationEntity){
-        return new PatientLocationDTO(patientLocationEntity.getId(), patientLocationEntity.getPatient_id(), patientLocationEntity.getStart_time(),
+        return new PatientLocationDTO(patientLocationEntity.getId(), patientLocationEntity.getStart_time(),
                 patientLocationEntity.getEnd_time(), patientLocationEntity.isConfirmed(), patientLocationEntity.getGeom());
     }
 
     public static PatientLocationEntity patientLocationDTOToEntity(PatientLocationDTO patientLocationDTO){
-        return new PatientLocationEntity(patientLocationDTO.getPatient_id(), patientLocationDTO.getStart_time(),
+        return new PatientLocationEntity(patientLocationDTO.getStart_time(),
                 patientLocationDTO.getEnd_time(), patientLocationDTO.isConfirmed(), patientLocationDTO.getGeom());
     }
 
-    public static PatientDTO contactsEntityToDTO(PatientEntity patientEntity){
+    public static PatientDTO patientEntityToDTO(PatientEntity patientEntity){
         List<PatientLocationEntity> tracingEntities = new ArrayList<>(patientEntity.getTracings());
         List<PatientLocationDTO> patientLocationDTOS = patientLocationDTOAggregator(tracingEntities);
         patientLocationDTOS.sort(Comparator.comparing(PatientLocationDTO::getStart_time));
-        return new PatientDTO(patientEntity.getName(), patientEntity.getEmail(),
-                patientEntity.getAddress(), patientLocationDTOS);
+        return new PatientDTO(patientEntity.getName(), patientEntity.getEmail(), patientLocationDTOS);
     }
 
-    public static List<PatientDTO> contactsDTOAggregator(List<PatientEntity> patientEntityList){
+    public static List<PatientDTO> patientDTOAggregator(List<PatientEntity> patientEntityList){
         List<PatientDTO> dtoAggregate = new ArrayList<>();
         for(PatientEntity cur: patientEntityList){
-            dtoAggregate.add(contactsEntityToDTO(cur));
+            dtoAggregate.add(patientEntityToDTO(cur));
         }
         return dtoAggregate;
     }

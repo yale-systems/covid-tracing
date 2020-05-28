@@ -18773,6 +18773,21 @@ COPY public.public_users_locations (id, public_user_id, start_time, end_time, co
 \.
 
 CREATE INDEX public_users_locations_geom_index ON public.public_users_locations USING gist (public.st_transform(geom, 32618));
+
+CREATE PROCEDURE public.select_public_users(point_time timestamp without time zone, range integer, point_loc public.geometry(Point,4326))
+LANGUAGE SQL
+AS $$
+select public.public_users_locations.public_user_id
+from public.public_users_locations
+where ST_DWITHIN(public.st_transform(public_users_locations.geom, 32618), public.st_transform(point_loc, 32618), range)
+AND public.public_users_locations.start_time <= point_time
+AND public.public_users_locations.end_time >= point_time;
+$$;
+
+
+
+
+
 --
 -- PostgreSQL database dump complete
 --

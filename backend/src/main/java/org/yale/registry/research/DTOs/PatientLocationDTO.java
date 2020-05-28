@@ -12,8 +12,6 @@ public class PatientLocationDTO {
 
     private Long id;
 
-    private Long patient_id;
-
     private Date start_time;
 
     private Date end_time;
@@ -27,9 +25,8 @@ public class PatientLocationDTO {
     public PatientLocationDTO() {
     }
 
-    public PatientLocationDTO(Long id, Long patient_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
+    public PatientLocationDTO(Long id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
         this.id = id;
-        this.patient_id = patient_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -38,10 +35,6 @@ public class PatientLocationDTO {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getPatient_id() {
-        return patient_id;
     }
 
     public Date getStart_time() {
@@ -62,9 +55,6 @@ public class PatientLocationDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-    public void setPatient_id(Long patient_id) {
-        this.patient_id = patient_id;
     }
 
     public void setStart_time(Date start_time) {
