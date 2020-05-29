@@ -10,22 +10,27 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
     {
         path: "/",
-        name: "LoginPage",
+        name: "login",
+        component: LoginPage
+    },
+    {
+        path: "/login",
+        name: "login",
         component: LoginPage
     },
     {
         path : "/welcome",
-        name: "Welcome",
+        name: "welcome",
         component : Welcome
     },
     {
         path : "/form",
-        name : "InterviewForm",
+        name : "form",
         component : InterviewFormView
     },
     {
         path : "/submitted",
-        name : "SubmitPage",
+        name : "submitted",
         component : SubmitPage
     }
 ];
