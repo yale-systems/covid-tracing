@@ -13,5 +13,5 @@ public interface ManagerRepository extends PagingAndSortingRepository<ManagerEnt
     @Query("SELECT new org.yale.registry.research.DTOs.ManagerDTO(m.manager_id, m.username, " +
             "m.password, m.name) from " +
             "ManagerEntity m WHERE m.manager_id = :manager_id")
-    Optional<ManagerDTO> findManagerDTOByManager_id(@Param("manager_id") Long manager_id);
+    public Optional<ManagerDTO> findManagerDTOByManager_id(@Param("manager_id") Long manager_id);
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yale.registry.research.DTOs.PatientDTO;
 import org.yale.registry.research.entities.PatientEntity;
+import org.yale.registry.research.repositories.PatientLocationRepository;
 import org.yale.registry.research.repositories.PatientRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
 
@@ -16,12 +17,14 @@ import java.util.Optional;
 @Transactional
 public class PatientService {
     private PatientRepository patientRepository;
+    private PatientLocationRepository patientLocationRepository;
     private GeometryFactory geometryFactory;
-    public static final int MAX_RANGE = 9000;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository, GeometryFactory geometryFactory){
+    public PatientService(PatientRepository patientRepository, PatientLocationRepository patientLocationRepository,
+                          GeometryFactory geometryFactory){
         this.patientRepository = patientRepository;
+        this.patientLocationRepository = patientLocationRepository;
         this.geometryFactory = geometryFactory;
     }
 
@@ -95,6 +98,7 @@ public class PatientService {
     }
 
     public void delete(Long patient_id){
+        patientLocationRepository.deleteByPatientId(patient_id);
         patientRepository.deleteById(patient_id);
     }
 

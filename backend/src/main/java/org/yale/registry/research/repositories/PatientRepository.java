@@ -14,23 +14,23 @@ public interface PatientRepository extends PagingAndSortingRepository<PatientEnt
     @Query("SELECT new org.yale.registry.research.DTOs.PatientDTO(p.patient_id, p.username, " +
             "p.password, p.name, p.email, p.manager_id, p.volunteer_id) from " +
             "PatientEntity p WHERE p.patient_id = :patient_id")
-    Optional<PatientDTO> findPatientDTOByPatient_id(@Param("patient_id") Long patient_id);
+    public Optional<PatientDTO> findPatientDTOByPatient_id(@Param("patient_id") Long patient_id);
 
     @Query("SELECT new org.yale.registry.research.DTOs.PatientDTO(p.patient_id, p.username, " +
             "p.password, p.name, p.email, p.manager_id, p.volunteer_id) from " +
             "PatientEntity p WHERE p.manager_id = :manager_id")
-    List<PatientDTO> findPatientDTOsByManager_id(@Param("manager_id") Long manager_id);
+    public List<PatientDTO> findPatientDTOsByManager_id(@Param("manager_id") Long manager_id);
 
     @Query("SELECT new org.yale.registry.research.DTOs.PatientDTO(p.patient_id, p.username, " +
             "p.password, p.name, p.email, p.manager_id, p.volunteer_id) from " +
             "PatientEntity p WHERE p.manager_id = :manager_id AND p.volunteer_id IS NULL")
-    List<PatientDTO> findOrphanedPatientDTOsByManager_id(@Param("manager_id") Long manager_id);
+    public List<PatientDTO> findOrphanedPatientDTOsByManager_id(@Param("manager_id") Long manager_id);
 
     @Query("SELECT p from PatientEntity p WHERE p.volunteer_id = :volunteer_id")
-    List<PatientEntity> findPatientEntitiesByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
+    public List<PatientEntity> findPatientEntitiesByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
 
     @Query("SELECT new org.yale.registry.research.DTOs.PatientDTO(p.patient_id, p.username, " +
             "p.password, p.name, p.email, p.manager_id, p.volunteer_id) from " +
             "PatientEntity p WHERE p.volunteer_id = :volunteer_id")
-    List<PatientDTO> findPatientDTOsByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
+    public List<PatientDTO> findPatientDTOsByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
 }
