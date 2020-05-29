@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h1 class="ma-4"> Interview Form </h1>
         <v-btn icon color="blue" class="ma-5" id="call">
             <v-icon x-large>mdi-chat</v-icon>
         </v-btn>
@@ -64,13 +65,21 @@
                 </v-btn>
             </v-row>
         </div>
+        <v-container>
+            <InterviewForm />
+        </v-container>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import InterviewForm from '@/components/InterviewForm.vue'
+
 export default Vue.extend({
     name : "InterviewFormView",
+    components : {
+        InterviewForm
+    },
     data() {
         return {
             helpOpen : false,
