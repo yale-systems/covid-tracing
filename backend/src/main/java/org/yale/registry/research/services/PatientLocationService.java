@@ -2,15 +2,21 @@ package org.yale.registry.research.services;
 
 import org.locationtech.jts.geom.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.yale.registry.research.DTOs.PatientDTO;
 import org.yale.registry.research.DTOs.PatientLocationDTO;
 import org.yale.registry.research.entities.PatientLocationEntity;
 import org.yale.registry.research.repositories.PatientLocationRepository;
 import org.yale.registry.research.utilities.DTOUtility;
+import org.yale.registry.research.utilities.RESTfulUtility;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class PatientLocationService {
@@ -31,45 +37,60 @@ public class PatientLocationService {
         return DTOUtility.patientLocationDTOAggregator(withinDistance);
     }
 
-    public List<PatientLocationDTO> getByIDRange(int range){
-        Iterable<PatientLocationEntity> researchEntitiesIterable = patientLocationRepository.findAll();
-        List<PatientLocationEntity> researchEntitiesList = StreamSupport.stream(researchEntitiesIterable.spliterator(), false)
-                .collect(Collectors.toList());
-
-        Random idGenerator = new Random();
-        Integer startIndex;
-        if(range > MAX_RANGE) { return null; }
-        else if(range == MAX_RANGE){ startIndex = 0; }
-        else { startIndex = idGenerator.nextInt(9000 - range); }
-
-        List<PatientLocationEntity> researchEntitiesSubList = researchEntitiesList.subList(startIndex, startIndex + range);
-        return DTOUtility.patientLocationDTOAggregator(researchEntitiesSubList);
-    }
-
-    public PatientLocationDTO getResearchOpportunity(Long id) throws Exception {
-        Optional<PatientLocationEntity> optionalResearchEntity = patientLocationRepository.findById(id);
-        if(!optionalResearchEntity.isPresent()){
-            return null;
+    public PatientLocationDTO getPatientLocationById(Long id){
+        Optional<PatientLocationEntity> optionalPatientLocationEntity = patientLocationRepository.findById(id);
+        PatientLocationDTO patientLocationDTO =
+                optionalPatientLocationEntity.map(DTOUtility::patientLocationEntityToDTO).
+                        orElse(null);
+        if(patientLocationDTO != null){
+            RESTfulUtility.addRestToPatientLocationDTO(patientLocationDTO);
         }
-        PatientLocationEntity patientLocationEntity = optionalResearchEntity.get();
-        return DTOUtility.patientLocationEntityToDTO(patientLocationEntity);
+        return patientLocationDTO;
     }
 
-    public void insertEntity(PatientLocationDTO toInsert){
-        PatientLocationEntity patientLocationEntity = DTOUtility.patientLocationDTOToEntity(toInsert);
+    public List<PatientLocationDTO> getByPatientId(Long patient_id){
+        List<PatientLocationEntity> patientLocationEntities =
+                patientLocationRepository.findPatientLocationEntitiesByPatientId(patient_id);
+        List<PatientLocationDTO> patientLocationDTOS =
+                DTOUtility.patientLocationDTOAggregator(patientLocationEntities);
+        RESTfulUtility.addRestToPatientLocationDTOs(patientLocationDTOS);
+        return patientLocationDTOS;
+    }
+
+    public void insert(PatientLocationDTO patientLocationDTO){
+        PatientLocationEntity patientLocationEntity = DTOUtility.patientLocationDTOToEntity(patientLocationDTO);
         patientLocationRepository.save(patientLocationEntity);
         System.out.println("test");
 
     }
 
-//    public void insertOrUpdateResearchEntity(TracingEntity researchEntity){
-//        tracingRepository.save(researchEntity);
-//    }
+    public void update(PatientLocationDTO patientLocationDTO){
+        Optional<PatientLocationEntity> optionalPatientLocationEntity =
+                patientLocationRepository.findById(patientLocationDTO.getId());
+        if(optionalPatientLocationEntity.isPresent()){
+            PatientLocationEntity patientLocationEntity = optionalPatientLocationEntity.get();
+            if(patientLocationDTO.getStart_time() != null){
+                patientLocationEntity.setStart_time(patientLocationDTO.getStart_time());
+            }
+            if(patientLocationDTO.getEnd_time() != null){
+                patientLocationEntity.setEnd_time(patientLocationDTO.getEnd_time());
+            }
+            if(patientLocationDTO.isConfirmed() != null){
+                patientLocationEntity.setConfirmed(patientLocationDTO.isConfirmed());
+            }
+            if(patientLocationDTO.getGeom() != null){
+                patientLocationEntity.setGeom(patientLocationDTO.getGeom());
+            }
+            if(patientLocationDTO.getPatient_id() != null){
+                patientLocationEntity.setPatient_id(patientLocationDTO.getPatient_id());
+            }
+            patientLocationRepository.save(patientLocationEntity);
+        }
+    }
 
-//    public void deleteResearchEntityById(Long id){
-//        tracingRepository.deleteById(id);
-//    }
-
+    public void delete(Long id){
+        patientLocationRepository.deleteById(id);
+    }
 
     private Point longLatToPoint(Double longitude, Double latitude){
         Coordinate coordinate = new Coordinate(longitude, latitude);

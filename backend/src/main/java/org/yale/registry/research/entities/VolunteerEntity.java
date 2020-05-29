@@ -1,7 +1,6 @@
 package org.yale.registry.research.entities;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "volunteers")
@@ -23,15 +22,7 @@ public class VolunteerEntity {
 
     private String email;
 
-    @OneToMany(
-            mappedBy = "volunteer",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}
-    )
-    private List<PatientEntity> patients;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id")
-    private ManagerEntity manager;
+    private Long manager_id;
 
 
     public VolunteerEntity(){}
@@ -39,30 +30,18 @@ public class VolunteerEntity {
     public VolunteerEntity(Long volunteer_id,
                            String username, String password,
                            String name, String email,
-                           List<PatientEntity> patients, ManagerEntity manager) {
+                           Long manager_id) {
         this.volunteer_id = volunteer_id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.patients = patients;
-        this.manager = manager;
-    }
-
-    public void addPatient(PatientEntity patientEntity){
-        patients.add(patientEntity);
-        patientEntity.setVolunteer(this);
-    }
-
-    public void removePatient(PatientEntity patientEntity){
-        patients.remove(patientEntity);
-        patientEntity.setVolunteer(null);
+        this.manager_id = manager_id;
     }
 
     public Long getVolunteer_id() {
         return volunteer_id;
     }
-
 
     public String getUsername() {
         return username;
@@ -80,12 +59,8 @@ public class VolunteerEntity {
         return email;
     }
 
-    public List<PatientEntity> getPatients() {
-        return patients;
-    }
-
-    public ManagerEntity getManager() {
-        return manager;
+    public Long getManager_id() {
+        return manager_id;
     }
 
     public void setVolunteer_id(Long volunteer_id) {
@@ -108,11 +83,7 @@ public class VolunteerEntity {
         this.email = email;
     }
 
-    public void setPatients(List<PatientEntity> patients) {
-        this.patients = patients;
-    }
-
-    public void setManager(ManagerEntity manager) {
-        this.manager = manager;
+    public void setManager_id(Long manager) {
+        this.manager_id = manager;
     }
 }

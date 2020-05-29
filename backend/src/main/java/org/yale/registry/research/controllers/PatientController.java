@@ -2,9 +2,10 @@ package org.yale.registry.research.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.PatientDTO;
-import org.yale.registry.research.entities.PatientEntity;
+import org.yale.registry.research.DTOs.VolunteerDTO;
 import org.yale.registry.research.services.PatientService;
 
 import javax.servlet.http.HttpSession;
@@ -21,14 +22,57 @@ public class PatientController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/getpatientbyid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PatientDTO getPatientById(@RequestParam Long patient_id, HttpSession httpSession){
+    @RequestMapping(value = "/getbypatientid/{patient_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PatientDTO getByPatientId(@PathVariable Long patient_id, HttpSession httpSession){
         return patientService.getPatientDTOById(patient_id);
     }
+
     @CrossOrigin
-    @RequestMapping(value = "/getpatientbyname", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientDTO> getPatientByName(@RequestParam String name){
-        return patientService.getPatientDTOsByName(name);
+    @RequestMapping(value = "/getbymanagerid/{manager_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientDTO> getByManagerId(@PathVariable Long manager_id, HttpSession httpSession){
+        return patientService.getPatientsByManagerId(manager_id);
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/getorphanedbymanagerid/{manager_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientDTO> getOrphanedByManagerId(@PathVariable Long manager_id){
+        return patientService.getOrphanedPatientsByManagerId(manager_id);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/getbyvolunteerid/{volunteer_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientDTO> getVolunteerPatients(@PathVariable Long volunteer_id){
+        return patientService.getPatientsByVolunteerId(volunteer_id);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientDTO> insert(@RequestBody PatientDTO patientDTO){
+        patientService.insert(patientDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientDTO> update(@RequestBody PatientDTO patientDTO){
+        patientService.update(patientDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "reassignment/{patient_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientDTO> reassignment(
+            @PathVariable Long patient_id,
+            @RequestParam(name = "new_volunteer_id", required = false) Long newVolunteerId
+    ){
+        patientService.reassignment(patient_id, newVolunteerId);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "delete/{patient_id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> delete(@PathVariable Long patient_id){
+        patientService.delete(patient_id);
+        return ResponseEntity.ok().build();
+    }
 }

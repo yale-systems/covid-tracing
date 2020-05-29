@@ -6,10 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.PatientLocationDTO;
+import org.yale.registry.research.entities.PatientLocationEntity;
 import org.yale.registry.research.services.PatientLocationService;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.List;
 
 @RestController
@@ -23,24 +23,15 @@ public class PatientLocationController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "/getrange", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientLocationDTO> getRange(@RequestParam(defaultValue = "10") Integer range) {
-        return patientLocationService.getByIDRange(range);
+    @GetMapping(value = "/getbypatientid/{patient_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientLocationDTO> getByPatientId(@PathVariable Long patient_id) {
+        return patientLocationService.getByPatientId(patient_id);
     }
 
     @CrossOrigin
-    @GetMapping(value = "/getonerandom", produces = MediaType.APPLICATION_JSON_VALUE)
-    public PatientLocationDTO getOneRandom() throws Exception {
-        Random idGenerator = new Random();
-        Long id = new Long(idGenerator.nextInt(4350) + 1);
-        return patientLocationService.getResearchOpportunity(id);
-    }
-
-    @CrossOrigin
-    @GetMapping(value = "/getone", produces = MediaType.APPLICATION_JSON_VALUE)
-    public PatientLocationDTO getOne(@RequestParam Integer id) throws Exception {
-        Long idLong = new Long(id);
-        return patientLocationService.getResearchOpportunity(idLong);
+    @GetMapping(value = "/getbyid/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PatientLocationDTO getById(@PathVariable Long id){
+        return patientLocationService.getPatientLocationById(id);
     }
 
     @CrossOrigin
@@ -57,8 +48,23 @@ public class PatientLocationController {
     @CrossOrigin
     @PostMapping(value = "/insert")
     public ResponseEntity<PatientLocationDTO> insert(@RequestBody PatientLocationDTO patientLocationDTO) {
-        patientLocationService.insertEntity(patientLocationDTO);
+        patientLocationService.insert(patientLocationDTO);
         return ResponseEntity.ok().build();
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientLocationDTO> update(@RequestBody PatientLocationDTO patientLocationDTO){
+        patientLocationService.update(patientLocationDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> delete(@PathVariable Long id){
+        patientLocationService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
 

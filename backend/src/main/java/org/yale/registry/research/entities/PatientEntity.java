@@ -2,7 +2,6 @@ package org.yale.registry.research.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table(name = "patients")
@@ -12,52 +11,59 @@ public class PatientEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patients_generator")
     private Long patient_id;
 
+    private String username;
+
+    private String password;
+
     private String name;
 
     private String email;
 
-//    orphanRemoval = false, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
-    // cascadetype SHOULD NOT have delete for volunteer entity
-    @OneToMany(
-            mappedBy = "patient",
-            orphanRemoval = true,
-            cascade = CascadeType.ALL
-    )
-    private List<PatientLocationEntity> tracings;
+    private Long manager_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id")
-    private ManagerEntity manager;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "volunteer_id")
-    private VolunteerEntity volunteer;
+    private Long volunteer_id;
 
 
     public PatientEntity(){}
 
-    public PatientEntity(String name, String email,
-                         List<PatientLocationEntity> tracings,
-                         ManagerEntity manager, VolunteerEntity volunteer) {
+    public PatientEntity(
+            Long patient_id, String username,
+            String password, String name,
+            String email, Long manager_id,
+            Long volunteer_id
+    ) {
+        this.patient_id = patient_id;
+        this.password = password;
+        this.username = username;
         this.name = name;
         this.email = email;
-        this.tracings = tracings;
-        this.manager = manager;
-        this.volunteer = volunteer;
+        this.manager_id = manager_id;
+        this.volunteer_id = volunteer_id;
     }
 
-    public void addPatientLocation(PatientLocationEntity patientLocationEntity){
-        tracings.add(patientLocationEntity);
-        patientLocationEntity.setPatient(this);
-    }
-
-    public void removePatientLocation(PatientLocationEntity patientLocationEntity){
-        tracings.remove(patientLocationEntity);
-        patientLocationEntity.setPatient(null);
+    public PatientEntity(
+            String username, String password,
+            String name, String email,
+            Long manager_id, Long volunteer
+    ) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.manager_id = manager_id;
+        this.volunteer_id = volunteer;
     }
 
     public Long getPatient_id() {
         return patient_id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
@@ -68,20 +74,24 @@ public class PatientEntity implements Serializable {
         return email;
     }
 
-    public List<PatientLocationEntity> getTracings() {
-        return tracings;
+    public Long getManager_id() {
+        return manager_id;
     }
 
-    public ManagerEntity getManager() {
-        return manager;
-    }
-
-    public VolunteerEntity getVolunteer() {
-        return volunteer;
+    public Long getVolunteer_id() {
+        return volunteer_id;
     }
 
     public void setPatient_id(Long trace_id) {
         this.patient_id = trace_id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setName(String name) {
@@ -92,15 +102,11 @@ public class PatientEntity implements Serializable {
         this.email = email;
     }
 
-    public void setTracings(List<PatientLocationEntity> tracings) {
-        this.tracings = tracings;
+    public void setManager_id(Long manager) {
+        this.manager_id = manager;
     }
 
-    public void setManager(ManagerEntity manager) {
-        this.manager = manager;
-    }
-
-    public void setVolunteer(VolunteerEntity volunteer) {
-        this.volunteer = volunteer;
+    public void setVolunteer_id(Long volunteer) {
+        this.volunteer_id = volunteer;
     }
 }

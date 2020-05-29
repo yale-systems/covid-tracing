@@ -28,18 +28,30 @@ public class PatientLocationEntity implements Serializable {
 
     private Point geom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
-    private PatientEntity patient;
+    private Long patient_id;
 
 
     public PatientLocationEntity(){}
 
-    public PatientLocationEntity(Date start_time, Date end_time, Boolean confirmed, Point geom) {
+    public PatientLocationEntity(Long id, Date start_time, Date end_time,
+                                 Boolean confirmed, Point geom,
+                                 Long patient_id) {
+        this.id = id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
         this.geom = geom;
+        this.patient_id = patient_id;
+    }
+
+    public PatientLocationEntity(Date start_time, Date end_time,
+                                 Boolean confirmed, Point geom,
+                                 Long patient_id) {
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.confirmed = confirmed;
+        this.geom = geom;
+        this.patient_id = patient_id;
     }
 
     public Long getId() {
@@ -62,8 +74,8 @@ public class PatientLocationEntity implements Serializable {
         return geom;
     }
 
-    public PatientEntity getPatient() {
-        return patient;
+    public Long getPatient_id() {
+        return patient_id;
     }
 
     public void setId(Long id) {
@@ -86,8 +98,8 @@ public class PatientLocationEntity implements Serializable {
         this.geom = geom;
     }
 
-    public void setPatient(PatientEntity patient) {
-        this.patient = patient;
+    public void setPatient_id(Long patient) {
+        this.patient_id = patient;
     }
 
 }
