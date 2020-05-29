@@ -32,21 +32,22 @@
                 <v-icon>mdi-open-in-new</v-icon>
             </v-btn>
         </v-app-bar>
-
         <v-content>
-            <LoginPage />
+            <router-view />
         </v-content>
     </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import LoginPage from "@/components/LoginPage.vue"
+import LoginPage from "@/views/LoginPage.vue"
+import Welcome from "@/views/Welcome.vue"
 
 export default Vue.extend({
     name: "App",
     components: {
-        LoginPage
+        LoginPage,
+        Welcome
     },
 
     data: () => ({

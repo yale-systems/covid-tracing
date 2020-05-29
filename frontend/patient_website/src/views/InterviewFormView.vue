@@ -1,0 +1,120 @@
+<template>
+    <div>
+        <v-btn icon color="blue" class="ma-5" id="call">
+            <v-icon x-large>mdi-chat</v-icon>
+        </v-btn>
+
+        <v-dialog
+            v-model="helpOpen"
+            width="700"
+        >
+            <template v-slot:activator="{ on }">
+                <v-btn icon color="blue" class="ma-5" id="phone" v-on="on">
+                    <v-icon x-large> mdi-phone </v-icon>
+                </v-btn>
+            </template>
+            
+            <v-card>
+                <v-card-title>
+                    Need help?
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="helpOpen=false">
+                        <v-icon> mdi-close </v-icon>
+                    </v-btn>
+                </v-card-title>
+                <v-card-text>
+                    If you would like some help navigating the form,
+                    feel free to take the tutorial again to familiarize yourself with the content.
+                    <br>
+                    <v-btn class="ma-2" color="primary" @click="handleTutorial"> Take the Tutorial</v-btn>
+                    <br>
+                    If you would like to request a call with a volunteer
+                    to go through the form together, please request an interview by clicking on the button below.
+                    <br>
+                    <v-btn class="ma-2" color="primary"> Request an Interview </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="submitLoading"
+            width = "700px"
+        >
+            <v-card>
+                <v-card-text> Please wait as your data is submitted... </v-card-text>
+                      <v-progress-circular
+                        :size="50"
+                        color="primary"
+                        indeterminate
+                    ></v-progress-circular>
+            </v-card>
+        </v-dialog>
+        <div>
+            <v-row>
+                <v-btn color="primary" id="save" class="ma-4" width="90px"> Save </v-btn>
+            </v-row>
+            <v-row>
+                <v-btn 
+                    color="primary" 
+                    id="submit" 
+                    class="ma-4" 
+                    @click="handleSubmit"
+                > 
+                Submit 
+                </v-btn>
+            </v-row>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+export default Vue.extend({
+    name : "InterviewFormView",
+    data() {
+        return {
+            helpOpen : false,
+            chatOpen : false,
+            submitLoading : false
+        }
+    },
+    methods : {
+        handleTutorial () {
+            this.$router.push({ path : "/tutorial"})
+        },
+        handleSubmit() {
+            // TODO: form validation
+            // TODO: submission to backend
+            this.submitLoading = true
+
+            // this.$router.push({ path : "/submitted"})
+        }
+    }
+})
+</script>
+
+<style scoped>
+#phone {
+    position : fixed;
+    bottom : 55px;
+    left: 0;
+}
+
+#call {
+    position : fixed;
+    bottom : 0px;
+    left : 0;
+}
+
+#save {
+    position : fixed;
+    bottom : 55px;
+    right : 0;
+}
+
+#submit {
+    position : fixed;
+    bottom : 0px;
+    right: 0;
+}
+</style>
