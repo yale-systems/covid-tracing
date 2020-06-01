@@ -9,7 +9,7 @@
             volunteer, and someone will call you to go over the form with you.
         </p>
         <br>
-        <router-link to="/tutorial"> take a tutorial </router-link>
+        <router-link to="tutorial"> take a tutorial </router-link>
         <br>
         <v-dialog
             v-model="dialog"
@@ -67,7 +67,7 @@ export default Vue.extend({
     },
     methods : {
         handleStart() {
-            this.$router.push({name : 'InterviewForm'})
+            this.$router.push({name : 'form'})
         }
     }
 })

@@ -1,7 +1,7 @@
 <template>
     <v-expansion-panel>
-        <v-expansion-panel-header>
-            <h2> {{defaultTitle}} </h2>
+        <v-expansion-panel-header >
+            <h2 contenteditable @click.native.stop> {{defaultTitle}} </h2>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
             <v-form>

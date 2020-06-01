@@ -4,14 +4,14 @@
             <div class="d-flex align-center large-bold ml-1">
                 Contact Tracing
             </div>
-            
-                <v-tabs v-if="loggedIn">
+            <div class="ml-4">
+                <v-tabs background-color="primary" v-if="loggedIn">
                     <v-tab
                         to="form">
                         <v-tab-content> Interview Form </v-tab-content>
                     </v-tab>
                 </v-tabs>
-        
+            </div>
         
             <v-spacer></v-spacer>
 
