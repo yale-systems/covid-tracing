@@ -80,8 +80,8 @@ export default Vue.extend({
                 apiCalls.checkLogin(credentials)
                     .then(function (response : boolean) {
                         if (response) {
-                            // TODO: send to welcome screen
-                            curr.$router.push({ name : "Welcome" });
+                            curr.$store.commit('logIn')
+                            curr.$router.push({ name : "welcome" });
                         } else {
                             console.log("not accepted")
                             // give feedback that something was wrong
