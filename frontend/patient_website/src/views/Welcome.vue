@@ -9,14 +9,14 @@
             volunteer, and someone will call you to go over the form with you.
         </p>
         <br>
-        <router-link to="tutorial"> take a tutorial </router-link>
+        <router-link to="tutorial" class="align-center"> take a tutorial </router-link>
         <br>
         <v-dialog
             v-model="dialog"
             width="700"
         >
             <template v-slot:activator="{ on }">
-                <a v-on="on" text-decoration="underline"> request an interview </a>
+                <a v-on="on" class="align-center"> request an interview </a>
             </template>
 
             <v-card v-if="!request">
@@ -51,7 +51,7 @@
             </v-card>
         </v-dialog>
         <br>
-        <v-btn mt-auto @click="handleStart"> Start Form </v-btn>
+        <v-btn class="mt-auto align-center" @click="handleStart"> Start Form </v-btn>
     </v-container>
 </template>
 

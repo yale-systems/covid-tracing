@@ -1,17 +1,17 @@
 <template>
     <div>
         <h1 class="ma-4"> Interview Form </h1>
-        <v-btn icon color="blue" class="ma-5" id="call">
+        <!-- <v-btn icon color="blue" class="ma-5" id="call">
             <v-icon x-large>mdi-chat</v-icon>
-        </v-btn>
+        </v-btn> -->
 
         <v-dialog
             v-model="helpOpen"
             width="700"
         >
             <template v-slot:activator="{ on }">
-                <v-btn icon color="blue" class="ma-5" id="phone" v-on="on">
-                    <v-icon x-large> mdi-phone </v-icon>
+                <v-btn color="primary" outlined class="ma-4" id="phone" width="90px" v-on="on">
+                    Help
                 </v-btn>
             </template>
             
@@ -42,12 +42,13 @@
             width = "700px"
         >
             <v-card>
-                <v-card-text> Please wait as your data is submitted... </v-card-text>
-                      <v-progress-circular
-                        :size="50"
-                        color="primary"
-                        indeterminate
-                    ></v-progress-circular>
+                <v-card-title text-align="center"> Your data is being submitted... </v-card-title>
+                <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                    class="ma-5 justify-center align-center"
+                ></v-progress-circular>
             </v-card>
         </v-dialog>
         <div>
@@ -65,7 +66,7 @@
                 </v-btn>
             </v-row>
         </div>
-        <v-container>
+        <v-container class="justify-left ml-2" id="form">
             <InterviewForm />
         </v-container>
     </div>
@@ -95,6 +96,7 @@ export default Vue.extend({
             // TODO: form validation
             // TODO: submission to backend
             this.submitLoading = true
+            setTimeout(() => this.$router.push({path : "/submitted"}), 2000)
 
             // this.$router.push({ path : "/submitted"})
         }
@@ -105,14 +107,14 @@ export default Vue.extend({
 <style scoped>
 #phone {
     position : fixed;
-    bottom : 55px;
-    left: 0;
+    bottom : 110px;
+    right: 0;
 }
 
 #call {
     position : fixed;
-    bottom : 0px;
-    left : 0;
+    bottom : 165px;
+    right : 0;
 }
 
 #save {
@@ -125,5 +127,10 @@ export default Vue.extend({
     position : fixed;
     bottom : 0px;
     right: 0;
+}
+
+#form {
+    width : 90%;
+    left: 0;
 }
 </style>

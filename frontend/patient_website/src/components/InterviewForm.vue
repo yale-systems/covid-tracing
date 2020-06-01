@@ -10,9 +10,9 @@
         <v-row>
             <v-spacer></v-spacer>
             <v-btn 
-                icon
+                fab small
                 @click="newEvent"
-                class="mr-7">
+                class="mr-7 mt-3">
                 <v-icon> mdi-plus </v-icon>
             </v-btn>
         </v-row>

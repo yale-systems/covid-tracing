@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card>
+        <v-card class="align-center justify-center ma-10">
             <v-card-title> Thank you for your time. </v-card-title>
             <v-card-text>
                     We appreciate and value the time you took to fill out this form. 
@@ -22,8 +22,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer> </v-spacer>
-                <v-btn label="View Resources"> </v-btn> 
-                <v-btn label="Edit Submission" color="primary"> </v-btn> 
+                <v-btn @click="handleResources" depressed> View Resources </v-btn> 
+                <v-btn color="primary" @click="handleEdit">  Edit Submission </v-btn> 
             </v-card-actions>
         </v-card>
     </div>
@@ -32,7 +32,15 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-    
+    name : "SubmitPage",
+    methods : {
+        handleEdit() {
+            this.$router.push({path: "/form"})
+        },
+        handleResources() {
+            this.$router.push({path: "/resources"})
+        }
+    }
 })
 </script>
 

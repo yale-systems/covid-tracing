@@ -34,7 +34,9 @@
                     <v-text-field
                         v-model="location"
                         label="Location"
-                        prepend-icon="mdi-map-marker"
+                        prepend-icon="mdi-map"
+                        placeholder="enter a location or choose a location using the map"
+                        @click:prepend="showMap = true"
                     >
                     </v-text-field>
                 </v-row>
@@ -44,9 +46,10 @@
                         <h3> Contacts </h3>
                         <v-spacer></v-spacer>
                         <v-btn 
-                            icon
                             @click="contactCount++"
-                            justify-right>
+                            justify-right
+                            outlined>
+                            Add contact
                             <v-icon> mdi-plus </v-icon>
                         </v-btn>
                     </v-row>
@@ -55,9 +58,16 @@
                         :key="i"
                     />
                 </v-container>
-            </v-form>    
+            </v-form>
         </v-expansion-panel-content>
+        <v-dialog
+            v-model="showMap"
+            >
+
+            <SearchMap class="search-map" v-model="this.addressInfo"/>
+        </v-dialog>
     </v-expansion-panel>
+
 </template>
 
 <script lang="ts">
@@ -76,7 +86,9 @@ export default Vue.extend({
         return {
             date: new Date().toISOString().substr(0, 10),
             menu: false,
-            contactCount : 1
+            contactCount : 1,
+            showMap : false,
+            addressInfo : ''
         }
     },
     computed : {
