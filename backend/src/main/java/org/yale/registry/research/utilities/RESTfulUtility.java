@@ -37,7 +37,7 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         update(patientDTO)).withRel("update"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
-                        reassignment(patientDTO.getVolunteer_id(), patientDTO.getVolunteer_id())).withRel("reassignment"),
+                        reassignment(patientDTO.getPatient_id(), patientDTO.getPatient_id())).withRel("reassignment"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         delete(patientDTO.getPatient_id())).withRel("delete"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
