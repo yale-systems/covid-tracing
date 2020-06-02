@@ -18784,10 +18784,6 @@ AND public.public_users_locations.start_time <= point_time
 AND public.public_users_locations.end_time >= point_time;
 $$;
 
-
-
-
-
 --
 -- PostgreSQL database dump complete
 --
