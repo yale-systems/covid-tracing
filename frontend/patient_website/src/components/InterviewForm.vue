@@ -21,10 +21,15 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import InterviewEvent from '@/components/InterviewEvent.vue'
+import InterviewEvent from './components/InterviewEvent.vue'
+import formMixin from '../mixins/formMixin'
+// validation rules to check input
+import { email, numeric } from 'vuelidate/lib/validators'
+import { isName } from '../constants/validators'
 
 export default Vue.extend({
     name : "InterviewForm",
+    
     components : {
         InterviewEvent
     },

@@ -1,8 +1,7 @@
 <template>
-
     <v-expansion-panel>
         <v-expansion-panel-header >
-            <h2 contenteditable @click.native.stop> {{defaultTitle}} </h2>
+            <h2 contenteditable > {{defaultTitle}} </h2>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
             <v-form>
@@ -19,6 +18,7 @@
                         >
                         <template v-slot:activator="{ on }">
                             <v-text-field
+                            class="mr-4"
                             v-model="date"
                             label="Date"
                             prepend-icon="mdi-calendar"
@@ -33,11 +33,15 @@
                         </v-date-picker>
                     </v-menu>
                     <v-text-field
+                        class="ml-4"
                         v-model="location"
                         label="Location"
                         prepend-icon="mdi-map"
-                        placeholder="enter a location or choose a location using the map"
+                        placeholder="choose a location using the map icon to the left"
                         @click:prepend="showMap = true"
+                        readonly
+                        append-icon="mdi-close"
+                        @click:append="location = ''"
                     >
                     </v-text-field>
                 </v-row>
@@ -65,10 +69,22 @@
             v-model="showMap"
             >
             <v-card>
-                <v-card-title> hello there man what the actual fuck </v-card-title>
+                <v-card-title> </v-card-title>
                 <v-card-text>
                     <SearchMap class="search-map" v-model="this.addressInfo"/>
                 </v-card-text>
+                <v-card-actions>
+                    <v-spacer> </v-spacer>
+                    <v-btn depressed
+                        @click="showMap = !showMap">
+                        Cancel
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        @click="handleOk">
+                        OK
+                    </v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
     </v-expansion-panel>
@@ -95,12 +111,24 @@ export default Vue.extend({
             menu: false,
             contactCount : 1,
             showMap : false,
-            addressInfo : ''
+            addressInfo : {
+                adr: '',
+                ll: null
+            },
+            location : '',
+            latlong : null
         }
     },
     computed : {
         defaultTitle () : string {
             return 'Event' + this.ID.toString()
+        }
+    },
+    methods : {
+        handleOk() {
+            this.showMap = !this.showMap
+            this.location = this.addressInfo.adr
+            this.latlong = this.addressInfo.ll
         }
     }
 })

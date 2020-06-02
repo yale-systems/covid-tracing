@@ -47,6 +47,7 @@ export default {
         })
         // every time we click the map, make a marker and fill input HTML with reverse geocoding 
         this.map.addListener('click', function(event) {
+            console.log("the map got clicked")
             curr.markerToSearch(event)
         })
         //initializing marker & geocoder
@@ -117,6 +118,7 @@ Dangerous! Not scoped!
         height: 40px;
         text-overflow: ellipsis;
         padding: 0 1em;
+        background-color: white;
     }
     /* otherwise autocomplete search is BEHIND modal, which is... unideal */
     .pac-container {

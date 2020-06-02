@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!this.deleted">
         <v-text-field
             label="Name"
         ></v-text-field>
@@ -69,7 +69,13 @@ export default Vue.extend({
                 "Close contact", "Prolonged close contact", "Minimal Contact"
             ],
             healthcare : false,
-            age: "adult"
+            age: "adult",
+            deleted : false
+        }
+    },
+    methods : {
+        deleteContact() {
+            this.deleted = true
         }
     }
 })
