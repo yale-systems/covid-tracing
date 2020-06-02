@@ -1,5 +1,5 @@
 <template>
-    <v-expansion-panel>
+    <v-expansion-panel v-on:delete-contact="deleteContact">
         <v-expansion-panel-header >
             <h2 contenteditable > {{defaultTitle}} </h2>
         </v-expansion-panel-header>
@@ -19,7 +19,7 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                             class="mr-4"
-                            v-model="date"
+                            v-model="value.date"
                             label="Date"
                             prepend-icon="mdi-calendar"
                             readonly
@@ -34,7 +34,7 @@
                     </v-menu>
                     <v-text-field
                         class="ml-4"
-                        v-model="location"
+                        v-model="value.location.streetName"
                         label="Location"
                         prepend-icon="mdi-map"
                         placeholder="choose a location using the map icon to the left"
@@ -51,7 +51,7 @@
                         <h3> Contacts </h3>
                         <v-spacer></v-spacer>
                         <v-btn 
-                            @click="contactCount++"
+                            @click="newContact"
                             justify-right
                             outlined>
                             Add contact
@@ -59,8 +59,11 @@
                         </v-btn>
                     </v-row>
                     <InterviewContact 
-                        v-for="i in contactCount"
-                        :key="i"
+                        v-for="contact in v.contacts.$each.$iter"
+                        :key="contact.$model.contactID"
+                        :ID="contact.$model.contactID"
+                        v-model="contact.$model"
+                        :v="contact"
                     />
                 </v-container>
             </v-form>
@@ -91,47 +94,74 @@
 
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import InterviewContact from '@/components/InterviewContact.vue'
 import SearchMap from '@/components/SearchMap.vue'
 
-export default Vue.extend({
+export default {
     name : "InterviewEvent",
     components : {
         InterviewContact,
         SearchMap
     },
     props: {
-        ID: Number
+        value : {
+            type : Object,
+            required : true
+        },
+        v : {
+            type : Object,
+            required : true
+        }
     },
     data () {
         return {
             date: new Date().toISOString().substr(0, 10),
             menu: false,
-            contactCount : 1,
             showMap : false,
             addressInfo : {
                 adr: '',
                 ll: null
             },
-            location : '',
-            latlong : null
         }
     },
     computed : {
-        defaultTitle () : string {
-            return 'Event' + this.ID.toString()
+        defaultTitle () {
+            return 'Event' + this.value.eventID.toString()
         }
     },
     methods : {
         handleOk() {
             this.showMap = !this.showMap
-            this.location = this.addressInfo.adr
-            this.latlong = this.addressInfo.ll
+            this.value.location.streetName = this.addressInfo.adr
+            this.value.location.coordinates = this.addressInfo.ll
+        },
+        newContact() {
+            let contact = {
+                firstName : '',
+                lastName : '',
+                phone : null,
+                email : '',
+                healthcareWorker : false,
+                age : 'adult',
+                contactType : null,
+                contactNature : '',
+                contactID : this.value.contacts.length
+            }
+            this.value.contacts.push(contact)
+        },
+        deleteContact(contactID) {
+            for (contact in this.value.contacts) {
+                if (contact.contactID = contactID) {
+                    this.value.contacts.splice(contactID, 1)
+                }
+            }
         }
+    },
+    mounted () {
+        console.log(this.value)
     }
-})
+}
 </script>
 
 <style>

@@ -7,7 +7,8 @@ export default {
             our particular form, which is...rather negative. But, y'know...
             win some lose some? 
         */
-        focusFirstStatus(component : any = this) : void {
+        focusFirstStatus() : void {
+            const component = this
             if ( component.status ) { // we found the problem card!
 
                 var element = component
