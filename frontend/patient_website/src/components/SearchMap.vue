@@ -35,6 +35,9 @@ export default {
             type: Object,
             required : true
         }
+    },
+    mounted() {
+        console.log("yes i did mount lol")
     }
 }
 </script>

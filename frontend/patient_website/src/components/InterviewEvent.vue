@@ -1,4 +1,5 @@
 <template>
+
     <v-expansion-panel>
         <v-expansion-panel-header >
             <h2 contenteditable @click.native.stop> {{defaultTitle}} </h2>
@@ -63,8 +64,12 @@
         <v-dialog
             v-model="showMap"
             >
-
-            <SearchMap class="search-map" v-model="this.addressInfo"/>
+            <v-card>
+                <v-card-title> hello there man what the actual fuck </v-card-title>
+                <v-card-text>
+                    <SearchMap class="search-map" v-model="this.addressInfo"/>
+                </v-card-text>
+            </v-card>
         </v-dialog>
     </v-expansion-panel>
 
@@ -73,11 +78,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import InterviewContact from '@/components/InterviewContact.vue'
+import SearchMap from '@/components/SearchMap.vue'
 
 export default Vue.extend({
     name : "InterviewEvent",
-        components : {
-        InterviewContact
+    components : {
+        InterviewContact,
+        SearchMap
     },
     props: {
         ID: Number
@@ -99,6 +106,8 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
-
+<style>
+.search-map {
+    height: 400px;
+}
 </style>
