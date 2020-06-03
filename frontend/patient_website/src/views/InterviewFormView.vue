@@ -73,7 +73,13 @@
             </v-row>
         </div>
         <v-container class="justify-left ml-2" id="form">
-            <InterviewForm :submit="submit" :save="save" />
+            <InterviewForm 
+                :submit="submit" 
+                :save="save" 
+                v-on:submitting="submitLoading = true" 
+                v-on:submitted="submitted" 
+                v-on:errorFound="submit = false"
+            />
         </v-container>
     </div>
 </template>
@@ -96,21 +102,24 @@ export default Vue.extend({
             save : false
         }
     },
+    mounted() {
+        console.log("in view, submit is")
+        console.log(this.submit)
+    },
     methods : {
         handleTutorial () {
             this.$router.push({ path : "/tutorial"})
         },
         handleSubmit() {
-            // TODO: form validation
-            // TODO: submission to backend
-            this.submitLoading = true
+            console.log("handle submit called")
             this.submit = true
-            setTimeout(() => this.$router.push({path : "/submitted"}), 2000)
-
-            // this.$router.push({ path : "/submitted"})
         },
         handleSave() {
             this.save = !this.save
+        },
+        submitted(){
+            setTimeout(() => this.$router.push({path : "/submitted"}).catch(err => {}), 2000)
+            this.submit = false
         }
     }
 })

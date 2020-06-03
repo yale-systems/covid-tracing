@@ -1,6 +1,7 @@
 <template>
     <div>
-        <v-expansion-panels>
+        <v-expansion-panels
+            v-model="panel">
             <InterviewEvent 
                 v-for="event in $v.events.$each.$iter"
                 :key="event.$model.eventID"
@@ -23,7 +24,7 @@
 
 <script>
 import InterviewEvent from '@/components/InterviewEvent.vue'
-import formMixin from '../mixins/formMixin'
+import formMixin from '../mixins/formMixin.js'
 // validation rules to check input
 import { email, numeric, required } from 'vuelidate/lib/validators'
 import { isName } from '../constants/validators'
@@ -57,13 +58,14 @@ export default {
         InterviewEvent
     },
     props : {
-        save : Boolean,
-        submit : Boolean
+        save: Boolean,
+        submit: Boolean
     },
     data () {
         return {
             // TODO: fill in data for each interview event
-            events: []
+            events: [],
+            panel: Number
         }
     },
     methods : {
@@ -78,24 +80,45 @@ export default {
                 contacts : []
             }
             this.events.push(event)
+            //console.log(events.length)
+            this.panel = this.events.length - 1
+        },
+        expandProblem() {
+            var count = 0;
+            for (event in this.$v.events.$each.$iter) {
+                if (this.$v.events.$each[event].$anyError) {
+                    break
+                }
+                count = count + 1
+            }
+            this.panel = count;
         }
     },
-    mounted() {
-        this.newEvent()
-    },
-    watched : {
+    watch : {
         save : () => {
             // TODO: validate, scroll to any errors 
             // if all is correct, emit to change the state of button (loading)
             // submit to backend (await), then emit to say saved
         },
-        submit : () => {
-            // TODO: validate, scroll to any errors
+        submit : function () {
+            console.log("submit pushed")
+            // TODO: validate, open up event containing first error
+            
+            if(this.$v.$anyError) {
+                this.expandProblem()
+                this.$emit('errorFound')
+                return
+            }
             // if all correct, emit to show progress screen
-            // submit to backend, emit to change to submit screen
+            this.$emit('submitting')
+            // TODO: submit to backend, 
+            
+            //emit to change to submit screen
+            this.$emit('submitted')
         }
     },
     mounted() {
+        console.log(this.$v)
         this.newEvent()
     }
 }

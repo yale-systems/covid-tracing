@@ -8,7 +8,7 @@
                 <v-tabs background-color="primary" v-if="loggedIn">
                     <v-tab
                         to="form">
-                        <v-tab-content> Interview Form </v-tab-content>
+                        Interview Form
                     </v-tab>
                 </v-tabs>
             </div>
