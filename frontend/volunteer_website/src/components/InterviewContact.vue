@@ -70,11 +70,10 @@
     </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import InterviewContact from '@/components/InterviewContact.vue'
+<script>
+import InterviewContact from '../components/InterviewContact.vue'
 
-export default Vue.extend({
+export default {
     name : "InterviewContact",
     props : {
         value : {
@@ -100,7 +99,7 @@ export default Vue.extend({
             this.$emit('delete-contact', this.value.contactID)
         }
     }
-})
+}
 </script>
 
 <style scoped>
