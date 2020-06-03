@@ -94,9 +94,6 @@ export default {
             // if all correct, emit to show progress screen
             // submit to backend, emit to change to submit screen
         }
-    },
-    mounted() {
-        this.newEvent()
     }
 }
 </script>
