@@ -24,6 +24,9 @@
                             prepend-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :error-messages="dateErrors"
+                            @focus="v.date.$reset"
+                            @blur="v.date.$touch"
                             ></v-text-field>
                         </template>
                         <v-date-picker v-model="date" no-title scrollable>
@@ -128,6 +131,11 @@ export default {
     computed : {
         defaultTitle () {
             return 'Event' + this.value.eventID.toString()
+        },
+        dateErrors() {
+            const errors = []
+            if (!this.v.date.$dirty) return errors
+            !this.v.date.required && errors.push('This field is required, please select a date.')
         }
     },
     methods : {
