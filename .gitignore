@@ -32,7 +32,8 @@
 *..vscode/
 
 *.DS_Store
-/frontend/node_modules
+/frontend/patient_website/node_modules
+/frontend/volunteer_website/node_modules
 *./dist
 
 # local env files
@@ -51,4 +52,5 @@
 *.sw?
 
 #APIkey
-/frontend/src/constants/apiKey.js
+/frontend/patient_website/src/constants/apiKey.js
+/frontend/volunteer_website/src/constants/apiKey.js
