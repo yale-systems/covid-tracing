@@ -78,7 +78,6 @@
                 :save="save" 
                 v-on:submitting="submitLoading = true" 
                 v-on:submitted="submitted" 
-                v-on:errorFound="submit = false"
             />
         </v-container>
     </div>
@@ -112,7 +111,7 @@ export default Vue.extend({
         },
         handleSubmit() {
             console.log("handle submit called")
-            this.submit = true
+            this.submit = !this.submit
         },
         handleSave() {
             this.save = !this.save

@@ -102,11 +102,25 @@ export default {
         },
         submit : function () {
             console.log("submit pushed")
-            // TODO: validate, open up event containing first error
             
+            // code red! code red!
+            for (var i = 0; i < this.events.length; i++) {
+                var event = this.$v.events.$each.$iter[i]
+                if (event.$anyDirty) {
+                    event.date.$touch();
+                }
+                for (var contact in event.contacts.$each.$iter) {
+                    //console.log(contact)
+                    var cat = event.contacts.$each.$iter[contact];
+                    if(cat.$anyDirty) {
+                        //console.log("trying to make things dirty")
+                        cat.$touch();
+                    }
+                }
+            }
+
             if(this.$v.$anyError) {
                 this.expandProblem()
-                this.$emit('errorFound')
                 return
             }
             // if all correct, emit to show progress screen

@@ -73,6 +73,8 @@
                     rows="1"
                     auto-grow
                     v-model="value.contactNature"
+                    @focus="v.contactNature.$reset"
+                    @blur="v.contactNature.$touch"
                 ></v-textarea>
             </v-col>
             <v-col cols="auto">
@@ -140,6 +142,7 @@ export default Vue.extend({
             const errors = []
             if (!this.v.contactType.$dirty) return errors
             !this.v.contactType.required && errors.push('Please select the type of contact from the dropdown menu.')
+            return errors
         }
     },
     methods : {
