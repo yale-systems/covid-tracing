@@ -8,7 +8,7 @@
                 <v-tabs background-color="primary" v-if="loggedIn">
                     <v-tab
                         to="form">
-                        <v-tab-content> Interview Form </v-tab-content>
+                         Interview Form
                     </v-tab>
                 </v-tabs>
             </div>
@@ -16,7 +16,7 @@
             <v-spacer></v-spacer>
 
             <div v-if="loggedIn">
-                <span class="mr-2">Welcome, Username</span>
+                <span class="mr-2">Welcome, {{name}} </span>
             </div>
 
             <div class="text-center" v-if="loggedIn">
@@ -68,6 +68,9 @@ export default Vue.extend({
     computed: {
         loggedIn() {
             return this.$store.state.loggedIn;
+        },
+        name() {
+            return this.$store.state.patientInfo.name
         }
     },
 
