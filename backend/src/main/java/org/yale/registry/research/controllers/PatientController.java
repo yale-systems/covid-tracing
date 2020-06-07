@@ -10,6 +10,7 @@ import org.yale.registry.research.services.PatientService;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/patient")
@@ -60,17 +61,19 @@ public class PatientController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "reassignment/{patient_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientDTO> reassignment(
-            @PathVariable Long patient_id,
-            @RequestParam(name = "new_volunteer_id", required = false) Long newVolunteerId
-    ){
-        patientService.reassignment(patient_id, newVolunteerId);
+    @RequestMapping(value = "/reassignment", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientDTO> reassignment(@RequestBody Map<String, Long> reassignment){
+        Long patientId = reassignment.get("patient_id");
+        if(patientId == null){
+            return null;
+        }
+        Long newVolunteerId = reassignment.get("new_volunteer_id");
+        patientService.reassignment(patientId, newVolunteerId);
         return ResponseEntity.ok().build();
     }
 
     @CrossOrigin
-    @RequestMapping(value = "delete/{patient_id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/delete/{patient_id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> delete(@PathVariable Long patient_id){
         patientService.delete(patient_id);
         return ResponseEntity.ok().build();

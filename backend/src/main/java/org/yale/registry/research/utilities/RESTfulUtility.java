@@ -22,6 +22,13 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
                         delete(patientLocationDTO.getId())).withRel("delete")
         );
+//        WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
+//                getById(patientLocationDTO.getId())).withSelfRel().andAffordance(
+//                WebMvcLinkBuilder.afford(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
+//                        update(patientLocationDTO))
+//        ),
+//                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
+//                        delete(patientLocationDTO.getId())).withRel("delete")
     }
 
     public static void addRestToPatientLocationDTOs(List<PatientLocationDTO> patientLocationDTOS){
@@ -37,7 +44,7 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         update(patientDTO)).withRel("update"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
-                        reassignment(patientDTO.getPatient_id(), patientDTO.getPatient_id())).withRel("reassignment"),
+                        reassignment(null)).withRel("reassignment"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         delete(patientDTO.getPatient_id())).withRel("delete"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
