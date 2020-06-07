@@ -4,19 +4,13 @@
             <v-col>
                 <v-text-field
                     label="First Name"
-                    :error-messages="firstNameErrors"
                     v-model="value.firstName"
-                    @focus="v.firstName.$reset"
-                    @blur="v.firstName.$touch"
                 ></v-text-field>
             </v-col>
             <v-col>
                 <v-text-field
                     label="Last Name"
                     v-model="value.lastName"
-                    :error-messages="lastNameErrors"
-                    @focus="v.lastName.$reset"
-                    @blur="v.lastName.$touch"
                 ></v-text-field>
             </v-col>
         </v-row>
@@ -25,18 +19,12 @@
                 <v-text-field
                     label="Phone Number"
                     v-model="value.phone"
-                    :error-messages="phoneErrors"
-                    @focus="v.phone.$reset"
-                    @blur="v.phone.$touch"
                 ></v-text-field>
             </v-col>
             <v-col>
                 <v-text-field
                     label="Email Address"
                     v-model="value.email"
-                    :error-messages="emailErrors"
-                    @focus="v.email.$reset"
-                    @blur="v.email.$touch"
                 ></v-text-field>
             </v-col>
         </v-row>
@@ -46,9 +34,6 @@
                     :items="contactTypes"
                     label="Type of Contact"
                     v-model="value.contactType"
-                    :error-messages="contactTypeErrors"
-                    @focus="v.contactType.$reset"
-                    @blur="v.contactType.$touch"
                 ></v-select>
             </v-col>
             <v-spacer></v-spacer>
@@ -73,8 +58,6 @@
                     rows="1"
                     auto-grow
                     v-model="value.contactNature"
-                    @focus="v.contactNature.$reset"
-                    @blur="v.contactNature.$touch"
                 ></v-textarea>
             </v-col>
             <v-col cols="auto">
@@ -87,11 +70,10 @@
     </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import InterviewContact from '@/components/InterviewContact.vue'
+<script>
+import InterviewContact from '../components/InterviewContact.vue'
 
-export default Vue.extend({
+export default {
     name : "InterviewContact",
     props : {
         value : {
@@ -111,48 +93,13 @@ export default Vue.extend({
             deleted : false
         }
     },
-    computed: {
-        firstNameErrors() {
-            const errors = []
-            if (!this.v.firstName.$dirty) return errors
-            !this.v.firstName.required && errors.push(`First name is required.`)
-            !this.v.firstName.isName && errors.push('Names can only contain alphabetic characters.')
-            return errors
-        },
-        lastNameErrors() {
-            const errors = []
-            if (!this.v.lastName.$dirty) return errors
-            !this.v.lastName.required && errors.push(`Last name is required.`)
-            !this.v.lastName.isName && errors.push('Names can only contain alphabetic characters.')
-            return errors
-        },
-        emailErrors () {
-            const errors = []
-            if (!this.v.email.$dirty) return errors
-            !this.v.email.email && errors.push('Invalid email -- emails must be of the form jane@doe.com')
-            return errors
-        },
-        phoneErrors() {
-            const errors = []
-            if (!this.v.phone.$dirty) return errors
-            !this.v.phone.numeric && errors.push('Phone number can only contain numeric digits')
-            return errors
-        },
-        contactTypeErrors() {
-            const errors = []
-            if (!this.v.contactType.$dirty) return errors
-            !this.v.contactType.required && errors.push('Please select the type of contact from the dropdown menu.')
-            return errors
-        }
-    },
     methods : {
         deleteContact() {
-            this.v.$reset
             this.deleted = true
             this.$emit('delete-contact', this.value.contactID)
         }
     }
-})
+}
 </script>
 
 <style scoped>

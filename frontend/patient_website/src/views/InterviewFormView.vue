@@ -53,7 +53,13 @@
         </v-dialog>
         <div>
             <v-row>
-                <v-btn color="primary" id="save" class="ma-4" width="90px"> Save </v-btn>
+                <v-btn 
+                    color="primary" 
+                    id="save" 
+                    class="ma-4" 
+                    width="90px"
+                    @click="save = !save"
+                    > Save </v-btn>
             </v-row>
             <v-row>
                 <v-btn 
@@ -67,7 +73,12 @@
             </v-row>
         </div>
         <v-container class="justify-left ml-2" id="form">
-            <InterviewForm />
+            <InterviewForm 
+                :submit="submit" 
+                :save="save" 
+                v-on:submitting="submitLoading = true" 
+                v-on:submitted="submitted" 
+            />
         </v-container>
     </div>
 </template>
@@ -85,20 +96,29 @@ export default Vue.extend({
         return {
             helpOpen : false,
             chatOpen : false,
-            submitLoading : false
+            submitLoading : false,
+            submit : false,
+            save : false
         }
+    },
+    mounted() {
+        console.log("in view, submit is")
+        console.log(this.submit)
     },
     methods : {
         handleTutorial () {
             this.$router.push({ path : "/tutorial"})
         },
         handleSubmit() {
-            // TODO: form validation
-            // TODO: submission to backend
-            this.submitLoading = true
-            setTimeout(() => this.$router.push({path : "/submitted"}), 2000)
-
-            // this.$router.push({ path : "/submitted"})
+            console.log("handle submit called")
+            this.submit = !this.submit
+        },
+        handleSave() {
+            this.save = !this.save
+        },
+        submitted(){
+            setTimeout(() => this.$router.push({path : "/submitted"}).catch(err => {}), 2000)
+            this.submit = false
         }
     }
 })

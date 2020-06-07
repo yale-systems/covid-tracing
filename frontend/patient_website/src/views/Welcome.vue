@@ -67,7 +67,7 @@ export default Vue.extend({
     },
     methods : {
         handleStart() {
-            this.$router.push({name : 'form'})
+            this.$router.push({name : 'setup'})
         }
     }
 })
