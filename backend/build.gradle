@@ -18,6 +18,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 //    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 //    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -27,7 +29,7 @@ dependencies {
 //    implementation 'org.springframework.session:spring-session-jdbc'
 //    implementation 'org.apache.commons:commons-dbcp2'
 //    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '9.0.26'
-    
+
     implementation 'org.hibernate:hibernate-spatial'
 
 // https://mvnrepository.com/artifact/com.graphhopper.external/jackson-datatype-jts
