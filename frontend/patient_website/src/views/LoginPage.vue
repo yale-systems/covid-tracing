@@ -66,10 +66,10 @@ export default Vue.extend({
     },
     methods : {
         async handleSubmit () {
-            console.log("clicked")
+            // console.log("clicked")
             // if the input is valid
             if (this.$refs.form.validate()) {
-                console.log("valid input")
+                // console.log("valid input")
                 // make call to API , and if that checks out, send to other page
                 let credentials = {
                     username : this.username,

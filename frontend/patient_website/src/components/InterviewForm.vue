@@ -67,10 +67,9 @@ export default {
         return {
             // TODO: fill in data for each interview event
             events: [],
-<<<<<<< HEAD
-            panel: Number
-=======
-            geocoder: null
+            panel: Number,
+            geocoder: null,
+            locations: []
         }
     },
     computed : {
@@ -80,21 +79,22 @@ export default {
             } else {
                 return 1
             }
->>>>>>> validation
         }
     },
-    methods : {
+    methods: {
         newEvent() {
             var event = {
-                eventID : this.events.length + 1,
-                date : '',
+                eventID: this.events.length + 1,
+                date: '',
                 location : {
-                    streetName : '',
-                    coordinates : {}
+                    streetName: '',
+                    coordinates: {}
                 },
-                contacts : []
+                contacts: []
             }
+            
             this.events.push(event)
+            this.panel = this.events.length - 1
         },
         async loadLocations() {
             console.log("this is the geocoder in interviewform")
@@ -102,52 +102,62 @@ export default {
             if (this.$store.state.loggedIn) {
                 // try to get patient locations
                 const link = this.$store.state.patientInfo.links.get_locations.href
-                var locations = await apiCalls.getLocations(link)
-                if (locations.length == 0) {
-                    this.newEvent();
-                } else {
-                    // make an event for each date, feed the date in
-                    for (var i = 0; i < 1; i++) {
-                        let l = locations[i]
-                        // console.log(l)
-                        const date = l.start_time.substring(0, 10)
-                        const position = {
-                            lng: l.geom.coordinates[0], 
-                            lat: l.geom.coordinates[1]
-                        }
-                        let curr = this;
-                        await geocoder.getStreetName(position, this.geocoder)
-                            .then(function(response) {
-                                console.log(response)
-                                let event = {
-                                    eventID : l.id,
-                                    date : date,
-                                    location : {
-                                        streetName : response,
-                                        coordinates : position,
-                                        contacts : []
-                                    }
-                                }
-                                curr.events.push(event)
-                            })
-                    }
-                }
-            } 
+                let curr = this
+                await apiCalls.getLocations(link)
+                    .then(async function(locations) {
+                    
+                    if (locations.length == 0) {
+                        this.newEvent();
+                    } else {
+                        curr.locations = locations
+                        let len = (locations.length >=5) ? 5 : locations.length
 
-            // await apiCalls.getLocations()
+                        // make an event for each date, feed the date in
+                        for (var i = 0; i < len; i++) {
+                            let e = i
+                            setTimeout(() => { curr.makeOldEvent( e ) }, 200 * e);
+                            
+                        }
+                    }
+                })
+            } 
+        },
+        makeOldEvent(i) {
+            let l = this.locations[i]
+            console.log(l)
+            const date = l.start_time.substring(0, 10)
+            const position = {
+                lng: l.geom.coordinates[0], 
+                lat: l.geom.coordinates[1]
+            }
+            let curr = this;
+            geocoder.getStreetName(position, curr.geocoder, function(response) {
+                console.log(response)
+                    let event = {
+                        eventID: l.id,
+                        date: date,
+                        location: {
+                            streetName: response,
+                            coordinates: position,
+                        },
+                        contacts: []
+                    }
+                    curr.events.push(event)
+            })
         }
     },
     async mounted() {
+        console.log("LOL this did in fact work")
         this.geocoder = await geocoder.getGeocoder()
         this.loadLocations()
     },
-    watched : {
-        save : () => {
+    watched: {
+        save: () => {
             // TODO: validate, scroll to any errors 
             // if all is correct, emit to change the state of button (loading)
             // submit to backend (await), then emit to say saved
         },
-        submit : function () {
+        submit: function () {
             console.log("submit pushed")
             
             // code red! code red!
@@ -177,10 +187,6 @@ export default {
             //emit to change to submit screen
             this.$emit('submitted')
         }
-    },
-    mounted() {
-        console.log(this.$v)
-        this.newEvent()
     }
 }
 </script>
