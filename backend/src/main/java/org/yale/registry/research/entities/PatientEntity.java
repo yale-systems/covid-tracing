@@ -58,55 +58,55 @@ public class PatientEntity implements Serializable {
         return patient_id;
     }
 
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
+    }
+
     public String getUsername() {
         return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Long getManager_id() {
-        return manager_id;
-    }
-
-    public Long getVolunteer_id() {
-        return volunteer_id;
-    }
-
-    public void setPatient_id(Long trace_id) {
-        this.patient_id = trace_id;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setManager_id(Long manager) {
-        this.manager_id = manager;
+    public Long getManager_id() {
+        return manager_id;
     }
 
-    public void setVolunteer_id(Long volunteer) {
-        this.volunteer_id = volunteer;
+    public void setManager_id(Long manager_id) {
+        this.manager_id = manager_id;
+    }
+
+    public Long getVolunteer_id() {
+        return volunteer_id;
+    }
+
+    public void setVolunteer_id(Long volunteer_id) {
+        this.volunteer_id = volunteer_id;
     }
 }

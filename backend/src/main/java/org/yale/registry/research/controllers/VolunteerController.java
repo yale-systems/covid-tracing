@@ -50,6 +50,6 @@ public class VolunteerController {
     @RequestMapping(value = "delete/{volunteer_id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> delete(@PathVariable Long volunteer_id){
         volunteerService.delete(volunteer_id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(volunteer_id);
     }
 }

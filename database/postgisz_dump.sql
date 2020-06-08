@@ -126,9 +126,9 @@ CREATE TABLE public.contacts (
     email text,
     phone_number text,
     age public.age_demographic,
-    is_household boolean,
+    household boolean,
     nature_of_contact text,
-    is_healthcare_worker boolean,
+    healthcare_worker boolean,
     patient_id integer NOT NULL
 );
 
@@ -481,7 +481,7 @@ ALTER TABLE ONLY public.volunteers ALTER COLUMN volunteer_id SET DEFAULT nextval
 -- Data for Name: contacts; Type: TABLE DATA; Schema: public; Owner: apiclient
 --
 
-COPY public.contacts (contact_id, first_name, last_name, email, phone_number, age, is_household, nature_of_contact, is_healthcare_worker, patient_id) FROM stdin;
+COPY public.contacts (contact_id, first_name, last_name, email, phone_number, age, household, nature_of_contact, healthcare_worker, patient_id) FROM stdin;
 1	john1	smith1	contact1@gmail.com	111-111-111	MINOR	t	stop and shop	t	10
 2	john2	smith2	contact2@gmail.com	111-111-112	ELDERLY	t	stop and shop	f	23
 3	john3	smith3	contact3@gmail.com	111-111-113	ADULT	t	stop and shop	t	26

@@ -63,7 +63,7 @@ public class PatientLocationController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> delete(@PathVariable Long id){
         patientLocationService.delete(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(id);
     }
 
 }

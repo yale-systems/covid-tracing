@@ -58,48 +58,47 @@ public class PatientLocationEntity implements Serializable {
         return id;
     }
 
-    public Date getStart_time() {
-        return start_time;
-    }
-
-    public Date getEnd_time() {
-        return end_time;
-    }
-
-    public Boolean isConfirmed() {
-        return confirmed;
-    }
-
-    public Point getGeom(){
-        return geom;
-    }
-
-    public Long getPatient_id() {
-        return patient_id;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getStart_time() {
+        return start_time;
     }
 
     public void setStart_time(Date start_time) {
         this.start_time = start_time;
     }
 
+    public Date getEnd_time() {
+        return end_time;
+    }
+
     public void setEnd_time(Date end_time) {
         this.end_time = end_time;
+    }
+
+    public Boolean getConfirmed() {
+        return confirmed;
     }
 
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
 
-    public void setGeom(Point geom){
+    public Point getGeom() {
+        return geom;
+    }
+
+    public void setGeom(Point geom) {
         this.geom = geom;
     }
 
-    public void setPatient_id(Long patient) {
-        this.patient_id = patient;
+    public Long getPatient_id() {
+        return patient_id;
     }
 
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
+    }
 }

@@ -1,14 +1,8 @@
 package org.yale.registry.research.utilities;
 
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.yale.registry.research.DTOs.ManagerDTO;
-import org.yale.registry.research.DTOs.PatientDTO;
-import org.yale.registry.research.DTOs.PatientLocationDTO;
-import org.yale.registry.research.DTOs.VolunteerDTO;
-import org.yale.registry.research.controllers.ManagerController;
-import org.yale.registry.research.controllers.PatientController;
-import org.yale.registry.research.controllers.PatientLocationController;
-import org.yale.registry.research.controllers.VolunteerController;
+import org.yale.registry.research.DTOs.*;
+import org.yale.registry.research.controllers.*;
 
 import java.util.List;
 
@@ -47,8 +41,12 @@ public class RESTfulUtility {
                         reassignment(null)).withRel("reassignment"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         delete(patientDTO.getPatient_id())).withRel("delete"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        getByPatientId(patientDTO.getPatient_id())).withRel("get_contacts"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
                         getByPatientId(patientDTO.getPatient_id())).withRel("get_locations"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        insert(null)).withRel("insert_contact"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
                         insert(null)).withRel("insert_location")
                 );
@@ -57,6 +55,23 @@ public class RESTfulUtility {
     public static void addRestToPatientDTOs(List<PatientDTO> patientDTOS){
         for(PatientDTO patientDTO: patientDTOS){
             addRestToPatientDTO(patientDTO);
+        }
+    }
+
+    public static void addRestToContactDTO(ContactDTO contactDTO){
+        contactDTO.add(
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        getByContactId(contactDTO.getContact_id())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        update(null)).withRel("update"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        delete(contactDTO.getContact_id())).withRel("delete")
+        );
+    }
+
+    public static void addRestToContactDTOs(List<ContactDTO> contactDTOS){
+        for(ContactDTO contactDTO: contactDTOS){
+            addRestToContactDTO(contactDTO);
         }
     }
 
@@ -69,7 +84,7 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(VolunteerController.class).
                         delete(volunteerDTO.getVolunteer_id())).withRel("delete"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
-                        getVolunteerPatients(volunteerDTO.getVolunteer_id())).withRel("get_patients"),
+                        getByVolunteerId(volunteerDTO.getVolunteer_id())).withRel("get_patients"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         insert(null)).withRel("insert_patient")
         );

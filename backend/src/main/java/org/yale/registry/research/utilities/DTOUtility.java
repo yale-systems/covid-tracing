@@ -20,7 +20,7 @@ public class DTOUtility {
     public static PatientLocationDTO patientLocationEntityToDTO(PatientLocationEntity patientLocationEntity){
         return new PatientLocationDTO(
                 patientLocationEntity.getId(), patientLocationEntity.getStart_time(),
-                patientLocationEntity.getEnd_time(), patientLocationEntity.isConfirmed(),
+                patientLocationEntity.getEnd_time(), patientLocationEntity.getConfirmed(),
                 patientLocationEntity.getGeom(), patientLocationEntity.getPatient_id()
         );
     }
@@ -33,20 +33,4 @@ public class DTOUtility {
                 );
     }
 
-    public static PatientDTO patientEntityToDTO(PatientDTO patientEntity){
-        return new PatientDTO(
-                patientEntity.getPatient_id(), patientEntity.getUsername(),
-                patientEntity.getPassword(), patientEntity.getName(),
-                patientEntity.getEmail(), patientEntity.getManager_id(),
-                patientEntity.getVolunteer_id()
-                );
-    }
-
-    public static List<PatientDTO> patientDTOAggregator(List<PatientDTO> patientEntityList){
-        List<PatientDTO> dtoAggregate = new ArrayList<>();
-        for(PatientDTO cur: patientEntityList){
-            dtoAggregate.add(patientEntityToDTO(cur));
-        }
-        return dtoAggregate;
-    }
 }

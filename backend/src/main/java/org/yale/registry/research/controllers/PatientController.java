@@ -42,7 +42,7 @@ public class PatientController {
 
     @CrossOrigin
     @RequestMapping(value = "/getbyvolunteerid/{volunteer_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientDTO> getVolunteerPatients(@PathVariable Long volunteer_id){
+    public List<PatientDTO> getByVolunteerId(@PathVariable Long volunteer_id){
         return patientService.getPatientsByVolunteerId(volunteer_id);
     }
 
@@ -76,6 +76,6 @@ public class PatientController {
     @RequestMapping(value = "/delete/{patient_id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> delete(@PathVariable Long patient_id){
         patientService.delete(patient_id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(patient_id);
     }
 }
