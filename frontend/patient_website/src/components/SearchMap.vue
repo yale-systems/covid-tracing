@@ -1,10 +1,11 @@
 <template>
     <GoogleMapLoader :mapCenter="mapCenter">
-        <template slot-scope="{google, map}">
+        <template slot-scope="{google, map, geocoder}">
             <!-- slot-scope enables SearchBar to insert itself on the map  -->
             <SearchBar 
                 :google ="google"
                 :map ="map"
+                :geocoder="geocoder"
                 v-model="value"
             />
         </template>

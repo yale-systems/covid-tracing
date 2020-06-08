@@ -42,7 +42,7 @@
     </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import apiCalls from '@/apiCalls'
 
@@ -54,12 +54,12 @@ export default Vue.extend({
             username : '',
             password : '',
             usernameRules : [
-                (v : any) => !/\s/.test(v) || 'Username cannot include spaces',
-                (v : any) => !!v || 'Username is required'
+                (v) => !/\s/.test(v) || 'Username cannot include spaces',
+                (v) => !!v || 'Username is required'
             ],
             passwordRules : [
-                (v : any) => !!v || 'Password is required'
-            ] as Array<any>,
+                (v) => !!v || 'Password is required'
+            ],
             showPassword : false,
             showAlert : false
         }
@@ -71,16 +71,18 @@ export default Vue.extend({
             if (this.$refs.form.validate()) {
                 console.log("valid input")
                 // make call to API , and if that checks out, send to other page
-                let credentials : any = {
+                let credentials = {
                     username : this.username,
                     password  : this.password
                 }
-                let curr : any = this;
+                let curr = this;
                 // if it passes, send to welcome screen
                 apiCalls.checkLogin(credentials)
-                    .then(function (response : boolean) {
-                        if (response) {
+                    .then(function (response) {
+                        console.log(response)
+                        if (response.login == true) {
                             curr.$store.commit('logIn')
+                            curr.$store.commit('instantiatePatient', response)
                             curr.$router.push({ name : "welcome" });
                         } else {
                             console.log("not accepted")

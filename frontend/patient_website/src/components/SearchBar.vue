@@ -9,8 +9,7 @@ export default {
         return {
             //google map objects initialized & mounted by SearchBar using props
             marker: null,
-            autocomplete : null,
-            geocoder : null
+            autocomplete : null
         }
     },
     props: {
@@ -27,9 +26,15 @@ export default {
         value : {
             type : Object,
             required: true
-        }   
+        },
+        
+        geocoder : {
+            type : Object,
+            required : true
+        }
     },
     mounted() {
+        console.log(this.geocoder)
         // initialize autocomplete object on input HTML element
         this.autocomplete = new this.google.maps.places.Autocomplete(this.$refs.searchInput)
         // puts HTML input at the top center of the map
@@ -54,7 +59,7 @@ export default {
         this.marker = new this.google.maps.Marker({
             map: this.map
         })
-        this.geocoder = new this.google.maps.Geocoder
+        // this.geocoder = new this.google.maps.Geocoder
     },
     methods : {
         // places a marker & adjusts map center based on autocomplete result
