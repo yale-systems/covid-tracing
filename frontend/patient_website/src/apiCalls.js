@@ -39,7 +39,7 @@ export default {
         var res = [];
         await axios.get(url)
             .then(function (response) {
-                console.log("getLocation")
+                // console.log("getLocation")
                 // console.log(response.data)
                 res = response.data
             })
@@ -47,5 +47,17 @@ export default {
                 console.log(error)
             })
         return res
+    },
+
+    async getContacts(url) {
+        var contacts = []
+        await axios.get(url)
+            .then(function(response) {
+                contacts = response.data
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+        return contacts
     }
 };

@@ -32,9 +32,10 @@ export default {
         console.log(geocoder)
         return geocoder
     },
-    async getStreetNameHelper(coordinates, geocoder) {
+
+    getStreetName (coordinates, geocoder, callback) {
         var streetName = 'dogs'
-        await geocoder.geocode({'location': coordinates}, function(results, status) {
+        geocoder.geocode({'location': coordinates}, function(results, status) {
             if (status === 'OK') {
                 if (results[0]) {
                     streetName = results[0].formatted_address
@@ -47,25 +48,20 @@ export default {
                 window.alert('Geocoder failed due to: ' + status);
                 streetName = ''
             }
-            console.log(streetName)
-            // return streetName;
+            callback(streetName);
         });
-        // while(streetName == 'dogs') {
-        //     console.log("still waiting")
-        // }
-        // console.log(streetName)
-        return streetName;
     },
-    async getStreetName(coordinates, geocoder) {
-        var streetName = 'cats'
-        await this.getStreetNameHelper(coordinates, geocoder)
-            .then(function(response) {
-                console.log(response)
-                streetName = response
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
-        return streetName
-    }
+    // async getStreetName(coordinates, geocoder) {
+    //     var streetName = 'cats'
+    //     await this.getStreetNameHelper(coordinates, geocoder)
+    //         .then(function(response) {
+    //             console.log(response)
+    //             streetName = response
+    //         })
+    //         .catch(function(error) {
+    //             console.log(error)
+    //         })
+    //     console.log(streetName)
+    //     return streetName
+    // }
 }
