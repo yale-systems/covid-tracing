@@ -2,19 +2,17 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.2 (Debian 11.2-1.pgdg90+1)
+-- Dumped from database version 12.2
 -- Dumped by pg_dump version 12.2
+-- DROP IF EXISTS dummy_data;
+-- DROP IF EXISTS contacts;
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+-- IF OBJECT_ID('dummy_data') IS NOT NULL
+--     DROP TABLE dummy_data;
+-- GO
+-- IF OBJECT_ID('contacts') IS NOT NULL
+--     DROP TABLE contacts;
+-- GO
 
 DROP TABLE IF EXISTS public.dummy_data;
 DROP TABLE IF EXISTS public.contacts;
@@ -27,134 +25,151 @@ DROP TABLE IF EXISTS public.public_users_locations;
 
 CREATE USER apiclient WITH PASSWORD 'testing';
 
---
--- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
---
 
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
-
-
---
--- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
-
-
---
--- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
-
-
---
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
-
-
---
--- Name: postgis_tiger_geocoder; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder WITH SCHEMA tiger;
-
-
---
--- Name: EXTENSION postgis_tiger_geocoder; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION postgis_tiger_geocoder IS 'PostGIS tiger geocoder and reverse geocoder';
-
-
---
--- Name: postgis_topology; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
-
-
---
--- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
-
-
---
--- Name: age_demographic; Type: TYPE; Schema: public; Owner: apiclient
---
-
-CREATE TYPE public.age_demographic AS ENUM (
-    'MINOR',
-    'ADULT',
-    'ELDERLY'
-);
-
-
-ALTER TYPE public.age_demographic OWNER TO apiclient;
-
---
--- Name: select_public_users(timestamp without time zone, integer, public.geometry); Type: PROCEDURE; Schema: public; Owner: postgres
---
-
-CREATE PROCEDURE public.select_public_users(point_time timestamp without time zone, range integer, point_loc public.geometry)
-    LANGUAGE sql
-    AS $$
-select public.public_users_locations.public_user_id
-from public.public_users_locations
-where ST_DWITHIN(public.st_transform(public_users_locations.geom, 32618), public.st_transform(point_loc, 32618), range)
-AND public.public_users_locations.start_time <= point_time
-AND public.public_users_locations.end_time >= point_time;
-$$;
-
-
-ALTER PROCEDURE public.select_public_users(point_time timestamp without time zone, range integer, point_loc public.geometry) OWNER TO postgres;
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
 SET default_tablespace = '';
 
---
--- Name: contacts; Type: TABLE; Schema: public; Owner: apiclient
---
 
-CREATE TABLE public.contacts (
-    contact_id integer NOT NULL,
-    first_name text,
-    last_name text,
-    email text,
-    phone_number text,
-    age public.age_demographic,
-    household boolean,
-    nature_of_contact text,
-    healthcare_worker boolean,
-    patient_id integer NOT NULL
+CREATE TABLE public.managers (
+    manager_id integer NOT NULL,
+    username text,
+    password text,
+    name text,
+    CONSTRAINT managers_pk PRIMARY KEY(manager_id)
 );
 
+CREATE TABLE public.volunteers (
+    volunteer_id integer NOT NULL,
+    username text,
+    password text,
+    name text,
+    email text,
+    CONSTRAINT volunteers_pk PRIMARY KEY(volunteer_id),
+    manager_id integer NOT NULL REFERENCES public.managers(manager_id)
+);
 
-ALTER TABLE public.contacts OWNER TO apiclient;
+CREATE TABLE public.patients (
+    patient_id integer NOT NULL,
+    username text,
+    password text,
+    name text,
+    email text,
+    manager_id integer NOT NULL REFERENCES public.managers(manager_id),
+    volunteer_id integer REFERENCES public.volunteers(volunteer_id),
+    CONSTRAINT patients_pk PRIMARY KEY(patient_id)
+);
 
---
--- Name: contacts_contact_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
+CREATE TABLE public.patient_locations (
+    id integer NOT NULL,
+    patient_id integer NOT NULL REFERENCES public.patients(patient_id),
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    confirmed boolean,
+    geom public.geometry(Point,4326),
+    CONSTRAINT patient_locations_pk PRIMARY KEY(id)
+);
 
-CREATE SEQUENCE public.contacts_contact_id_seq
+CREATE TABLE public.public_users (
+    public_user_id integer NOT NULL,
+    username text,
+    password text,
+    name text,
+    email text,
+    CONSTRAINT public_users_pk PRIMARY KEY(public_user_id)
+);
+
+CREATE TABLE public.public_users_locations (
+    id integer NOT NULL,
+    public_user_id integer NOT NULL REFERENCES public.public_users(public_user_id),
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    confirmed boolean,
+    geom public.geometry(Point,4326),
+    CONSTRAINT public_users_locations_pk PRIMARY KEY(id)
+);
+
+ALTER TABLE public.managers OWNER TO apiclient;
+ALTER TABLE public.volunteers OWNER TO apiclient;
+ALTER TABLE public.patients OWNER TO apiclient;
+ALTER TABLE public.patient_locations OWNER TO apiclient;
+ALTER TABLE public.public_users OWNER TO apiclient;
+ALTER TABLE public.public_users_locations OWNER TO apiclient;
+
+CREATE SEQUENCE public.managers_id_seq
     AS integer
-    START WITH 1
+    START WITH 5
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE public.volunteers_id_seq
+    AS integer
+    START WITH 41
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE public.patients_id_seq
+    AS integer
+    START WITH 101
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE public.patient_locations_id_seq
+    AS integer
+    START WITH 4351
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE public.public_users_id_seq
+    AS integer
+    START WITH 98
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE public.public_users_locations_id_seq
+    AS integer
+    START WITH 4651
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
+ALTER TABLE public.managers_id_seq OWNER TO apiclient;
+ALTER TABLE public.volunteers_id_seq OWNER TO apiclient;
+ALTER TABLE public.patients_id_seq OWNER TO apiclient;
+ALTER TABLE public.patient_locations_id_seq OWNER TO apiclient;
+ALTER TABLE public.public_users_id_seq OWNER TO apiclient;
+ALTER TABLE public.public_users_locations_id_seq OWNER TO apiclient;
 
-ALTER TABLE public.contacts_contact_id_seq OWNER TO apiclient;
+ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.manager_id;
+ALTER SEQUENCE public.volunteers_id_seq OWNED BY public.volunteers.volunteer_id;
+ALTER SEQUENCE public.patients_id_seq OWNED BY public.patients.patient_id;
+ALTER SEQUENCE public.patient_locations_id_seq OWNED BY public.patient_locations.id;
+ALTER SEQUENCE public.public_users_id_seq OWNED BY public.public_users.public_user_id;
+ALTER SEQUENCE public.public_users_locations_id_seq OWNED BY public.public_users_locations.id;
 
---
--- Name: contacts_contact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
+ALTER TABLE ONLY public.managers ALTER COLUMN manager_id SET DEFAULT nextval('public.managers_id_seq'::regclass);
+ALTER TABLE ONLY public.volunteers ALTER COLUMN volunteer_id SET DEFAULT nextval('public.volunteers_id_seq'::regclass);
+ALTER TABLE ONLY public.patients ALTER COLUMN patient_id SET DEFAULT nextval('public.patients_id_seq'::regclass);
+ALTER TABLE ONLY public.patient_locations ALTER COLUMN id SET DEFAULT nextval('public.patient_locations_id_seq'::regclass);
+ALTER TABLE ONLY public.public_users ALTER COLUMN public_user_id SET DEFAULT nextval('public.public_users_id_seq'::regclass);
+ALTER TABLE ONLY public.public_users_locations ALTER COLUMN id SET DEFAULT nextval('public.public_users_locations_id_seq'::regclass);
 
-ALTER SEQUENCE public.contacts_contact_id_seq OWNED BY public.contacts.contact_id;
+
 
 
 --
@@ -195,794 +210,12 @@ ALTER TABLE public.dummy_data_id_seq OWNER TO apiclient;
 ALTER SEQUENCE public.dummy_data_id_seq OWNED BY public.dummy_data.id;
 
 
---
--- Name: managers; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.managers (
-    manager_id integer NOT NULL,
-    username text,
-    password text,
-    name text
-);
-
-
-ALTER TABLE public.managers OWNER TO apiclient;
-
---
--- Name: managers_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.managers_id_seq
-    AS integer
-    START WITH 5
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.managers_id_seq OWNER TO apiclient;
-
---
--- Name: managers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.manager_id;
-
-
---
--- Name: patient_locations; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.patient_locations (
-    id integer NOT NULL,
-    patient_id integer NOT NULL,
-    start_time timestamp without time zone,
-    end_time timestamp without time zone,
-    confirmed boolean,
-    geom public.geometry(Point,4326)
-);
-
-
-ALTER TABLE public.patient_locations OWNER TO apiclient;
-
---
--- Name: patient_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.patient_locations_id_seq
-    AS integer
-    START WITH 4351
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.patient_locations_id_seq OWNER TO apiclient;
-
---
--- Name: patient_locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.patient_locations_id_seq OWNED BY public.patient_locations.id;
-
-
---
--- Name: patients; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.patients (
-    patient_id integer NOT NULL,
-    username text,
-    password text,
-    name text,
-    email text,
-    manager_id integer NOT NULL,
-    volunteer_id integer
-);
-
-
-ALTER TABLE public.patients OWNER TO apiclient;
-
---
--- Name: patients_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.patients_id_seq
-    AS integer
-    START WITH 101
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.patients_id_seq OWNER TO apiclient;
-
---
--- Name: patients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.patients_id_seq OWNED BY public.patients.patient_id;
-
-
---
--- Name: public_users; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.public_users (
-    public_user_id integer NOT NULL,
-    username text,
-    password text,
-    name text,
-    email text
-);
-
-
-ALTER TABLE public.public_users OWNER TO apiclient;
-
---
--- Name: public_users_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.public_users_id_seq
-    AS integer
-    START WITH 98
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.public_users_id_seq OWNER TO apiclient;
-
---
--- Name: public_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.public_users_id_seq OWNED BY public.public_users.public_user_id;
-
-
---
--- Name: public_users_locations; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.public_users_locations (
-    id integer NOT NULL,
-    public_user_id integer NOT NULL,
-    start_time timestamp without time zone,
-    end_time timestamp without time zone,
-    confirmed boolean,
-    geom public.geometry(Point,4326)
-);
-
-
-ALTER TABLE public.public_users_locations OWNER TO apiclient;
-
---
--- Name: public_users_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.public_users_locations_id_seq
-    AS integer
-    START WITH 4651
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.public_users_locations_id_seq OWNER TO apiclient;
-
---
--- Name: public_users_locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.public_users_locations_id_seq OWNED BY public.public_users_locations.id;
-
-
---
--- Name: volunteers; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.volunteers (
-    volunteer_id integer NOT NULL,
-    username text,
-    password text,
-    name text,
-    email text,
-    manager_id integer NOT NULL
-);
-
-
-ALTER TABLE public.volunteers OWNER TO apiclient;
-
---
--- Name: volunteers_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.volunteers_id_seq
-    AS integer
-    START WITH 41
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.volunteers_id_seq OWNER TO apiclient;
-
---
--- Name: volunteers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.volunteers_id_seq OWNED BY public.volunteers.volunteer_id;
-
-
---
--- Name: contacts contact_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.contacts ALTER COLUMN contact_id SET DEFAULT nextval('public.contacts_contact_id_seq'::regclass);
-
 
 --
 -- Name: dummy_data id; Type: DEFAULT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.dummy_data ALTER COLUMN id SET DEFAULT nextval('public.dummy_data_id_seq'::regclass);
-
-
---
--- Name: managers manager_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.managers ALTER COLUMN manager_id SET DEFAULT nextval('public.managers_id_seq'::regclass);
-
-
---
--- Name: patient_locations id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patient_locations ALTER COLUMN id SET DEFAULT nextval('public.patient_locations_id_seq'::regclass);
-
-
---
--- Name: patients patient_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patients ALTER COLUMN patient_id SET DEFAULT nextval('public.patients_id_seq'::regclass);
-
-
---
--- Name: public_users public_user_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.public_users ALTER COLUMN public_user_id SET DEFAULT nextval('public.public_users_id_seq'::regclass);
-
-
---
--- Name: public_users_locations id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.public_users_locations ALTER COLUMN id SET DEFAULT nextval('public.public_users_locations_id_seq'::regclass);
-
-
---
--- Name: volunteers volunteer_id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.volunteers ALTER COLUMN volunteer_id SET DEFAULT nextval('public.volunteers_id_seq'::regclass);
-
-
---
--- Data for Name: contacts; Type: TABLE DATA; Schema: public; Owner: apiclient
---
-
-COPY public.contacts (contact_id, first_name, last_name, email, phone_number, age, household, nature_of_contact, healthcare_worker, patient_id) FROM stdin;
-1	john1	smith1	contact1@gmail.com	111-111-111	MINOR	t	stop and shop	t	10
-2	john2	smith2	contact2@gmail.com	111-111-112	ELDERLY	t	stop and shop	f	23
-3	john3	smith3	contact3@gmail.com	111-111-113	ADULT	t	stop and shop	t	26
-4	john4	smith4	contact4@gmail.com	111-111-114	ADULT	f	stop and shop	t	29
-5	john5	smith5	contact5@gmail.com	111-111-115	ELDERLY	t	stop and shop	t	54
-6	john6	smith6	contact6@gmail.com	111-111-116	ADULT	f	stop and shop	f	74
-7	john7	smith7	contact7@gmail.com	111-111-117	ADULT	t	stop and shop	t	47
-8	john8	smith8	contact8@gmail.com	111-111-118	MINOR	t	stop and shop	f	42
-9	john9	smith9	contact9@gmail.com	111-111-119	ADULT	t	stop and shop	f	58
-10	john10	smith10	contact10@gmail.com	111-111-1110	MINOR	f	stop and shop	t	34
-11	john11	smith11	contact11@gmail.com	111-111-1111	ADULT	f	stop and shop	t	3
-12	john12	smith12	contact12@gmail.com	111-111-1112	MINOR	t	stop and shop	t	8
-13	john13	smith13	contact13@gmail.com	111-111-1113	ADULT	f	stop and shop	t	48
-14	john14	smith14	contact14@gmail.com	111-111-1114	MINOR	t	stop and shop	t	88
-15	john15	smith15	contact15@gmail.com	111-111-1115	ELDERLY	f	stop and shop	f	89
-16	john16	smith16	contact16@gmail.com	111-111-1116	MINOR	t	stop and shop	t	22
-17	john17	smith17	contact17@gmail.com	111-111-1117	ELDERLY	t	stop and shop	f	86
-18	john18	smith18	contact18@gmail.com	111-111-1118	ELDERLY	t	stop and shop	t	98
-19	john19	smith19	contact19@gmail.com	111-111-1119	ELDERLY	f	stop and shop	f	65
-20	john20	smith20	contact20@gmail.com	111-111-1120	ELDERLY	t	stop and shop	t	35
-21	john21	smith21	contact21@gmail.com	111-111-1121	ADULT	t	stop and shop	f	27
-22	john22	smith22	contact22@gmail.com	111-111-1122	ELDERLY	f	stop and shop	f	81
-23	john23	smith23	contact23@gmail.com	111-111-1123	ELDERLY	f	stop and shop	f	92
-24	john24	smith24	contact24@gmail.com	111-111-1124	ELDERLY	f	stop and shop	f	29
-25	john25	smith25	contact25@gmail.com	111-111-1125	ELDERLY	t	stop and shop	t	94
-26	john26	smith26	contact26@gmail.com	111-111-1126	ADULT	t	stop and shop	f	97
-27	john27	smith27	contact27@gmail.com	111-111-1127	ELDERLY	t	stop and shop	f	12
-28	john28	smith28	contact28@gmail.com	111-111-1128	ADULT	f	stop and shop	t	90
-29	john29	smith29	contact29@gmail.com	111-111-1129	ELDERLY	f	stop and shop	f	35
-30	john30	smith30	contact30@gmail.com	111-111-1130	MINOR	t	stop and shop	t	23
-31	john31	smith31	contact31@gmail.com	111-111-1131	ADULT	t	stop and shop	t	68
-32	john32	smith32	contact32@gmail.com	111-111-1132	ADULT	t	stop and shop	t	6
-33	john33	smith33	contact33@gmail.com	111-111-1133	ADULT	f	stop and shop	f	32
-34	john34	smith34	contact34@gmail.com	111-111-1134	MINOR	f	stop and shop	t	82
-35	john35	smith35	contact35@gmail.com	111-111-1135	ADULT	f	stop and shop	f	43
-36	john36	smith36	contact36@gmail.com	111-111-1136	ADULT	t	stop and shop	f	65
-37	john37	smith37	contact37@gmail.com	111-111-1137	MINOR	t	stop and shop	t	4
-38	john38	smith38	contact38@gmail.com	111-111-1138	ADULT	t	stop and shop	f	74
-39	john39	smith39	contact39@gmail.com	111-111-1139	ADULT	f	stop and shop	t	50
-40	john40	smith40	contact40@gmail.com	111-111-1140	ADULT	t	stop and shop	f	12
-41	john41	smith41	contact41@gmail.com	111-111-1141	MINOR	f	stop and shop	t	88
-42	john42	smith42	contact42@gmail.com	111-111-1142	ELDERLY	t	stop and shop	t	35
-43	john43	smith43	contact43@gmail.com	111-111-1143	ADULT	f	stop and shop	t	21
-44	john44	smith44	contact44@gmail.com	111-111-1144	ELDERLY	f	stop and shop	f	100
-45	john45	smith45	contact45@gmail.com	111-111-1145	ELDERLY	f	stop and shop	f	47
-46	john46	smith46	contact46@gmail.com	111-111-1146	MINOR	t	stop and shop	f	48
-47	john47	smith47	contact47@gmail.com	111-111-1147	MINOR	t	stop and shop	f	52
-48	john48	smith48	contact48@gmail.com	111-111-1148	ADULT	t	stop and shop	f	29
-49	john49	smith49	contact49@gmail.com	111-111-1149	ADULT	f	stop and shop	f	46
-50	john50	smith50	contact50@gmail.com	111-111-1150	ADULT	t	stop and shop	f	5
-51	john51	smith51	contact51@gmail.com	111-111-1151	ADULT	t	stop and shop	t	26
-52	john52	smith52	contact52@gmail.com	111-111-1152	ELDERLY	t	stop and shop	t	64
-53	john53	smith53	contact53@gmail.com	111-111-1153	ELDERLY	f	stop and shop	t	49
-54	john54	smith54	contact54@gmail.com	111-111-1154	ADULT	t	stop and shop	f	90
-55	john55	smith55	contact55@gmail.com	111-111-1155	ELDERLY	f	stop and shop	f	89
-56	john56	smith56	contact56@gmail.com	111-111-1156	ADULT	f	stop and shop	t	3
-57	john57	smith57	contact57@gmail.com	111-111-1157	MINOR	t	stop and shop	t	92
-58	john58	smith58	contact58@gmail.com	111-111-1158	ELDERLY	f	stop and shop	f	93
-59	john59	smith59	contact59@gmail.com	111-111-1159	ADULT	f	stop and shop	t	22
-60	john60	smith60	contact60@gmail.com	111-111-1160	ELDERLY	f	stop and shop	f	21
-61	john61	smith61	contact61@gmail.com	111-111-1161	MINOR	t	stop and shop	f	61
-62	john62	smith62	contact62@gmail.com	111-111-1162	MINOR	f	stop and shop	t	68
-63	john63	smith63	contact63@gmail.com	111-111-1163	ELDERLY	t	stop and shop	f	34
-64	john64	smith64	contact64@gmail.com	111-111-1164	ADULT	t	stop and shop	f	9
-65	john65	smith65	contact65@gmail.com	111-111-1165	ELDERLY	f	stop and shop	t	3
-66	john66	smith66	contact66@gmail.com	111-111-1166	ADULT	t	stop and shop	t	34
-67	john67	smith67	contact67@gmail.com	111-111-1167	ADULT	t	stop and shop	t	29
-68	john68	smith68	contact68@gmail.com	111-111-1168	ADULT	f	stop and shop	f	55
-69	john69	smith69	contact69@gmail.com	111-111-1169	ADULT	f	stop and shop	t	72
-70	john70	smith70	contact70@gmail.com	111-111-1170	MINOR	t	stop and shop	f	16
-71	john71	smith71	contact71@gmail.com	111-111-1171	ADULT	t	stop and shop	f	2
-72	john72	smith72	contact72@gmail.com	111-111-1172	ADULT	t	stop and shop	t	92
-73	john73	smith73	contact73@gmail.com	111-111-1173	ADULT	f	stop and shop	t	49
-74	john74	smith74	contact74@gmail.com	111-111-1174	MINOR	f	stop and shop	f	6
-75	john75	smith75	contact75@gmail.com	111-111-1175	MINOR	t	stop and shop	t	90
-76	john76	smith76	contact76@gmail.com	111-111-1176	MINOR	t	stop and shop	t	37
-77	john77	smith77	contact77@gmail.com	111-111-1177	ELDERLY	t	stop and shop	t	19
-78	john78	smith78	contact78@gmail.com	111-111-1178	MINOR	t	stop and shop	t	14
-79	john79	smith79	contact79@gmail.com	111-111-1179	ELDERLY	t	stop and shop	t	23
-80	john80	smith80	contact80@gmail.com	111-111-1180	MINOR	t	stop and shop	f	25
-81	john81	smith81	contact81@gmail.com	111-111-1181	ELDERLY	f	stop and shop	f	74
-82	john82	smith82	contact82@gmail.com	111-111-1182	ADULT	f	stop and shop	f	2
-83	john83	smith83	contact83@gmail.com	111-111-1183	MINOR	t	stop and shop	t	54
-84	john84	smith84	contact84@gmail.com	111-111-1184	ADULT	f	stop and shop	f	54
-85	john85	smith85	contact85@gmail.com	111-111-1185	MINOR	t	stop and shop	t	90
-86	john86	smith86	contact86@gmail.com	111-111-1186	ELDERLY	f	stop and shop	t	93
-87	john87	smith87	contact87@gmail.com	111-111-1187	MINOR	t	stop and shop	t	78
-88	john88	smith88	contact88@gmail.com	111-111-1188	MINOR	t	stop and shop	t	21
-89	john89	smith89	contact89@gmail.com	111-111-1189	ELDERLY	t	stop and shop	t	67
-90	john90	smith90	contact90@gmail.com	111-111-1190	ADULT	f	stop and shop	t	37
-91	john91	smith91	contact91@gmail.com	111-111-1191	ELDERLY	t	stop and shop	t	52
-92	john92	smith92	contact92@gmail.com	111-111-1192	ADULT	t	stop and shop	f	86
-93	john93	smith93	contact93@gmail.com	111-111-1193	ADULT	f	stop and shop	t	27
-94	john94	smith94	contact94@gmail.com	111-111-1194	ADULT	t	stop and shop	t	53
-95	john95	smith95	contact95@gmail.com	111-111-1195	MINOR	t	stop and shop	t	26
-96	john96	smith96	contact96@gmail.com	111-111-1196	ELDERLY	f	stop and shop	t	51
-97	john97	smith97	contact97@gmail.com	111-111-1197	MINOR	f	stop and shop	f	41
-98	john98	smith98	contact98@gmail.com	111-111-1198	ADULT	t	stop and shop	f	16
-99	john99	smith99	contact99@gmail.com	111-111-1199	ADULT	f	stop and shop	f	31
-100	john100	smith100	contact100@gmail.com	111-111-11100	ADULT	f	stop and shop	t	41
-101	john101	smith101	contact101@gmail.com	111-111-11101	ADULT	t	stop and shop	f	8
-102	john102	smith102	contact102@gmail.com	111-111-11102	MINOR	t	stop and shop	t	95
-103	john103	smith103	contact103@gmail.com	111-111-11103	MINOR	f	stop and shop	f	46
-104	john104	smith104	contact104@gmail.com	111-111-11104	ADULT	t	stop and shop	t	22
-105	john105	smith105	contact105@gmail.com	111-111-11105	MINOR	f	stop and shop	f	57
-106	john106	smith106	contact106@gmail.com	111-111-11106	MINOR	t	stop and shop	f	8
-107	john107	smith107	contact107@gmail.com	111-111-11107	ADULT	t	stop and shop	t	78
-108	john108	smith108	contact108@gmail.com	111-111-11108	ADULT	t	stop and shop	f	84
-109	john109	smith109	contact109@gmail.com	111-111-11109	MINOR	t	stop and shop	f	82
-110	john110	smith110	contact110@gmail.com	111-111-11110	MINOR	t	stop and shop	f	57
-111	john111	smith111	contact111@gmail.com	111-111-11111	ADULT	t	stop and shop	t	10
-112	john112	smith112	contact112@gmail.com	111-111-11112	ADULT	t	stop and shop	t	70
-113	john113	smith113	contact113@gmail.com	111-111-11113	MINOR	f	stop and shop	t	15
-114	john114	smith114	contact114@gmail.com	111-111-11114	ELDERLY	t	stop and shop	t	54
-115	john115	smith115	contact115@gmail.com	111-111-11115	MINOR	f	stop and shop	t	92
-116	john116	smith116	contact116@gmail.com	111-111-11116	MINOR	f	stop and shop	t	31
-117	john117	smith117	contact117@gmail.com	111-111-11117	ADULT	t	stop and shop	t	17
-118	john118	smith118	contact118@gmail.com	111-111-11118	ADULT	t	stop and shop	f	4
-119	john119	smith119	contact119@gmail.com	111-111-11119	ADULT	f	stop and shop	t	55
-120	john120	smith120	contact120@gmail.com	111-111-11120	ADULT	t	stop and shop	f	21
-121	john121	smith121	contact121@gmail.com	111-111-11121	MINOR	t	stop and shop	t	43
-122	john122	smith122	contact122@gmail.com	111-111-11122	MINOR	f	stop and shop	t	93
-123	john123	smith123	contact123@gmail.com	111-111-11123	ADULT	t	stop and shop	t	100
-124	john124	smith124	contact124@gmail.com	111-111-11124	ELDERLY	f	stop and shop	f	2
-125	john125	smith125	contact125@gmail.com	111-111-11125	ELDERLY	t	stop and shop	t	48
-126	john126	smith126	contact126@gmail.com	111-111-11126	ELDERLY	t	stop and shop	t	83
-127	john127	smith127	contact127@gmail.com	111-111-11127	ELDERLY	t	stop and shop	t	33
-128	john128	smith128	contact128@gmail.com	111-111-11128	ADULT	t	stop and shop	t	63
-129	john129	smith129	contact129@gmail.com	111-111-11129	MINOR	f	stop and shop	f	21
-130	john130	smith130	contact130@gmail.com	111-111-11130	MINOR	t	stop and shop	f	10
-131	john131	smith131	contact131@gmail.com	111-111-11131	ELDERLY	t	stop and shop	t	4
-132	john132	smith132	contact132@gmail.com	111-111-11132	MINOR	t	stop and shop	t	56
-133	john133	smith133	contact133@gmail.com	111-111-11133	ADULT	t	stop and shop	t	62
-134	john134	smith134	contact134@gmail.com	111-111-11134	ELDERLY	t	stop and shop	f	28
-135	john135	smith135	contact135@gmail.com	111-111-11135	ADULT	f	stop and shop	f	85
-136	john136	smith136	contact136@gmail.com	111-111-11136	MINOR	f	stop and shop	f	61
-137	john137	smith137	contact137@gmail.com	111-111-11137	ADULT	t	stop and shop	f	72
-138	john138	smith138	contact138@gmail.com	111-111-11138	ADULT	t	stop and shop	t	7
-139	john139	smith139	contact139@gmail.com	111-111-11139	MINOR	f	stop and shop	t	30
-140	john140	smith140	contact140@gmail.com	111-111-11140	ADULT	f	stop and shop	t	64
-141	john141	smith141	contact141@gmail.com	111-111-11141	ELDERLY	f	stop and shop	t	9
-142	john142	smith142	contact142@gmail.com	111-111-11142	MINOR	t	stop and shop	t	9
-143	john143	smith143	contact143@gmail.com	111-111-11143	ADULT	t	stop and shop	f	66
-144	john144	smith144	contact144@gmail.com	111-111-11144	MINOR	f	stop and shop	t	51
-145	john145	smith145	contact145@gmail.com	111-111-11145	MINOR	t	stop and shop	f	50
-146	john146	smith146	contact146@gmail.com	111-111-11146	ADULT	t	stop and shop	f	1
-147	john147	smith147	contact147@gmail.com	111-111-11147	ADULT	t	stop and shop	f	96
-148	john148	smith148	contact148@gmail.com	111-111-11148	MINOR	t	stop and shop	f	21
-149	john149	smith149	contact149@gmail.com	111-111-11149	ADULT	f	stop and shop	t	25
-150	john150	smith150	contact150@gmail.com	111-111-11150	MINOR	t	stop and shop	f	26
-151	john151	smith151	contact151@gmail.com	111-111-11151	MINOR	t	stop and shop	t	39
-152	john152	smith152	contact152@gmail.com	111-111-11152	MINOR	t	stop and shop	t	57
-153	john153	smith153	contact153@gmail.com	111-111-11153	ADULT	f	stop and shop	f	50
-154	john154	smith154	contact154@gmail.com	111-111-11154	ADULT	f	stop and shop	f	3
-155	john155	smith155	contact155@gmail.com	111-111-11155	ELDERLY	f	stop and shop	f	35
-156	john156	smith156	contact156@gmail.com	111-111-11156	ADULT	f	stop and shop	t	83
-157	john157	smith157	contact157@gmail.com	111-111-11157	MINOR	t	stop and shop	t	42
-158	john158	smith158	contact158@gmail.com	111-111-11158	ELDERLY	t	stop and shop	f	65
-159	john159	smith159	contact159@gmail.com	111-111-11159	MINOR	t	stop and shop	f	19
-160	john160	smith160	contact160@gmail.com	111-111-11160	ADULT	t	stop and shop	t	36
-161	john161	smith161	contact161@gmail.com	111-111-11161	ADULT	f	stop and shop	f	28
-162	john162	smith162	contact162@gmail.com	111-111-11162	ADULT	f	stop and shop	t	80
-163	john163	smith163	contact163@gmail.com	111-111-11163	MINOR	f	stop and shop	t	22
-164	john164	smith164	contact164@gmail.com	111-111-11164	MINOR	t	stop and shop	f	97
-165	john165	smith165	contact165@gmail.com	111-111-11165	MINOR	t	stop and shop	f	46
-166	john166	smith166	contact166@gmail.com	111-111-11166	ADULT	f	stop and shop	t	89
-167	john167	smith167	contact167@gmail.com	111-111-11167	MINOR	f	stop and shop	t	41
-168	john168	smith168	contact168@gmail.com	111-111-11168	MINOR	f	stop and shop	t	55
-169	john169	smith169	contact169@gmail.com	111-111-11169	ADULT	f	stop and shop	f	89
-170	john170	smith170	contact170@gmail.com	111-111-11170	ADULT	t	stop and shop	t	84
-171	john171	smith171	contact171@gmail.com	111-111-11171	MINOR	t	stop and shop	t	72
-172	john172	smith172	contact172@gmail.com	111-111-11172	MINOR	f	stop and shop	t	35
-173	john173	smith173	contact173@gmail.com	111-111-11173	MINOR	f	stop and shop	t	95
-174	john174	smith174	contact174@gmail.com	111-111-11174	ADULT	f	stop and shop	t	13
-175	john175	smith175	contact175@gmail.com	111-111-11175	ADULT	t	stop and shop	t	39
-176	john176	smith176	contact176@gmail.com	111-111-11176	MINOR	f	stop and shop	f	10
-177	john177	smith177	contact177@gmail.com	111-111-11177	MINOR	f	stop and shop	f	40
-178	john178	smith178	contact178@gmail.com	111-111-11178	ELDERLY	t	stop and shop	f	64
-179	john179	smith179	contact179@gmail.com	111-111-11179	ELDERLY	f	stop and shop	f	80
-180	john180	smith180	contact180@gmail.com	111-111-11180	MINOR	t	stop and shop	t	6
-181	john181	smith181	contact181@gmail.com	111-111-11181	ADULT	f	stop and shop	f	56
-182	john182	smith182	contact182@gmail.com	111-111-11182	ADULT	f	stop and shop	f	99
-183	john183	smith183	contact183@gmail.com	111-111-11183	ADULT	f	stop and shop	f	62
-184	john184	smith184	contact184@gmail.com	111-111-11184	ELDERLY	t	stop and shop	t	58
-185	john185	smith185	contact185@gmail.com	111-111-11185	MINOR	t	stop and shop	f	86
-186	john186	smith186	contact186@gmail.com	111-111-11186	MINOR	t	stop and shop	t	9
-187	john187	smith187	contact187@gmail.com	111-111-11187	MINOR	t	stop and shop	t	90
-188	john188	smith188	contact188@gmail.com	111-111-11188	MINOR	f	stop and shop	t	27
-189	john189	smith189	contact189@gmail.com	111-111-11189	ADULT	t	stop and shop	f	57
-190	john190	smith190	contact190@gmail.com	111-111-11190	MINOR	f	stop and shop	t	7
-191	john191	smith191	contact191@gmail.com	111-111-11191	ELDERLY	t	stop and shop	f	53
-192	john192	smith192	contact192@gmail.com	111-111-11192	ELDERLY	f	stop and shop	f	4
-193	john193	smith193	contact193@gmail.com	111-111-11193	ADULT	t	stop and shop	f	55
-194	john194	smith194	contact194@gmail.com	111-111-11194	MINOR	t	stop and shop	f	64
-195	john195	smith195	contact195@gmail.com	111-111-11195	ELDERLY	f	stop and shop	f	81
-196	john196	smith196	contact196@gmail.com	111-111-11196	MINOR	f	stop and shop	t	85
-197	john197	smith197	contact197@gmail.com	111-111-11197	ELDERLY	t	stop and shop	f	59
-198	john198	smith198	contact198@gmail.com	111-111-11198	MINOR	f	stop and shop	f	53
-199	john199	smith199	contact199@gmail.com	111-111-11199	ADULT	t	stop and shop	f	97
-200	john200	smith200	contact200@gmail.com	111-111-11200	ELDERLY	t	stop and shop	f	92
-201	john201	smith201	contact201@gmail.com	111-111-11201	ELDERLY	t	stop and shop	t	46
-202	john202	smith202	contact202@gmail.com	111-111-11202	ADULT	f	stop and shop	f	96
-203	john203	smith203	contact203@gmail.com	111-111-11203	ELDERLY	f	stop and shop	t	34
-204	john204	smith204	contact204@gmail.com	111-111-11204	ELDERLY	t	stop and shop	t	35
-205	john205	smith205	contact205@gmail.com	111-111-11205	ELDERLY	t	stop and shop	t	91
-206	john206	smith206	contact206@gmail.com	111-111-11206	MINOR	f	stop and shop	f	92
-207	john207	smith207	contact207@gmail.com	111-111-11207	MINOR	t	stop and shop	f	62
-208	john208	smith208	contact208@gmail.com	111-111-11208	MINOR	t	stop and shop	t	49
-209	john209	smith209	contact209@gmail.com	111-111-11209	ELDERLY	f	stop and shop	t	7
-210	john210	smith210	contact210@gmail.com	111-111-11210	ELDERLY	f	stop and shop	t	50
-211	john211	smith211	contact211@gmail.com	111-111-11211	ADULT	t	stop and shop	f	31
-212	john212	smith212	contact212@gmail.com	111-111-11212	ADULT	t	stop and shop	f	62
-213	john213	smith213	contact213@gmail.com	111-111-11213	ADULT	t	stop and shop	f	89
-214	john214	smith214	contact214@gmail.com	111-111-11214	ELDERLY	f	stop and shop	f	74
-215	john215	smith215	contact215@gmail.com	111-111-11215	ELDERLY	t	stop and shop	t	18
-216	john216	smith216	contact216@gmail.com	111-111-11216	ELDERLY	t	stop and shop	f	60
-217	john217	smith217	contact217@gmail.com	111-111-11217	ELDERLY	f	stop and shop	t	9
-218	john218	smith218	contact218@gmail.com	111-111-11218	ADULT	t	stop and shop	t	41
-219	john219	smith219	contact219@gmail.com	111-111-11219	ADULT	t	stop and shop	f	2
-220	john220	smith220	contact220@gmail.com	111-111-11220	ADULT	t	stop and shop	f	11
-221	john221	smith221	contact221@gmail.com	111-111-11221	MINOR	t	stop and shop	f	44
-222	john222	smith222	contact222@gmail.com	111-111-11222	ELDERLY	f	stop and shop	t	100
-223	john223	smith223	contact223@gmail.com	111-111-11223	ADULT	f	stop and shop	t	86
-224	john224	smith224	contact224@gmail.com	111-111-11224	ELDERLY	t	stop and shop	t	79
-225	john225	smith225	contact225@gmail.com	111-111-11225	ELDERLY	f	stop and shop	t	1
-226	john226	smith226	contact226@gmail.com	111-111-11226	ADULT	t	stop and shop	f	30
-227	john227	smith227	contact227@gmail.com	111-111-11227	ELDERLY	f	stop and shop	f	62
-228	john228	smith228	contact228@gmail.com	111-111-11228	ADULT	f	stop and shop	f	100
-229	john229	smith229	contact229@gmail.com	111-111-11229	ADULT	f	stop and shop	f	36
-230	john230	smith230	contact230@gmail.com	111-111-11230	MINOR	t	stop and shop	f	64
-231	john231	smith231	contact231@gmail.com	111-111-11231	ADULT	t	stop and shop	f	72
-232	john232	smith232	contact232@gmail.com	111-111-11232	MINOR	t	stop and shop	f	78
-233	john233	smith233	contact233@gmail.com	111-111-11233	ADULT	t	stop and shop	f	98
-234	john234	smith234	contact234@gmail.com	111-111-11234	ELDERLY	t	stop and shop	f	44
-235	john235	smith235	contact235@gmail.com	111-111-11235	MINOR	t	stop and shop	f	15
-236	john236	smith236	contact236@gmail.com	111-111-11236	MINOR	t	stop and shop	f	24
-237	john237	smith237	contact237@gmail.com	111-111-11237	ADULT	t	stop and shop	t	53
-238	john238	smith238	contact238@gmail.com	111-111-11238	ELDERLY	f	stop and shop	t	13
-239	john239	smith239	contact239@gmail.com	111-111-11239	ADULT	t	stop and shop	t	21
-240	john240	smith240	contact240@gmail.com	111-111-11240	MINOR	f	stop and shop	f	89
-241	john241	smith241	contact241@gmail.com	111-111-11241	MINOR	f	stop and shop	t	83
-242	john242	smith242	contact242@gmail.com	111-111-11242	MINOR	t	stop and shop	t	67
-243	john243	smith243	contact243@gmail.com	111-111-11243	ELDERLY	f	stop and shop	f	18
-244	john244	smith244	contact244@gmail.com	111-111-11244	MINOR	t	stop and shop	t	100
-245	john245	smith245	contact245@gmail.com	111-111-11245	ELDERLY	t	stop and shop	t	87
-246	john246	smith246	contact246@gmail.com	111-111-11246	ELDERLY	t	stop and shop	t	12
-247	john247	smith247	contact247@gmail.com	111-111-11247	ADULT	t	stop and shop	t	18
-248	john248	smith248	contact248@gmail.com	111-111-11248	ADULT	t	stop and shop	f	33
-249	john249	smith249	contact249@gmail.com	111-111-11249	MINOR	f	stop and shop	f	73
-250	john250	smith250	contact250@gmail.com	111-111-11250	MINOR	f	stop and shop	f	73
-251	john251	smith251	contact251@gmail.com	111-111-11251	MINOR	f	stop and shop	t	37
-252	john252	smith252	contact252@gmail.com	111-111-11252	MINOR	t	stop and shop	f	61
-253	john253	smith253	contact253@gmail.com	111-111-11253	ADULT	f	stop and shop	f	31
-254	john254	smith254	contact254@gmail.com	111-111-11254	MINOR	t	stop and shop	t	9
-255	john255	smith255	contact255@gmail.com	111-111-11255	ADULT	f	stop and shop	f	13
-256	john256	smith256	contact256@gmail.com	111-111-11256	MINOR	f	stop and shop	f	8
-257	john257	smith257	contact257@gmail.com	111-111-11257	ELDERLY	f	stop and shop	t	18
-258	john258	smith258	contact258@gmail.com	111-111-11258	MINOR	t	stop and shop	f	54
-259	john259	smith259	contact259@gmail.com	111-111-11259	ELDERLY	f	stop and shop	t	19
-260	john260	smith260	contact260@gmail.com	111-111-11260	ELDERLY	t	stop and shop	t	42
-261	john261	smith261	contact261@gmail.com	111-111-11261	ELDERLY	t	stop and shop	f	10
-262	john262	smith262	contact262@gmail.com	111-111-11262	MINOR	f	stop and shop	t	42
-263	john263	smith263	contact263@gmail.com	111-111-11263	ADULT	t	stop and shop	t	2
-264	john264	smith264	contact264@gmail.com	111-111-11264	MINOR	t	stop and shop	t	11
-265	john265	smith265	contact265@gmail.com	111-111-11265	ELDERLY	t	stop and shop	t	31
-266	john266	smith266	contact266@gmail.com	111-111-11266	MINOR	f	stop and shop	f	91
-267	john267	smith267	contact267@gmail.com	111-111-11267	ADULT	t	stop and shop	f	49
-268	john268	smith268	contact268@gmail.com	111-111-11268	ELDERLY	t	stop and shop	f	81
-269	john269	smith269	contact269@gmail.com	111-111-11269	ELDERLY	f	stop and shop	f	30
-270	john270	smith270	contact270@gmail.com	111-111-11270	MINOR	t	stop and shop	f	80
-271	john271	smith271	contact271@gmail.com	111-111-11271	ELDERLY	t	stop and shop	t	94
-272	john272	smith272	contact272@gmail.com	111-111-11272	MINOR	f	stop and shop	t	26
-273	john273	smith273	contact273@gmail.com	111-111-11273	ADULT	t	stop and shop	f	81
-274	john274	smith274	contact274@gmail.com	111-111-11274	ELDERLY	f	stop and shop	f	62
-275	john275	smith275	contact275@gmail.com	111-111-11275	ADULT	f	stop and shop	f	37
-276	john276	smith276	contact276@gmail.com	111-111-11276	ELDERLY	f	stop and shop	f	28
-277	john277	smith277	contact277@gmail.com	111-111-11277	ADULT	f	stop and shop	t	79
-278	john278	smith278	contact278@gmail.com	111-111-11278	ADULT	f	stop and shop	t	54
-279	john279	smith279	contact279@gmail.com	111-111-11279	MINOR	t	stop and shop	t	53
-280	john280	smith280	contact280@gmail.com	111-111-11280	ADULT	f	stop and shop	f	25
-281	john281	smith281	contact281@gmail.com	111-111-11281	MINOR	t	stop and shop	f	23
-282	john282	smith282	contact282@gmail.com	111-111-11282	MINOR	f	stop and shop	t	29
-283	john283	smith283	contact283@gmail.com	111-111-11283	ADULT	f	stop and shop	f	68
-284	john284	smith284	contact284@gmail.com	111-111-11284	MINOR	t	stop and shop	f	82
-285	john285	smith285	contact285@gmail.com	111-111-11285	MINOR	f	stop and shop	f	2
-286	john286	smith286	contact286@gmail.com	111-111-11286	ELDERLY	t	stop and shop	f	16
-287	john287	smith287	contact287@gmail.com	111-111-11287	ADULT	f	stop and shop	f	48
-288	john288	smith288	contact288@gmail.com	111-111-11288	ELDERLY	t	stop and shop	t	49
-289	john289	smith289	contact289@gmail.com	111-111-11289	ELDERLY	f	stop and shop	f	6
-290	john290	smith290	contact290@gmail.com	111-111-11290	MINOR	t	stop and shop	t	3
-291	john291	smith291	contact291@gmail.com	111-111-11291	MINOR	f	stop and shop	f	29
-292	john292	smith292	contact292@gmail.com	111-111-11292	MINOR	f	stop and shop	f	20
-293	john293	smith293	contact293@gmail.com	111-111-11293	MINOR	t	stop and shop	t	40
-294	john294	smith294	contact294@gmail.com	111-111-11294	ADULT	f	stop and shop	t	83
-295	john295	smith295	contact295@gmail.com	111-111-11295	ELDERLY	f	stop and shop	t	94
-296	john296	smith296	contact296@gmail.com	111-111-11296	MINOR	f	stop and shop	f	25
-297	john297	smith297	contact297@gmail.com	111-111-11297	ADULT	f	stop and shop	t	2
-298	john298	smith298	contact298@gmail.com	111-111-11298	ADULT	f	stop and shop	f	16
-299	john299	smith299	contact299@gmail.com	111-111-11299	ELDERLY	t	stop and shop	t	83
-300	john300	smith300	contact300@gmail.com	111-111-11300	MINOR	f	stop and shop	t	100
-301	john301	smith301	contact301@gmail.com	111-111-11301	ADULT	f	stop and shop	t	97
-302	john302	smith302	contact302@gmail.com	111-111-11302	ELDERLY	t	stop and shop	t	19
-303	john303	smith303	contact303@gmail.com	111-111-11303	ELDERLY	f	stop and shop	f	69
-304	john304	smith304	contact304@gmail.com	111-111-11304	ADULT	t	stop and shop	f	15
-305	john305	smith305	contact305@gmail.com	111-111-11305	MINOR	f	stop and shop	t	47
-306	john306	smith306	contact306@gmail.com	111-111-11306	ELDERLY	t	stop and shop	f	2
-307	john307	smith307	contact307@gmail.com	111-111-11307	MINOR	t	stop and shop	f	40
-308	john308	smith308	contact308@gmail.com	111-111-11308	ADULT	t	stop and shop	t	2
-309	john309	smith309	contact309@gmail.com	111-111-11309	ELDERLY	t	stop and shop	t	99
-310	john310	smith310	contact310@gmail.com	111-111-11310	ELDERLY	f	stop and shop	t	51
-311	john311	smith311	contact311@gmail.com	111-111-11311	MINOR	f	stop and shop	t	74
-312	john312	smith312	contact312@gmail.com	111-111-11312	ADULT	f	stop and shop	t	23
-313	john313	smith313	contact313@gmail.com	111-111-11313	ELDERLY	t	stop and shop	t	38
-314	john314	smith314	contact314@gmail.com	111-111-11314	ELDERLY	t	stop and shop	t	16
-315	john315	smith315	contact315@gmail.com	111-111-11315	ELDERLY	t	stop and shop	f	72
-316	john316	smith316	contact316@gmail.com	111-111-11316	ELDERLY	t	stop and shop	f	58
-317	john317	smith317	contact317@gmail.com	111-111-11317	MINOR	f	stop and shop	f	24
-318	john318	smith318	contact318@gmail.com	111-111-11318	ELDERLY	f	stop and shop	f	20
-319	john319	smith319	contact319@gmail.com	111-111-11319	ELDERLY	t	stop and shop	f	11
-320	john320	smith320	contact320@gmail.com	111-111-11320	MINOR	f	stop and shop	t	38
-321	john321	smith321	contact321@gmail.com	111-111-11321	MINOR	t	stop and shop	f	53
-322	john322	smith322	contact322@gmail.com	111-111-11322	MINOR	t	stop and shop	f	58
-323	john323	smith323	contact323@gmail.com	111-111-11323	ADULT	f	stop and shop	t	45
-324	john324	smith324	contact324@gmail.com	111-111-11324	ELDERLY	t	stop and shop	f	83
-325	john325	smith325	contact325@gmail.com	111-111-11325	MINOR	f	stop and shop	f	53
-326	john326	smith326	contact326@gmail.com	111-111-11326	MINOR	t	stop and shop	f	43
-327	john327	smith327	contact327@gmail.com	111-111-11327	ADULT	t	stop and shop	t	12
-328	john328	smith328	contact328@gmail.com	111-111-11328	ADULT	t	stop and shop	f	23
-329	john329	smith329	contact329@gmail.com	111-111-11329	ADULT	f	stop and shop	f	26
-330	john330	smith330	contact330@gmail.com	111-111-11330	ADULT	f	stop and shop	f	96
-331	john331	smith331	contact331@gmail.com	111-111-11331	ADULT	f	stop and shop	f	1
-332	john332	smith332	contact332@gmail.com	111-111-11332	ADULT	f	stop and shop	f	22
-333	john333	smith333	contact333@gmail.com	111-111-11333	ELDERLY	t	stop and shop	f	93
-334	john334	smith334	contact334@gmail.com	111-111-11334	ELDERLY	t	stop and shop	f	78
-335	john335	smith335	contact335@gmail.com	111-111-11335	ELDERLY	t	stop and shop	t	62
-336	john336	smith336	contact336@gmail.com	111-111-11336	ADULT	f	stop and shop	t	42
-337	john337	smith337	contact337@gmail.com	111-111-11337	ADULT	f	stop and shop	f	80
-338	john338	smith338	contact338@gmail.com	111-111-11338	ELDERLY	f	stop and shop	f	98
-339	john339	smith339	contact339@gmail.com	111-111-11339	MINOR	f	stop and shop	f	60
-340	john340	smith340	contact340@gmail.com	111-111-11340	ADULT	f	stop and shop	t	28
-341	john341	smith341	contact341@gmail.com	111-111-11341	MINOR	t	stop and shop	t	98
-342	john342	smith342	contact342@gmail.com	111-111-11342	ADULT	t	stop and shop	f	67
-343	john343	smith343	contact343@gmail.com	111-111-11343	ELDERLY	t	stop and shop	f	5
-344	john344	smith344	contact344@gmail.com	111-111-11344	MINOR	f	stop and shop	f	100
-345	john345	smith345	contact345@gmail.com	111-111-11345	ADULT	t	stop and shop	f	44
-346	john346	smith346	contact346@gmail.com	111-111-11346	ADULT	t	stop and shop	t	32
-347	john347	smith347	contact347@gmail.com	111-111-11347	MINOR	t	stop and shop	t	51
-348	john348	smith348	contact348@gmail.com	111-111-11348	MINOR	f	stop and shop	f	79
-349	john349	smith349	contact349@gmail.com	111-111-11349	ELDERLY	t	stop and shop	f	25
-350	john350	smith350	contact350@gmail.com	111-111-11350	ADULT	t	stop and shop	f	26
-351	john351	smith351	contact351@gmail.com	111-111-11351	MINOR	f	stop and shop	f	86
-352	john352	smith352	contact352@gmail.com	111-111-11352	ELDERLY	f	stop and shop	f	24
-353	john353	smith353	contact353@gmail.com	111-111-11353	MINOR	t	stop and shop	t	14
-354	john354	smith354	contact354@gmail.com	111-111-11354	MINOR	f	stop and shop	t	73
-355	john355	smith355	contact355@gmail.com	111-111-11355	MINOR	t	stop and shop	t	88
-356	john356	smith356	contact356@gmail.com	111-111-11356	ADULT	f	stop and shop	f	25
-357	john357	smith357	contact357@gmail.com	111-111-11357	ADULT	f	stop and shop	t	95
-358	john358	smith358	contact358@gmail.com	111-111-11358	ELDERLY	t	stop and shop	t	39
-359	john359	smith359	contact359@gmail.com	111-111-11359	MINOR	f	stop and shop	f	8
-360	john360	smith360	contact360@gmail.com	111-111-11360	ELDERLY	f	stop and shop	t	55
-361	john361	smith361	contact361@gmail.com	111-111-11361	ADULT	t	stop and shop	t	87
-362	john362	smith362	contact362@gmail.com	111-111-11362	ELDERLY	f	stop and shop	t	98
-363	john363	smith363	contact363@gmail.com	111-111-11363	ELDERLY	t	stop and shop	f	90
-364	john364	smith364	contact364@gmail.com	111-111-11364	ELDERLY	f	stop and shop	t	22
-365	john365	smith365	contact365@gmail.com	111-111-11365	ELDERLY	f	stop and shop	f	32
-366	john366	smith366	contact366@gmail.com	111-111-11366	ELDERLY	t	stop and shop	f	4
-367	john367	smith367	contact367@gmail.com	111-111-11367	MINOR	f	stop and shop	t	49
-368	john368	smith368	contact368@gmail.com	111-111-11368	ADULT	f	stop and shop	t	25
-369	john369	smith369	contact369@gmail.com	111-111-11369	ADULT	t	stop and shop	f	4
-370	john370	smith370	contact370@gmail.com	111-111-11370	ELDERLY	t	stop and shop	f	35
-371	john371	smith371	contact371@gmail.com	111-111-11371	ELDERLY	t	stop and shop	t	12
-372	john372	smith372	contact372@gmail.com	111-111-11372	ADULT	f	stop and shop	f	56
-373	john373	smith373	contact373@gmail.com	111-111-11373	ELDERLY	f	stop and shop	t	9
-374	john374	smith374	contact374@gmail.com	111-111-11374	ADULT	t	stop and shop	t	11
-375	john375	smith375	contact375@gmail.com	111-111-11375	MINOR	f	stop and shop	t	1
-376	john376	smith376	contact376@gmail.com	111-111-11376	MINOR	f	stop and shop	f	30
-377	john377	smith377	contact377@gmail.com	111-111-11377	ELDERLY	f	stop and shop	t	24
-378	john378	smith378	contact378@gmail.com	111-111-11378	ADULT	t	stop and shop	t	5
-379	john379	smith379	contact379@gmail.com	111-111-11379	MINOR	t	stop and shop	t	66
-380	john380	smith380	contact380@gmail.com	111-111-11380	ELDERLY	t	stop and shop	t	24
-381	john381	smith381	contact381@gmail.com	111-111-11381	ELDERLY	f	stop and shop	t	3
-382	john382	smith382	contact382@gmail.com	111-111-11382	ELDERLY	f	stop and shop	t	63
-383	john383	smith383	contact383@gmail.com	111-111-11383	ELDERLY	f	stop and shop	f	23
-384	john384	smith384	contact384@gmail.com	111-111-11384	ADULT	f	stop and shop	t	21
-385	john385	smith385	contact385@gmail.com	111-111-11385	ADULT	f	stop and shop	f	8
-386	john386	smith386	contact386@gmail.com	111-111-11386	MINOR	f	stop and shop	f	79
-387	john387	smith387	contact387@gmail.com	111-111-11387	MINOR	f	stop and shop	f	79
-388	john388	smith388	contact388@gmail.com	111-111-11388	ADULT	t	stop and shop	t	7
-389	john389	smith389	contact389@gmail.com	111-111-11389	ELDERLY	t	stop and shop	f	91
-390	john390	smith390	contact390@gmail.com	111-111-11390	ADULT	t	stop and shop	t	70
-391	john391	smith391	contact391@gmail.com	111-111-11391	ADULT	f	stop and shop	f	97
-392	john392	smith392	contact392@gmail.com	111-111-11392	ELDERLY	t	stop and shop	t	54
-393	john393	smith393	contact393@gmail.com	111-111-11393	ELDERLY	t	stop and shop	t	79
-394	john394	smith394	contact394@gmail.com	111-111-11394	MINOR	f	stop and shop	t	15
-395	john395	smith395	contact395@gmail.com	111-111-11395	ADULT	t	stop and shop	f	91
-396	john396	smith396	contact396@gmail.com	111-111-11396	ADULT	f	stop and shop	t	98
-397	john397	smith397	contact397@gmail.com	111-111-11397	ELDERLY	f	stop and shop	f	88
-398	john398	smith398	contact398@gmail.com	111-111-11398	MINOR	f	stop and shop	t	64
-399	john399	smith399	contact399@gmail.com	111-111-11399	ADULT	t	stop and shop	t	97
-400	john400	smith400	contact400@gmail.com	111-111-11400	MINOR	t	stop and shop	t	6
-401	john401	smith401	contact401@gmail.com	111-111-11401	ADULT	f	stop and shop	t	39
-402	john402	smith402	contact402@gmail.com	111-111-11402	ADULT	t	stop and shop	t	81
-403	john403	smith403	contact403@gmail.com	111-111-11403	MINOR	t	stop and shop	t	52
-404	john404	smith404	contact404@gmail.com	111-111-11404	ELDERLY	f	stop and shop	f	59
-405	john405	smith405	contact405@gmail.com	111-111-11405	MINOR	f	stop and shop	f	12
-406	john406	smith406	contact406@gmail.com	111-111-11406	ADULT	f	stop and shop	f	29
-407	john407	smith407	contact407@gmail.com	111-111-11407	MINOR	f	stop and shop	t	1
-408	john408	smith408	contact408@gmail.com	111-111-11408	ADULT	f	stop and shop	f	31
-409	john409	smith409	contact409@gmail.com	111-111-11409	ELDERLY	f	stop and shop	t	97
-410	john410	smith410	contact410@gmail.com	111-111-11410	ELDERLY	f	stop and shop	t	82
-411	john411	smith411	contact411@gmail.com	111-111-11411	ADULT	f	stop and shop	t	18
-412	john412	smith412	contact412@gmail.com	111-111-11412	ADULT	f	stop and shop	f	6
-413	john413	smith413	contact413@gmail.com	111-111-11413	ADULT	t	stop and shop	t	85
-414	john414	smith414	contact414@gmail.com	111-111-11414	MINOR	t	stop and shop	f	39
-415	john415	smith415	contact415@gmail.com	111-111-11415	MINOR	t	stop and shop	t	60
-416	john416	smith416	contact416@gmail.com	111-111-11416	ADULT	f	stop and shop	t	45
-417	john417	smith417	contact417@gmail.com	111-111-11417	ELDERLY	t	stop and shop	f	32
-418	john418	smith418	contact418@gmail.com	111-111-11418	MINOR	t	stop and shop	t	32
-419	john419	smith419	contact419@gmail.com	111-111-11419	MINOR	t	stop and shop	t	42
-420	john420	smith420	contact420@gmail.com	111-111-11420	MINOR	f	stop and shop	t	56
-421	john421	smith421	contact421@gmail.com	111-111-11421	ELDERLY	t	stop and shop	t	55
-422	john422	smith422	contact422@gmail.com	111-111-11422	ADULT	t	stop and shop	t	2
-423	john423	smith423	contact423@gmail.com	111-111-11423	ELDERLY	f	stop and shop	f	11
-424	john424	smith424	contact424@gmail.com	111-111-11424	ADULT	f	stop and shop	f	14
-425	john425	smith425	contact425@gmail.com	111-111-11425	ELDERLY	t	stop and shop	f	11
-426	john426	smith426	contact426@gmail.com	111-111-11426	MINOR	f	stop and shop	t	73
-427	john427	smith427	contact427@gmail.com	111-111-11427	MINOR	f	stop and shop	f	34
-428	john428	smith428	contact428@gmail.com	111-111-11428	ELDERLY	t	stop and shop	t	81
-429	john429	smith429	contact429@gmail.com	111-111-11429	MINOR	f	stop and shop	f	6
-430	john430	smith430	contact430@gmail.com	111-111-11430	ELDERLY	f	stop and shop	f	48
-431	john431	smith431	contact431@gmail.com	111-111-11431	ELDERLY	t	stop and shop	f	30
-432	john432	smith432	contact432@gmail.com	111-111-11432	ELDERLY	f	stop and shop	t	85
-433	john433	smith433	contact433@gmail.com	111-111-11433	ELDERLY	f	stop and shop	t	24
-434	john434	smith434	contact434@gmail.com	111-111-11434	ADULT	f	stop and shop	t	20
-435	john435	smith435	contact435@gmail.com	111-111-11435	MINOR	f	stop and shop	f	7
-436	john436	smith436	contact436@gmail.com	111-111-11436	MINOR	f	stop and shop	t	65
-437	john437	smith437	contact437@gmail.com	111-111-11437	ELDERLY	t	stop and shop	t	1
-438	john438	smith438	contact438@gmail.com	111-111-11438	ADULT	f	stop and shop	t	66
-439	john439	smith439	contact439@gmail.com	111-111-11439	MINOR	f	stop and shop	t	35
-440	john440	smith440	contact440@gmail.com	111-111-11440	ADULT	t	stop and shop	t	74
-441	john441	smith441	contact441@gmail.com	111-111-11441	MINOR	t	stop and shop	t	83
-442	john442	smith442	contact442@gmail.com	111-111-11442	ELDERLY	f	stop and shop	t	48
-443	john443	smith443	contact443@gmail.com	111-111-11443	MINOR	f	stop and shop	t	30
-444	john444	smith444	contact444@gmail.com	111-111-11444	ELDERLY	f	stop and shop	f	25
-445	john445	smith445	contact445@gmail.com	111-111-11445	ADULT	t	stop and shop	f	18
-446	john446	smith446	contact446@gmail.com	111-111-11446	ELDERLY	f	stop and shop	t	27
-447	john447	smith447	contact447@gmail.com	111-111-11447	ELDERLY	t	stop and shop	t	41
-448	john448	smith448	contact448@gmail.com	111-111-11448	ELDERLY	f	stop and shop	t	74
-449	john449	smith449	contact449@gmail.com	111-111-11449	MINOR	f	stop and shop	f	68
-450	john450	smith450	contact450@gmail.com	111-111-11450	ELDERLY	f	stop and shop	f	27
-451	john451	smith451	contact451@gmail.com	111-111-11451	ELDERLY	t	stop and shop	t	93
-452	john452	smith452	contact452@gmail.com	111-111-11452	ELDERLY	f	stop and shop	f	8
-453	john453	smith453	contact453@gmail.com	111-111-11453	ELDERLY	t	stop and shop	t	32
-454	john454	smith454	contact454@gmail.com	111-111-11454	ELDERLY	f	stop and shop	t	64
-455	john455	smith455	contact455@gmail.com	111-111-11455	ELDERLY	f	stop and shop	f	58
-456	john456	smith456	contact456@gmail.com	111-111-11456	ADULT	t	stop and shop	f	65
-457	john457	smith457	contact457@gmail.com	111-111-11457	MINOR	f	stop and shop	t	6
-458	john458	smith458	contact458@gmail.com	111-111-11458	ELDERLY	f	stop and shop	f	30
-459	john459	smith459	contact459@gmail.com	111-111-11459	ADULT	f	stop and shop	f	6
-460	john460	smith460	contact460@gmail.com	111-111-11460	ADULT	f	stop and shop	t	30
-461	john461	smith461	contact461@gmail.com	111-111-11461	ADULT	f	stop and shop	t	44
-462	john462	smith462	contact462@gmail.com	111-111-11462	ADULT	t	stop and shop	f	21
-463	john463	smith463	contact463@gmail.com	111-111-11463	MINOR	f	stop and shop	t	51
-464	john464	smith464	contact464@gmail.com	111-111-11464	ELDERLY	t	stop and shop	t	94
-465	john465	smith465	contact465@gmail.com	111-111-11465	MINOR	t	stop and shop	t	67
-466	john466	smith466	contact466@gmail.com	111-111-11466	MINOR	t	stop and shop	t	45
-467	john467	smith467	contact467@gmail.com	111-111-11467	ADULT	f	stop and shop	t	82
-468	john468	smith468	contact468@gmail.com	111-111-11468	ADULT	f	stop and shop	t	31
-469	john469	smith469	contact469@gmail.com	111-111-11469	ADULT	t	stop and shop	f	3
-470	john470	smith470	contact470@gmail.com	111-111-11470	ADULT	t	stop and shop	t	87
-471	john471	smith471	contact471@gmail.com	111-111-11471	MINOR	f	stop and shop	t	58
-472	john472	smith472	contact472@gmail.com	111-111-11472	MINOR	f	stop and shop	t	25
-473	john473	smith473	contact473@gmail.com	111-111-11473	MINOR	t	stop and shop	f	63
-474	john474	smith474	contact474@gmail.com	111-111-11474	MINOR	t	stop and shop	f	53
-475	john475	smith475	contact475@gmail.com	111-111-11475	MINOR	f	stop and shop	f	4
-476	john476	smith476	contact476@gmail.com	111-111-11476	ADULT	f	stop and shop	f	30
-477	john477	smith477	contact477@gmail.com	111-111-11477	ADULT	f	stop and shop	t	29
-478	john478	smith478	contact478@gmail.com	111-111-11478	MINOR	f	stop and shop	f	22
-479	john479	smith479	contact479@gmail.com	111-111-11479	MINOR	t	stop and shop	f	31
-480	john480	smith480	contact480@gmail.com	111-111-11480	ADULT	t	stop and shop	f	44
-481	john481	smith481	contact481@gmail.com	111-111-11481	MINOR	t	stop and shop	f	59
-482	john482	smith482	contact482@gmail.com	111-111-11482	ELDERLY	f	stop and shop	t	40
-483	john483	smith483	contact483@gmail.com	111-111-11483	ADULT	f	stop and shop	t	51
-484	john484	smith484	contact484@gmail.com	111-111-11484	MINOR	t	stop and shop	t	37
-485	john485	smith485	contact485@gmail.com	111-111-11485	ELDERLY	t	stop and shop	t	87
-486	john486	smith486	contact486@gmail.com	111-111-11486	ELDERLY	t	stop and shop	t	30
-487	john487	smith487	contact487@gmail.com	111-111-11487	MINOR	t	stop and shop	f	32
-488	john488	smith488	contact488@gmail.com	111-111-11488	MINOR	t	stop and shop	t	42
-489	john489	smith489	contact489@gmail.com	111-111-11489	MINOR	t	stop and shop	t	75
-490	john490	smith490	contact490@gmail.com	111-111-11490	MINOR	t	stop and shop	t	93
-491	john491	smith491	contact491@gmail.com	111-111-11491	ELDERLY	f	stop and shop	t	4
-492	john492	smith492	contact492@gmail.com	111-111-11492	ADULT	t	stop and shop	t	96
-493	john493	smith493	contact493@gmail.com	111-111-11493	ELDERLY	f	stop and shop	t	66
-494	john494	smith494	contact494@gmail.com	111-111-11494	ADULT	t	stop and shop	f	62
-495	john495	smith495	contact495@gmail.com	111-111-11495	ELDERLY	t	stop and shop	t	61
-496	john496	smith496	contact496@gmail.com	111-111-11496	ADULT	t	stop and shop	t	35
-497	john497	smith497	contact497@gmail.com	111-111-11497	ADULT	t	stop and shop	t	42
-498	john498	smith498	contact498@gmail.com	111-111-11498	ELDERLY	f	stop and shop	t	94
-499	john499	smith499	contact499@gmail.com	111-111-11499	MINOR	f	stop and shop	f	67
-500	john500	smith500	contact500@gmail.com	111-111-11500	ELDERLY	f	stop and shop	t	71
-\.
 
 
 --
@@ -9994,7 +9227,24 @@ COPY public.dummy_data (id, trace_id, start_time, end_time, confirmed, geom) FRO
 
 
 --
--- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: apiclient
+-- Name: dummy_data_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
+--
+
+SELECT pg_catalog.setval('public.dummy_data_id_seq', 9000, true);
+
+
+--
+-- Name: dummy_data dummy_data_pkey; Type: CONSTRAINT; Schema: public; Owner: apiclient
+--
+
+ALTER TABLE ONLY public.dummy_data
+    ADD CONSTRAINT dummy_data_pkey PRIMARY KEY (id);
+
+
+
+
+--
+-- Name: dummy_data dummy_data_trace_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
 --
 
 COPY public.managers (manager_id, username, password, name) FROM stdin;
@@ -10004,10 +9254,151 @@ COPY public.managers (manager_id, username, password, name) FROM stdin;
 4	manager4	pw_manager4	Manager4
 \.
 
+COPY public.volunteers (volunteer_id, username, password, name, email, manager_id) FROM stdin;
+1	volunteer1.uname	volunteer1.pw	volunteer1.name	volunteer1@health_example.com	1
+2	volunteer2.uname	volunteer2.pw	volunteer2.name	volunteer2@health_example.com	1
+3	volunteer3.uname	volunteer3.pw	volunteer3.name	volunteer3@health_example.com	1
+4	volunteer4.uname	volunteer4.pw	volunteer4.name	volunteer4@health_example.com	1
+5	volunteer5.uname	volunteer5.pw	volunteer5.name	volunteer5@health_example.com	1
+6	volunteer6.uname	volunteer6.pw	volunteer6.name	volunteer6@health_example.com	1
+7	volunteer7.uname	volunteer7.pw	volunteer7.name	volunteer7@health_example.com	1
+8	volunteer8.uname	volunteer8.pw	volunteer8.name	volunteer8@health_example.com	1
+9	volunteer9.uname	volunteer9.pw	volunteer9.name	volunteer9@health_example.com	1
+10	volunteer10.uname	volunteer10.pw	volunteer10.name	volunteer10@health_example.com	1
+11	volunteer11.uname	volunteer11.pw	volunteer11.name	volunteer11@health_example.com	2
+12	volunteer12.uname	volunteer12.pw	volunteer12.name	volunteer12@health_example.com	2
+13	volunteer13.uname	volunteer13.pw	volunteer13.name	volunteer13@health_example.com	2
+14	volunteer14.uname	volunteer14.pw	volunteer14.name	volunteer14@health_example.com	2
+15	volunteer15.uname	volunteer15.pw	volunteer15.name	volunteer15@health_example.com	2
+16	volunteer16.uname	volunteer16.pw	volunteer16.name	volunteer16@health_example.com	2
+17	volunteer17.uname	volunteer17.pw	volunteer17.name	volunteer17@health_example.com	2
+18	volunteer18.uname	volunteer18.pw	volunteer18.name	volunteer18@health_example.com	2
+19	volunteer19.uname	volunteer19.pw	volunteer19.name	volunteer19@health_example.com	2
+20	volunteer20.uname	volunteer20.pw	volunteer20.name	volunteer20@health_example.com	2
+21	volunteer21.uname	volunteer21.pw	volunteer21.name	volunteer21@health_example.com	3
+22	volunteer22.uname	volunteer22.pw	volunteer22.name	volunteer22@health_example.com	3
+23	volunteer23.uname	volunteer23.pw	volunteer23.name	volunteer23@health_example.com	3
+24	volunteer24.uname	volunteer24.pw	volunteer24.name	volunteer24@health_example.com	3
+25	volunteer25.uname	volunteer25.pw	volunteer25.name	volunteer25@health_example.com	3
+26	volunteer26.uname	volunteer26.pw	volunteer26.name	volunteer26@health_example.com	3
+27	volunteer27.uname	volunteer27.pw	volunteer27.name	volunteer27@health_example.com	3
+28	volunteer28.uname	volunteer28.pw	volunteer28.name	volunteer28@health_example.com	3
+29	volunteer29.uname	volunteer29.pw	volunteer29.name	volunteer29@health_example.com	3
+30	volunteer30.uname	volunteer30.pw	volunteer30.name	volunteer30@health_example.com	3
+31	volunteer31.uname	volunteer31.pw	volunteer31.name	volunteer31@health_example.com	4
+32	volunteer32.uname	volunteer32.pw	volunteer32.name	volunteer32@health_example.com	4
+33	volunteer33.uname	volunteer33.pw	volunteer33.name	volunteer33@health_example.com	4
+34	volunteer34.uname	volunteer34.pw	volunteer34.name	volunteer34@health_example.com	4
+35	volunteer35.uname	volunteer35.pw	volunteer35.name	volunteer35@health_example.com	4
+36	volunteer36.uname	volunteer36.pw	volunteer36.name	volunteer36@health_example.com	4
+37	volunteer37.uname	volunteer37.pw	volunteer37.name	volunteer37@health_example.com	4
+38	volunteer38.uname	volunteer38.pw	volunteer38.name	volunteer38@health_example.com	4
+39	volunteer39.uname	volunteer39.pw	volunteer39.name	volunteer39@health_example.com	4
+40	volunteer40.uname	volunteer40.pw	volunteer40.name	volunteer40@health_example.com	4
+\.
 
---
--- Data for Name: patient_locations; Type: TABLE DATA; Schema: public; Owner: apiclient
---
+COPY public.patients (patient_id, username, password, name, email, manager_id, volunteer_id) FROM stdin;
+1	patient1.username	patient1.pw	patient1.name	patient1@example.com	1	1
+2	patient2.username	patient2.pw	patient2.name	patient2@example.com	1	1
+3	patient3.username	patient3.pw	patient3.name	patient3@example.com	1	1
+4	patient4.username	patient4.pw	patient4.name	patient4@example.com	1	2
+5	patient5.username	patient5.pw	patient5.name	patient5@example.com	1	2
+6	patient6.username	patient6.pw	patient6.name	patient6@example.com	1	2
+7	patient7.username	patient7.pw	patient7.name	patient7@example.com	1	3
+8	patient8.username	patient8.pw	patient8.name	patient8@example.com	1	3
+9	patient9.username	patient9.pw	patient9.name	patient9@example.com	1	3
+10	patient10.username	patient10.pw	patient10.name	patient10@example.com	1	4
+11	patient11.username	patient11.pw	patient11.name	patient11@example.com	1	4
+12	patient12.username	patient12.pw	patient12.name	patient12@example.com	1	4
+13	patient13.username	patient13.pw	patient13.name	patient13@example.com	1	5
+14	patient14.username	patient14.pw	patient14.name	patient14@example.com	1	5
+15	patient15.username	patient15.pw	patient15.name	patient15@example.com	1	5
+16	patient16.username	patient16.pw	patient16.name	patient16@example.com	1	6
+17	patient17.username	patient17.pw	patient17.name	patient17@example.com	1	6
+18	patient18.username	patient18.pw	patient18.name	patient18@example.com	1	6
+19	patient19.username	patient19.pw	patient19.name	patient19@example.com	1	7
+20	patient20.username	patient20.pw	patient20.name	patient20@example.com	1	7
+21	patient21.username	patient21.pw	patient21.name	patient21@example.com	1	7
+22	patient22.username	patient22.pw	patient22.name	patient22@example.com	1	8
+23	patient23.username	patient23.pw	patient23.name	patient23@example.com	1	8
+24	patient24.username	patient24.pw	patient24.name	patient24@example.com	1	8
+25	patient25.username	patient25.pw	patient25.name	patient25@example.com	1	9
+26	patient26.username	patient26.pw	patient26.name	patient26@example.com	1	9
+27	patient27.username	patient27.pw	patient27.name	patient27@example.com	1	9
+28	patient28.username	patient28.pw	patient28.name	patient28@example.com	1	10
+29	patient29.username	patient29.pw	patient29.name	patient29@example.com	1	10
+30	patient30.username	patient30.pw	patient30.name	patient30@example.com	1	10
+31	patient31.username	patient31.pw	patient31.name	patient31@example.com	2	11
+32	patient32.username	patient32.pw	patient32.name	patient32@example.com	2	11
+33	patient33.username	patient33.pw	patient33.name	patient33@example.com	2	11
+34	patient34.username	patient34.pw	patient34.name	patient34@example.com	2	12
+35	patient35.username	patient35.pw	patient35.name	patient35@example.com	2	12
+36	patient36.username	patient36.pw	patient36.name	patient36@example.com	2	12
+37	patient37.username	patient37.pw	patient37.name	patient37@example.com	2	13
+38	patient38.username	patient38.pw	patient38.name	patient38@example.com	2	13
+39	patient39.username	patient39.pw	patient39.name	patient39@example.com	2	13
+40	patient40.username	patient40.pw	patient40.name	patient40@example.com	2	14
+41	patient41.username	patient41.pw	patient41.name	patient41@example.com	2	14
+42	patient42.username	patient42.pw	patient42.name	patient42@example.com	2	14
+43	patient43.username	patient43.pw	patient43.name	patient43@example.com	2	15
+44	patient44.username	patient44.pw	patient44.name	patient44@example.com	2	15
+45	patient45.username	patient45.pw	patient45.name	patient45@example.com	2	15
+46	patient46.username	patient46.pw	patient46.name	patient46@example.com	2	16
+47	patient47.username	patient47.pw	patient47.name	patient47@example.com	2	16
+48	patient48.username	patient48.pw	patient48.name	patient48@example.com	2	16
+49	patient49.username	patient49.pw	patient49.name	patient49@example.com	2	17
+50	patient50.username	patient50.pw	patient50.name	patient50@example.com	2	17
+51	patient51.username	patient51.pw	patient51.name	patient51@example.com	2	17
+52	patient52.username	patient52.pw	patient52.name	patient52@example.com	2	18
+53	patient53.username	patient53.pw	patient53.name	patient53@example.com	2	18
+54	patient54.username	patient54.pw	patient54.name	patient54@example.com	2	18
+55	patient55.username	patient55.pw	patient55.name	patient55@example.com	2	19
+56	patient56.username	patient56.pw	patient56.name	patient56@example.com	2	19
+57	patient57.username	patient57.pw	patient57.name	patient57@example.com	2	19
+58	patient58.username	patient58.pw	patient58.name	patient58@example.com	2	20
+59	patient59.username	patient59.pw	patient59.name	patient59@example.com	2	20
+60	patient60.username	patient60.pw	patient60.name	patient60@example.com	2	20
+61	patient61.username	patient61.pw	patient61.name	patient61@example.com	3	21
+62	patient62.username	patient62.pw	patient62.name	patient62@example.com	3	21
+63	patient63.username	patient63.pw	patient63.name	patient63@example.com	3	21
+64	patient64.username	patient64.pw	patient64.name	patient64@example.com	3	22
+65	patient65.username	patient65.pw	patient65.name	patient65@example.com	3	22
+66	patient66.username	patient66.pw	patient66.name	patient66@example.com	3	22
+67	patient67.username	patient67.pw	patient67.name	patient67@example.com	3	23
+68	patient68.username	patient68.pw	patient68.name	patient68@example.com	3	23
+69	patient69.username	patient69.pw	patient69.name	patient69@example.com	3	23
+70	patient70.username	patient70.pw	patient70.name	patient70@example.com	3	24
+71	patient71.username	patient71.pw	patient71.name	patient71@example.com	3	24
+72	patient72.username	patient72.pw	patient72.name	patient72@example.com	3	24
+73	patient73.username	patient73.pw	patient73.name	patient73@example.com	3	25
+74	patient74.username	patient74.pw	patient74.name	patient74@example.com	3	25
+75	patient75.username	patient75.pw	patient75.name	patient75@example.com	3	25
+76	patient76.username	patient76.pw	patient76.name	patient76@example.com	3	26
+77	patient77.username	patient77.pw	patient77.name	patient77@example.com	3	26
+78	patient78.username	patient78.pw	patient78.name	patient78@example.com	3	26
+79	patient79.username	patient79.pw	patient79.name	patient79@example.com	3	27
+80	patient80.username	patient80.pw	patient80.name	patient80@example.com	3	27
+81	patient81.username	patient81.pw	patient81.name	patient81@example.com	3	27
+82	patient82.username	patient82.pw	patient82.name	patient82@example.com	3	28
+83	patient83.username	patient83.pw	patient83.name	patient83@example.com	3	28
+84	patient84.username	patient84.pw	patient84.name	patient84@example.com	3	28
+85	patient85.username	patient85.pw	patient85.name	patient85@example.com	3	29
+86	patient86.username	patient86.pw	patient86.name	patient86@example.com	3	29
+87	patient87.username	patient87.pw	patient87.name	patient87@example.com	3	29
+88	patient88.username	patient88.pw	patient88.name	patient88@example.com	3	30
+89	patient89.username	patient89.pw	patient89.name	patient89@example.com	3	30
+90	patient90.username	patient90.pw	patient90.name	patient90@example.com	3	30
+91	patient91.username	patient91.pw	patient91.name	patient91@example.com	4	31
+92	patient92.username	patient92.pw	patient92.name	patient92@example.com	4	31
+93	patient93.username	patient93.pw	patient93.name	patient93@example.com	4	31
+94	patient94.username	patient94.pw	patient94.name	patient94@example.com	4	32
+95	patient95.username	patient95.pw	patient95.name	patient95@example.com	4	32
+96	patient96.username	patient96.pw	patient96.name	patient96@example.com	4	32
+97	patient97.username	patient97.pw	patient97.name	patient97@example.com	4	33
+98	patient98.username	patient98.pw	patient98.name	patient98@example.com	4	33
+99	patient99.username	patient99.pw	patient99.name	patient99@example.com	4	33
+100	patient100.username	patient100.pw	patient100.name	patient100@example.com	4	34
+\.
 
 COPY public.patient_locations (id, patient_id, start_time, end_time, confirmed, geom) FROM stdin;
 1	1	2008-02-08 01:42:55	2008-02-08 01:44:55	f	0101000020E6100000F91A82E3323A52C056F146E691D54440
@@ -14362,118 +13753,7 @@ COPY public.patient_locations (id, patient_id, start_time, end_time, confirmed, 
 4350	100	2008-02-04 00:52:34	2008-02-04 00:54:34	f	0101000020E6100000C88157CB9D3152C0C7F484251ED64440
 \.
 
-
---
--- Data for Name: patients; Type: TABLE DATA; Schema: public; Owner: apiclient
---
-
-COPY public.patients (patient_id, username, password, name, email, manager_id, volunteer_id) FROM stdin;
-1	patient1.username	patient1.pw	patient1.name	patient1@example.com	1	1
-2	patient2.username	patient2.pw	patient2.name	patient2@example.com	1	1
-3	patient3.username	patient3.pw	patient3.name	patient3@example.com	1	1
-4	patient4.username	patient4.pw	patient4.name	patient4@example.com	1	2
-5	patient5.username	patient5.pw	patient5.name	patient5@example.com	1	2
-6	patient6.username	patient6.pw	patient6.name	patient6@example.com	1	2
-7	patient7.username	patient7.pw	patient7.name	patient7@example.com	1	3
-8	patient8.username	patient8.pw	patient8.name	patient8@example.com	1	3
-9	patient9.username	patient9.pw	patient9.name	patient9@example.com	1	3
-10	patient10.username	patient10.pw	patient10.name	patient10@example.com	1	4
-11	patient11.username	patient11.pw	patient11.name	patient11@example.com	1	4
-12	patient12.username	patient12.pw	patient12.name	patient12@example.com	1	4
-13	patient13.username	patient13.pw	patient13.name	patient13@example.com	1	5
-14	patient14.username	patient14.pw	patient14.name	patient14@example.com	1	5
-15	patient15.username	patient15.pw	patient15.name	patient15@example.com	1	5
-16	patient16.username	patient16.pw	patient16.name	patient16@example.com	1	6
-17	patient17.username	patient17.pw	patient17.name	patient17@example.com	1	6
-18	patient18.username	patient18.pw	patient18.name	patient18@example.com	1	6
-19	patient19.username	patient19.pw	patient19.name	patient19@example.com	1	7
-20	patient20.username	patient20.pw	patient20.name	patient20@example.com	1	7
-21	patient21.username	patient21.pw	patient21.name	patient21@example.com	1	7
-22	patient22.username	patient22.pw	patient22.name	patient22@example.com	1	8
-23	patient23.username	patient23.pw	patient23.name	patient23@example.com	1	8
-24	patient24.username	patient24.pw	patient24.name	patient24@example.com	1	8
-25	patient25.username	patient25.pw	patient25.name	patient25@example.com	1	9
-26	patient26.username	patient26.pw	patient26.name	patient26@example.com	1	9
-27	patient27.username	patient27.pw	patient27.name	patient27@example.com	1	9
-28	patient28.username	patient28.pw	patient28.name	patient28@example.com	1	10
-29	patient29.username	patient29.pw	patient29.name	patient29@example.com	1	10
-30	patient30.username	patient30.pw	patient30.name	patient30@example.com	1	10
-31	patient31.username	patient31.pw	patient31.name	patient31@example.com	2	11
-32	patient32.username	patient32.pw	patient32.name	patient32@example.com	2	11
-33	patient33.username	patient33.pw	patient33.name	patient33@example.com	2	11
-34	patient34.username	patient34.pw	patient34.name	patient34@example.com	2	12
-35	patient35.username	patient35.pw	patient35.name	patient35@example.com	2	12
-36	patient36.username	patient36.pw	patient36.name	patient36@example.com	2	12
-37	patient37.username	patient37.pw	patient37.name	patient37@example.com	2	13
-38	patient38.username	patient38.pw	patient38.name	patient38@example.com	2	13
-39	patient39.username	patient39.pw	patient39.name	patient39@example.com	2	13
-40	patient40.username	patient40.pw	patient40.name	patient40@example.com	2	14
-41	patient41.username	patient41.pw	patient41.name	patient41@example.com	2	14
-42	patient42.username	patient42.pw	patient42.name	patient42@example.com	2	14
-43	patient43.username	patient43.pw	patient43.name	patient43@example.com	2	15
-44	patient44.username	patient44.pw	patient44.name	patient44@example.com	2	15
-45	patient45.username	patient45.pw	patient45.name	patient45@example.com	2	15
-46	patient46.username	patient46.pw	patient46.name	patient46@example.com	2	16
-47	patient47.username	patient47.pw	patient47.name	patient47@example.com	2	16
-48	patient48.username	patient48.pw	patient48.name	patient48@example.com	2	16
-49	patient49.username	patient49.pw	patient49.name	patient49@example.com	2	17
-50	patient50.username	patient50.pw	patient50.name	patient50@example.com	2	17
-51	patient51.username	patient51.pw	patient51.name	patient51@example.com	2	17
-52	patient52.username	patient52.pw	patient52.name	patient52@example.com	2	18
-53	patient53.username	patient53.pw	patient53.name	patient53@example.com	2	18
-54	patient54.username	patient54.pw	patient54.name	patient54@example.com	2	18
-55	patient55.username	patient55.pw	patient55.name	patient55@example.com	2	19
-56	patient56.username	patient56.pw	patient56.name	patient56@example.com	2	19
-57	patient57.username	patient57.pw	patient57.name	patient57@example.com	2	19
-58	patient58.username	patient58.pw	patient58.name	patient58@example.com	2	20
-59	patient59.username	patient59.pw	patient59.name	patient59@example.com	2	20
-60	patient60.username	patient60.pw	patient60.name	patient60@example.com	2	20
-61	patient61.username	patient61.pw	patient61.name	patient61@example.com	3	21
-62	patient62.username	patient62.pw	patient62.name	patient62@example.com	3	21
-63	patient63.username	patient63.pw	patient63.name	patient63@example.com	3	21
-64	patient64.username	patient64.pw	patient64.name	patient64@example.com	3	22
-65	patient65.username	patient65.pw	patient65.name	patient65@example.com	3	22
-66	patient66.username	patient66.pw	patient66.name	patient66@example.com	3	22
-67	patient67.username	patient67.pw	patient67.name	patient67@example.com	3	23
-68	patient68.username	patient68.pw	patient68.name	patient68@example.com	3	23
-69	patient69.username	patient69.pw	patient69.name	patient69@example.com	3	23
-70	patient70.username	patient70.pw	patient70.name	patient70@example.com	3	24
-71	patient71.username	patient71.pw	patient71.name	patient71@example.com	3	24
-72	patient72.username	patient72.pw	patient72.name	patient72@example.com	3	24
-73	patient73.username	patient73.pw	patient73.name	patient73@example.com	3	25
-74	patient74.username	patient74.pw	patient74.name	patient74@example.com	3	25
-75	patient75.username	patient75.pw	patient75.name	patient75@example.com	3	25
-76	patient76.username	patient76.pw	patient76.name	patient76@example.com	3	26
-77	patient77.username	patient77.pw	patient77.name	patient77@example.com	3	26
-78	patient78.username	patient78.pw	patient78.name	patient78@example.com	3	26
-79	patient79.username	patient79.pw	patient79.name	patient79@example.com	3	27
-80	patient80.username	patient80.pw	patient80.name	patient80@example.com	3	27
-81	patient81.username	patient81.pw	patient81.name	patient81@example.com	3	27
-82	patient82.username	patient82.pw	patient82.name	patient82@example.com	3	28
-83	patient83.username	patient83.pw	patient83.name	patient83@example.com	3	28
-84	patient84.username	patient84.pw	patient84.name	patient84@example.com	3	28
-85	patient85.username	patient85.pw	patient85.name	patient85@example.com	3	29
-86	patient86.username	patient86.pw	patient86.name	patient86@example.com	3	29
-87	patient87.username	patient87.pw	patient87.name	patient87@example.com	3	29
-88	patient88.username	patient88.pw	patient88.name	patient88@example.com	3	30
-89	patient89.username	patient89.pw	patient89.name	patient89@example.com	3	30
-90	patient90.username	patient90.pw	patient90.name	patient90@example.com	3	30
-91	patient91.username	patient91.pw	patient91.name	patient91@example.com	4	31
-92	patient92.username	patient92.pw	patient92.name	patient92@example.com	4	31
-93	patient93.username	patient93.pw	patient93.name	patient93@example.com	4	31
-94	patient94.username	patient94.pw	patient94.name	patient94@example.com	4	32
-95	patient95.username	patient95.pw	patient95.name	patient95@example.com	4	32
-96	patient96.username	patient96.pw	patient96.name	patient96@example.com	4	32
-97	patient97.username	patient97.pw	patient97.name	patient97@example.com	4	33
-98	patient98.username	patient98.pw	patient98.name	patient98@example.com	4	33
-99	patient99.username	patient99.pw	patient99.name	patient99@example.com	4	33
-100	patient100.username	patient100.pw	patient100.name	patient100@example.com	4	34
-\.
-
-
---
--- Data for Name: public_users; Type: TABLE DATA; Schema: public; Owner: apiclient
---
+CREATE INDEX patient_locations_geom_index ON public.patient_locations USING gist (public.st_transform(geom, 32618));
 
 COPY public.public_users (public_user_id, username, password, name, email) FROM stdin;
 1	pub_user1.username	pub_user1.pw	pub_user1.name	pub_user1@public_example.com
@@ -14576,9 +13856,6 @@ COPY public.public_users (public_user_id, username, password, name, email) FROM 
 \.
 
 
---
--- Data for Name: public_users_locations; Type: TABLE DATA; Schema: public; Owner: apiclient
---
 
 COPY public.public_users_locations (id, public_user_id, start_time, end_time, confirmed, geom) FROM stdin;
 1	1	2008-02-02 23:32:47	2008-02-02 23:34:47	f	0101000020E6100000418864C8B13552C00D37E0F3C3E24440
@@ -19233,286 +18510,18 @@ COPY public.public_users_locations (id, public_user_id, start_time, end_time, co
 4650	97	2008-02-05 01:31:11	2008-02-05 01:33:11	f	0101000020E610000070F1F09E031952C02927DA5548CF4440
 \.
 
-
---
--- Data for Name: spatial_ref_sys; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
-\.
-
-
---
--- Data for Name: volunteers; Type: TABLE DATA; Schema: public; Owner: apiclient
---
-
-COPY public.volunteers (volunteer_id, username, password, name, email, manager_id) FROM stdin;
-1	volunteer1.uname	volunteer1.pw	volunteer1.name	volunteer1@health_example.com	1
-2	volunteer2.uname	volunteer2.pw	volunteer2.name	volunteer2@health_example.com	1
-3	volunteer3.uname	volunteer3.pw	volunteer3.name	volunteer3@health_example.com	1
-4	volunteer4.uname	volunteer4.pw	volunteer4.name	volunteer4@health_example.com	1
-5	volunteer5.uname	volunteer5.pw	volunteer5.name	volunteer5@health_example.com	1
-6	volunteer6.uname	volunteer6.pw	volunteer6.name	volunteer6@health_example.com	1
-7	volunteer7.uname	volunteer7.pw	volunteer7.name	volunteer7@health_example.com	1
-8	volunteer8.uname	volunteer8.pw	volunteer8.name	volunteer8@health_example.com	1
-9	volunteer9.uname	volunteer9.pw	volunteer9.name	volunteer9@health_example.com	1
-10	volunteer10.uname	volunteer10.pw	volunteer10.name	volunteer10@health_example.com	1
-11	volunteer11.uname	volunteer11.pw	volunteer11.name	volunteer11@health_example.com	2
-12	volunteer12.uname	volunteer12.pw	volunteer12.name	volunteer12@health_example.com	2
-13	volunteer13.uname	volunteer13.pw	volunteer13.name	volunteer13@health_example.com	2
-14	volunteer14.uname	volunteer14.pw	volunteer14.name	volunteer14@health_example.com	2
-15	volunteer15.uname	volunteer15.pw	volunteer15.name	volunteer15@health_example.com	2
-16	volunteer16.uname	volunteer16.pw	volunteer16.name	volunteer16@health_example.com	2
-17	volunteer17.uname	volunteer17.pw	volunteer17.name	volunteer17@health_example.com	2
-18	volunteer18.uname	volunteer18.pw	volunteer18.name	volunteer18@health_example.com	2
-19	volunteer19.uname	volunteer19.pw	volunteer19.name	volunteer19@health_example.com	2
-20	volunteer20.uname	volunteer20.pw	volunteer20.name	volunteer20@health_example.com	2
-21	volunteer21.uname	volunteer21.pw	volunteer21.name	volunteer21@health_example.com	3
-22	volunteer22.uname	volunteer22.pw	volunteer22.name	volunteer22@health_example.com	3
-23	volunteer23.uname	volunteer23.pw	volunteer23.name	volunteer23@health_example.com	3
-24	volunteer24.uname	volunteer24.pw	volunteer24.name	volunteer24@health_example.com	3
-25	volunteer25.uname	volunteer25.pw	volunteer25.name	volunteer25@health_example.com	3
-26	volunteer26.uname	volunteer26.pw	volunteer26.name	volunteer26@health_example.com	3
-27	volunteer27.uname	volunteer27.pw	volunteer27.name	volunteer27@health_example.com	3
-28	volunteer28.uname	volunteer28.pw	volunteer28.name	volunteer28@health_example.com	3
-29	volunteer29.uname	volunteer29.pw	volunteer29.name	volunteer29@health_example.com	3
-30	volunteer30.uname	volunteer30.pw	volunteer30.name	volunteer30@health_example.com	3
-31	volunteer31.uname	volunteer31.pw	volunteer31.name	volunteer31@health_example.com	4
-32	volunteer32.uname	volunteer32.pw	volunteer32.name	volunteer32@health_example.com	4
-33	volunteer33.uname	volunteer33.pw	volunteer33.name	volunteer33@health_example.com	4
-34	volunteer34.uname	volunteer34.pw	volunteer34.name	volunteer34@health_example.com	4
-35	volunteer35.uname	volunteer35.pw	volunteer35.name	volunteer35@health_example.com	4
-36	volunteer36.uname	volunteer36.pw	volunteer36.name	volunteer36@health_example.com	4
-37	volunteer37.uname	volunteer37.pw	volunteer37.name	volunteer37@health_example.com	4
-38	volunteer38.uname	volunteer38.pw	volunteer38.name	volunteer38@health_example.com	4
-39	volunteer39.uname	volunteer39.pw	volunteer39.name	volunteer39@health_example.com	4
-40	volunteer40.uname	volunteer40.pw	volunteer40.name	volunteer40@health_example.com	4
-\.
-
-
---
--- Data for Name: geocode_settings; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.geocode_settings (name, setting, unit, category, short_desc) FROM stdin;
-\.
-
-
---
--- Data for Name: pagc_gaz; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.pagc_gaz (id, seq, word, stdword, token, is_custom) FROM stdin;
-\.
-
-
---
--- Data for Name: pagc_lex; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.pagc_lex (id, seq, word, stdword, token, is_custom) FROM stdin;
-\.
-
-
---
--- Data for Name: pagc_rules; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.pagc_rules (id, rule, is_custom) FROM stdin;
-\.
-
-
---
--- Data for Name: topology; Type: TABLE DATA; Schema: topology; Owner: postgres
---
-
-COPY topology.topology (id, name, srid, "precision", hasz) FROM stdin;
-\.
-
-
---
--- Data for Name: layer; Type: TABLE DATA; Schema: topology; Owner: postgres
---
-
-COPY topology.layer (topology_id, layer_id, schema_name, table_name, feature_column, feature_type, level, child_id) FROM stdin;
-\.
-
-
---
--- Name: contacts_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.contacts_contact_id_seq', 500, true);
-
-
---
--- Name: dummy_data_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.dummy_data_id_seq', 9000, true);
-
-
---
--- Name: managers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.managers_id_seq', 5, false);
-
-
---
--- Name: patient_locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.patient_locations_id_seq', 4351, false);
-
-
---
--- Name: patients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.patients_id_seq', 101, false);
-
-
---
--- Name: public_users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.public_users_id_seq', 98, false);
-
-
---
--- Name: public_users_locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.public_users_locations_id_seq', 4651, false);
-
-
---
--- Name: volunteers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
---
-
-SELECT pg_catalog.setval('public.volunteers_id_seq', 41, false);
-
-
---
--- Name: dummy_data dummy_data_pkey; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.dummy_data
-    ADD CONSTRAINT dummy_data_pkey PRIMARY KEY (id);
-
-
---
--- Name: managers managers_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.managers
-    ADD CONSTRAINT managers_pk PRIMARY KEY (manager_id);
-
-
---
--- Name: patient_locations patient_locations_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patient_locations
-    ADD CONSTRAINT patient_locations_pk PRIMARY KEY (id);
-
-
---
--- Name: patients patients_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patients
-    ADD CONSTRAINT patients_pk PRIMARY KEY (patient_id);
-
-
---
--- Name: public_users_locations public_users_locations_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.public_users_locations
-    ADD CONSTRAINT public_users_locations_pk PRIMARY KEY (id);
-
-
---
--- Name: public_users public_users_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.public_users
-    ADD CONSTRAINT public_users_pk PRIMARY KEY (public_user_id);
-
-
---
--- Name: volunteers volunteers_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.volunteers
-    ADD CONSTRAINT volunteers_pk PRIMARY KEY (volunteer_id);
-
-
---
--- Name: patient_locations_geom_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
-CREATE INDEX patient_locations_geom_index ON public.patient_locations USING gist (public.st_transform(geom, 32618));
-
-
---
--- Name: public_users_locations_geom_index; Type: INDEX; Schema: public; Owner: apiclient
---
-
 CREATE INDEX public_users_locations_geom_index ON public.public_users_locations USING gist (public.st_transform(geom, 32618));
 
-
---
--- Name: contacts contacts_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.contacts
-    ADD CONSTRAINT contacts_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
-
-
---
--- Name: patient_locations patient_locations_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patient_locations
-    ADD CONSTRAINT patient_locations_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
-
-
---
--- Name: patients patients_manager_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patients
-    ADD CONSTRAINT patients_manager_id_fkey FOREIGN KEY (manager_id) REFERENCES public.managers(manager_id);
-
-
---
--- Name: patients patients_volunteer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patients
-    ADD CONSTRAINT patients_volunteer_id_fkey FOREIGN KEY (volunteer_id) REFERENCES public.volunteers(volunteer_id);
-
-
---
--- Name: public_users_locations public_users_locations_public_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.public_users_locations
-    ADD CONSTRAINT public_users_locations_public_user_id_fkey FOREIGN KEY (public_user_id) REFERENCES public.public_users(public_user_id);
-
-
---
--- Name: volunteers volunteers_manager_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.volunteers
-    ADD CONSTRAINT volunteers_manager_id_fkey FOREIGN KEY (manager_id) REFERENCES public.managers(manager_id);
-
+CREATE PROCEDURE public.select_public_users(point_time timestamp without time zone, range integer, point_loc public.geometry(Point,4326))
+LANGUAGE SQL
+AS $$
+select public.public_users_locations.public_user_id
+from public.public_users_locations
+where ST_DWITHIN(public.st_transform(public_users_locations.geom, 32618), public.st_transform(point_loc, 32618), range)
+AND public.public_users_locations.start_time <= point_time
+AND public.public_users_locations.end_time >= point_time;
+$$;
 
 --
 -- PostgreSQL database dump complete
 --
-

@@ -5,13 +5,13 @@ import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.locationtech.jts.geom.Point;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 
-public class TracingDTO {
+public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> {
 
-
-    private Long trace_id;
+    private Long id;
 
     private Date start_time;
 
@@ -19,24 +19,28 @@ public class TracingDTO {
 
     private Boolean confirmed;
 
+    private Long patient_id;
+
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Point geom;
 
-    public TracingDTO() {
+    public PatientLocationDTO() {
     }
 
-    public TracingDTO(Long trace_id, Date start_time, Date end_time, Boolean confirmed, Point geom) {
-        this.trace_id = trace_id;
+    public PatientLocationDTO(Long id, Date start_time,
+                              Date end_time, Boolean confirmed,
+                              Point geom, Long patient_id) {
+        this.id = id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
         this.geom = geom;
+        this.patient_id = patient_id;
     }
 
-
-    public Long getTrace_id() {
-        return trace_id;
+    public Long getId() {
+        return id;
     }
 
     public Date getStart_time() {
@@ -55,8 +59,12 @@ public class TracingDTO {
         return geom;
     }
 
-    public void setTrace_id(Long trace_id) {
-        this.trace_id = trace_id;
+    public Long getPatient_id() {
+        return patient_id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setStart_time(Date start_time) {
@@ -73,6 +81,10 @@ public class TracingDTO {
 
     public void setGeom(Point geom){
         this.geom = geom;
+    }
+
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
     }
 }
 
