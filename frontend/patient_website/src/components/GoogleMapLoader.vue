@@ -5,6 +5,7 @@
         <slot
             :google="google"
             :map="map"
+            :geocoder="geocoder"
         />
     </template>
   </div>
@@ -23,7 +24,8 @@ export default {
     data() {
         return {
             google: null,
-            map: null
+            map: null,
+            geocoder: null
         }
     },
     computed: {
@@ -47,11 +49,15 @@ export default {
         })
         this.google = googleMapApi
         this.initializeMap()
+        this.initializeGeocoder()
     },
     methods: {
         initializeMap() {
             const mapContainer = this.$refs.googleMap
             this.map = new this.google.maps.Map(mapContainer, this.mapConfig)
+        },
+        initializeGeocoder() {
+            this.geocoder  = new this.google.maps.Geocoder
         }
     }
 }

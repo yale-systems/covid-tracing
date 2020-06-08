@@ -9,16 +9,28 @@
                     flat
                     dark
                 >
-                    <v-toolbar-title> Patients </v-toolbar-title>
-            
-                    <v-spacer></v-spacer>
-            
+                    <v-toolbar-title
+                        v-if="!showSearch"
+                    > Patients </v-toolbar-title>
+                    <v-spacer v-if="!showSearch"></v-spacer>
+
+                    <v-text-field
+                        placeholder="search patients"
+                        v-show="showSearch"
+                        @blur="hideSearch"
+                        v-model="searchText"
+                        ref="search"
+                        class="mt-4">
+                    </v-text-field>
+                    <v-btn 
+                        icon
+                        @click="handleSearch"
+                    >
+                        <v-icon>mdi-magnify</v-icon>
+                   </v-btn>
+
                     <v-btn icon>
-                    <v-icon>mdi-magnify</v-icon>
-                    </v-btn>
-            
-                    <v-btn icon>
-                    <v-icon> mdi-sort </v-icon>
+                        <v-icon> mdi-sort </v-icon>
                     </v-btn>
                 </v-toolbar>
                 <v-list two-line>
@@ -74,7 +86,7 @@
                             </v-icon>
                         </v-btn>
                     </v-card-title>
-                    <v-card-content>
+                    <v-card-text>
                         <v-container>
                             <v-row>
                                 <h3 class="pl-3"> Interview Information </h3>
@@ -130,7 +142,7 @@
                                 </v-col>
                             </v-row>
                         </v-container>
-                    </v-card-content>
+                    </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn>
@@ -181,12 +193,28 @@ export default {
                 "Patient completed interview",
                 "Unable to reach",
                 "Unable to reach, bad number"
-            ]
+            ],
+            searchText : '',
+            showSearch : false
         }
     },
     methods : {
         print() {
             console.log(this.selected)
+        },
+        handleSearch() {
+            if (!this.showSearch) {
+                this.showSearch = true
+                this.$refs.search.$el.focus()
+                console.log(this.$refs.search)
+            } else {
+                // TODO: make call to find in data table ...how??  hm
+            }
+        },
+        hideSearch(){
+            if (this.searchText.length < 1) {
+                this.showSearch = false
+            }
         }
     }
 }
@@ -194,4 +222,4 @@ export default {
 
 <style>
 
-</style>
+</style> 

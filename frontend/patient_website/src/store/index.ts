@@ -5,7 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        loggedIn: false
+        loggedIn: false,
+        patientInfo : null
     },
     mutations: {
         logIn(state) {
@@ -13,6 +14,9 @@ export default new Vuex.Store({
         },
         logOut(state) {
             state.loggedIn = false
+        },
+        instantiatePatient(state, value) {
+            state.patientInfo = value
         }
     },
     actions: {}
