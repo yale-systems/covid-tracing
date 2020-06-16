@@ -51,21 +51,20 @@ public class PatientController {
     @CrossOrigin
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientDTO> insert(@RequestBody PatientDTO patientDTO){
-        patientService.insert(patientDTO);
+        PatientDTO insertedPatientDTO = patientService.insert(patientDTO);
         patientService.sendCreationEmail(
                 patientDTO.getName(),
                 patientDTO.getEmail(),
                 patientDTO.getUsername(),
                 patientDTO.getPassword()
         );
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(insertedPatientDTO);
     }
 
     @CrossOrigin
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientDTO> update(@RequestBody PatientDTO patientDTO){
-        patientService.update(patientDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(patientService.update(patientDTO));
     }
 
     @CrossOrigin
@@ -76,8 +75,7 @@ public class PatientController {
             return null;
         }
         Long newVolunteerId = reassignment.get("new_volunteer_id");
-        patientService.reassignment(patientId, newVolunteerId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(patientService.reassignment(patientId, newVolunteerId));
     }
 
     @CrossOrigin

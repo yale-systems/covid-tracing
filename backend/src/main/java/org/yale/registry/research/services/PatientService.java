@@ -63,7 +63,7 @@ public class PatientService {
         return patientDTOS;
     }
 
-    public void update(PatientDTO patientDTO){
+    public PatientDTO update(PatientDTO patientDTO){
         Optional<PatientEntity> optionalPatientEntity =
                 patientRepository.findById(patientDTO.getPatient_id());
         if(optionalPatientEntity.isPresent()){
@@ -81,19 +81,27 @@ public class PatientService {
                 patientEntity.setEmail(patientDTO.getEmail());
             }
             patientRepository.save(patientEntity);
+            PatientDTO returnPatientDTO = new PatientDTO(patientEntity);
+            RESTfulUtility.addRestToPatientDTO(returnPatientDTO);
+            return returnPatientDTO;
         }
+        return null;
     }
 
-    public void reassignment(Long patient_id, Long newVolunteerId){
+    public PatientDTO reassignment(Long patient_id, Long newVolunteerId){
         Optional<PatientEntity> optionalPatientEntity = patientRepository.findById(patient_id);
         if(optionalPatientEntity.isPresent()){
             PatientEntity patientEntity = optionalPatientEntity.get();
             patientEntity.setVolunteer_id(newVolunteerId);
             patientRepository.save(patientEntity);
+            PatientDTO returnPatientDTO = new PatientDTO(patientEntity);
+            RESTfulUtility.addRestToPatientDTO(returnPatientDTO);
+            return returnPatientDTO;
         }
+        return null;
     }
 
-    public void insert(PatientDTO patientDTO){
+    public PatientDTO insert(PatientDTO patientDTO){
         PatientEntity patientEntity = new PatientEntity(
                 patientDTO.getPatient_id(), patientDTO.getUsername(),
                 patientDTO.getPassword(), patientDTO.getName(),
@@ -101,6 +109,9 @@ public class PatientService {
                 patientDTO.getVolunteer_id()
         );
         patientRepository.save(patientEntity);
+        PatientDTO returnPatientDTO = new PatientDTO(patientEntity);
+        RESTfulUtility.addRestToPatientDTO(returnPatientDTO);
+        return returnPatientDTO;
     }
 
     public void delete(Long patient_id){
@@ -114,14 +125,14 @@ public class PatientService {
         message.setTo(email);
         message.setSubject(SUBJECT);
         message.setText(
-                "NOTE: THIS EMAIL IS FOR TESTING PURPOSES ONLY, " +
+                "WARNING: THIS EMAIL IS FOR TESTING PURPOSES ONLY, " +
                         "IF YOU RECEIVE THIS EMAIL, IGNORE IT. " +
-                        "YALE HEALTH HAS NOT IDENTIFIED THAT YOU HAVE COVID.\n" +
-                        "Dear " + name + ",\nYou have been identified as a patient of Yale" +
+                        "YALE HEALTH HAS NOT IDENTIFIED THAT YOU HAVE COVID.\n\n\n\n\n" +
+                        "Dear " + name + ",\n\nYou have been identified as a patient of Yale" +
                         " Health for COVID-19. A username and password for your Yale Health Account"
                         + " has been created with the following credentials.\nUsername: " +
                         username + "\nPassword: " + password + "\nIf you could fill the form" +
-                        " out at your earliest convenience it would be appreciated\nSincerely,\n" +
+                        " out at your earliest convenience it would be appreciated\n\nSincerely,\n" +
                         "Yale Health"
         );
         mailSender.send(message);

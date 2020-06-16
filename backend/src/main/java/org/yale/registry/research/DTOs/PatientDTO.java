@@ -1,6 +1,7 @@
 package org.yale.registry.research.DTOs;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.yale.registry.research.entities.PatientEntity;
 
 public class PatientDTO extends RepresentationModel<PatientDTO> {
     private Long patient_id;
@@ -31,6 +32,16 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.email = email;
         this.manager_id = manager_id;
         this.volunteer_id = volunteer_id;
+    }
+
+    public PatientDTO(PatientEntity patientEntity) {
+        this.patient_id = patientEntity.getPatient_id();
+        this.username = patientEntity.getUsername();
+        this.password = patientEntity.getPassword();
+        this.name = patientEntity.getName();
+        this.email = patientEntity.getEmail();
+        this.manager_id = patientEntity.getManager_id();
+        this.volunteer_id = patientEntity.getVolunteer_id();
     }
 
     public Long getPatient_id() {

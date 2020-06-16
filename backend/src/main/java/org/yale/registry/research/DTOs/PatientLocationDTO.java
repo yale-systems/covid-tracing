@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.locationtech.jts.geom.Point;
 import org.springframework.hateoas.RepresentationModel;
+import org.yale.registry.research.entities.PatientLocationEntity;
 
 import java.util.Date;
 
@@ -37,6 +38,15 @@ public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> 
         this.confirmed = confirmed;
         this.geom = geom;
         this.patient_id = patient_id;
+    }
+
+    public PatientLocationDTO(PatientLocationEntity patientLocationEntity) {
+        this.id = patientLocationEntity.getId();
+        this.start_time = patientLocationEntity.getStart_time();
+        this.end_time = patientLocationEntity.getEnd_time();
+        this.confirmed = patientLocationEntity.getConfirmed();
+        this.geom = patientLocationEntity.getGeom();
+        this.patient_id = patientLocationEntity.getPatient_id();
     }
 
     public Long getId() {

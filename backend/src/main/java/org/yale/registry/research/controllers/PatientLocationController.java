@@ -48,15 +48,13 @@ public class PatientLocationController {
     @CrossOrigin
     @PostMapping(value = "/insert")
     public ResponseEntity<PatientLocationDTO> insert(@RequestBody PatientLocationDTO patientLocationDTO) {
-        patientLocationService.insert(patientLocationDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(patientLocationService.insert(patientLocationDTO));
     }
 
     @CrossOrigin
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientLocationDTO> update(@RequestBody PatientLocationDTO patientLocationDTO){
-        patientLocationService.update(patientLocationDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(patientLocationService.update(patientLocationDTO));
     }
 
     @CrossOrigin

@@ -35,15 +35,13 @@ public class VolunteerController {
     @CrossOrigin
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VolunteerDTO> insert(@RequestBody VolunteerDTO volunteerDTO){
-        volunteerService.insert(volunteerDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(volunteerService.insert(volunteerDTO));
     }
 
     @CrossOrigin
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientDTO> update(@RequestBody VolunteerDTO volunteerDTO){
-        volunteerService.update(volunteerDTO);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<VolunteerDTO> update(@RequestBody VolunteerDTO volunteerDTO){
+        return ResponseEntity.ok(volunteerService.update(volunteerDTO));
     }
 
     @CrossOrigin

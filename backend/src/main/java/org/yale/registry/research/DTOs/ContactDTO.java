@@ -1,6 +1,7 @@
 package org.yale.registry.research.DTOs;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.yale.registry.research.entities.ContactEntity;
 import org.yale.registry.research.enums.AgeDemographic;
 
 public class ContactDTO extends RepresentationModel<ContactDTO> {
@@ -43,6 +44,19 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.nature_of_contact = nature_of_contact;
         this.healthcare_worker = healthcare_worker;
         this.patient_id = patient_id;
+    }
+
+    public ContactDTO(ContactEntity contactEntity){
+        this.contact_id = contactEntity.getContact_id();
+        this.first_name = contactEntity.getFirst_name();
+        this.last_name = contactEntity.getLast_name();
+        this.email = contactEntity.getEmail();
+        this.phone_number = contactEntity.getPhone_number();
+        this.age = contactEntity.getAge();
+        this.household = contactEntity.getHousehold();
+        this.nature_of_contact = contactEntity.getNature_of_contact();
+        this.healthcare_worker = contactEntity.getHealthcare_worker();
+        this.patient_id = contactEntity.getPatient_id();
     }
 
     public Long getContact_id() {

@@ -1,6 +1,7 @@
 package org.yale.registry.research.DTOs;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.yale.registry.research.entities.ManagerEntity;
 
 public class ManagerDTO extends RepresentationModel<ManagerDTO> {
     private Long manager_id;
@@ -18,6 +19,13 @@ public class ManagerDTO extends RepresentationModel<ManagerDTO> {
         this.username = username;
         this.password = password;
         this.name = name;
+    }
+
+    public ManagerDTO(ManagerEntity managerEntity) {
+        this.manager_id = managerEntity.getManager_id();
+        this.username = managerEntity.getUsername();
+        this.password = managerEntity.getPassword();
+        this.name = managerEntity.getName();
     }
 
     public Long getManager_id() {

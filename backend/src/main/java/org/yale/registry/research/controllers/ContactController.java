@@ -34,15 +34,13 @@ public class ContactController {
     @CrossOrigin
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ContactDTO> insert(@RequestBody ContactDTO contactDTO){
-        contactService.insert(contactDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(contactService.insert(contactDTO));
     }
 
     @CrossOrigin
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ContactDTO> update(@RequestBody ContactDTO contactDTO){
-        contactService.update(contactDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(contactService.update(contactDTO));
     }
 
     @CrossOrigin
