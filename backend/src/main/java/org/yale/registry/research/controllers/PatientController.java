@@ -3,6 +3,8 @@ package org.yale.registry.research.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 import org.yale.registry.research.DTOs.PatientDTO;
 import org.yale.registry.research.DTOs.VolunteerDTO;
@@ -50,6 +52,12 @@ public class PatientController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientDTO> insert(@RequestBody PatientDTO patientDTO){
         patientService.insert(patientDTO);
+        patientService.sendCreationEmail(
+                patientDTO.getName(),
+                patientDTO.getEmail(),
+                patientDTO.getUsername(),
+                patientDTO.getPassword()
+        );
         return ResponseEntity.ok().build();
     }
 
