@@ -43,7 +43,7 @@ public class VolunteerService {
         return volunteerDTOS;
     }
 
-    public void update(VolunteerDTO volunteerDTO){
+    public VolunteerDTO update(VolunteerDTO volunteerDTO){
         Optional<VolunteerEntity> optionalVolunteerEntity =
                 volunteerRepository.findById(volunteerDTO.getVolunteer_id());
         if(optionalVolunteerEntity.isPresent()){
@@ -61,16 +61,23 @@ public class VolunteerService {
                 volunteerEntity.setEmail(volunteerDTO.getEmail());
             }
             volunteerRepository.save(volunteerEntity);
+            VolunteerDTO returnVolunteerDTO = new VolunteerDTO(volunteerEntity);
+            RESTfulUtility.addRestToVolunteerDTO(returnVolunteerDTO);
+            return returnVolunteerDTO;
         }
+        return null;
     }
 
-    public void insert(VolunteerDTO volunteerDTO){
+    public VolunteerDTO insert(VolunteerDTO volunteerDTO){
         VolunteerEntity volunteerEntity = new VolunteerEntity(
                 volunteerDTO.getVolunteer_id(), volunteerDTO.getUsername(),
                 volunteerDTO.getPassword(), volunteerDTO.getName(),
                 volunteerDTO.getEmail(), volunteerDTO.getManager_id()
         );
         volunteerRepository.save(volunteerEntity);
+        VolunteerDTO returnVolunteerDTO = new VolunteerDTO(volunteerEntity);
+        RESTfulUtility.addRestToVolunteerDTO(returnVolunteerDTO);
+        return returnVolunteerDTO;
     }
 
     public void delete(Long volunteer_id){

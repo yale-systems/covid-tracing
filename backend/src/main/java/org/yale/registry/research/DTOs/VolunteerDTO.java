@@ -1,6 +1,7 @@
 package org.yale.registry.research.DTOs;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.yale.registry.research.entities.VolunteerEntity;
 
 public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
     private Long volunteer_id;
@@ -28,6 +29,15 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
         this.name = name;
         this.email = email;
         this.manager_id = manager_id;
+    }
+
+    public VolunteerDTO(VolunteerEntity volunteerEntity) {
+        this.volunteer_id = volunteerEntity.getVolunteer_id();
+        this.username = volunteerEntity.getUsername();
+        this.password = volunteerEntity.getPassword();
+        this.name = volunteerEntity.getName();
+        this.email = volunteerEntity.getEmail();
+        this.manager_id = volunteerEntity.getManager_id();
     }
 
     public Long getVolunteer_id() {

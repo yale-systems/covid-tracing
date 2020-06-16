@@ -57,14 +57,15 @@ public class PatientLocationService {
         return patientLocationDTOS;
     }
 
-    public void insert(PatientLocationDTO patientLocationDTO){
+    public PatientLocationDTO insert(PatientLocationDTO patientLocationDTO){
         PatientLocationEntity patientLocationEntity = DTOUtility.patientLocationDTOToEntity(patientLocationDTO);
         patientLocationRepository.save(patientLocationEntity);
-        System.out.println("test");
-
+        PatientLocationDTO returnPatientLocationDTO = new PatientLocationDTO(patientLocationEntity);
+        RESTfulUtility.addRestToPatientLocationDTO(returnPatientLocationDTO);
+        return returnPatientLocationDTO;
     }
 
-    public void update(PatientLocationDTO patientLocationDTO){
+    public PatientLocationDTO update(PatientLocationDTO patientLocationDTO){
         Optional<PatientLocationEntity> optionalPatientLocationEntity =
                 patientLocationRepository.findById(patientLocationDTO.getId());
         if(optionalPatientLocationEntity.isPresent()){
@@ -85,7 +86,11 @@ public class PatientLocationService {
                 patientLocationEntity.setPatient_id(patientLocationDTO.getPatient_id());
             }
             patientLocationRepository.save(patientLocationEntity);
+            PatientLocationDTO returnPatientLocationDTO = new PatientLocationDTO(patientLocationEntity);
+            RESTfulUtility.addRestToPatientLocationDTO(returnPatientLocationDTO);
+            return returnPatientLocationDTO;
         }
+        return null;
     }
 
     public void delete(Long id){

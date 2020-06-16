@@ -38,7 +38,7 @@ public class ContactService {
         return contactDTOS;
     }
 
-    public void insert(ContactDTO contactDTO){
+    public ContactDTO insert(ContactDTO contactDTO){
         ContactEntity contactEntity = new ContactEntity(
                 contactDTO.getContact_id(), contactDTO.getFirst_name(),
                 contactDTO.getLast_name(), contactDTO.getEmail(),
@@ -47,9 +47,12 @@ public class ContactService {
                 contactDTO.getHealthcare_worker(), contactDTO.getPatient_id()
         );
         contactRepository.save(contactEntity);
+        ContactDTO returnContactDTO = new ContactDTO(contactEntity);
+        RESTfulUtility.addRestToContactDTO(returnContactDTO);
+        return returnContactDTO;
     }
 
-    public void update(ContactDTO contactDTO){
+    public ContactDTO update(ContactDTO contactDTO){
         Optional<ContactEntity> optionalContactEntity =
                 contactRepository.findById(contactDTO.getContact_id());
         if(optionalContactEntity.isPresent()){
@@ -79,7 +82,11 @@ public class ContactService {
                 contactEntity.setHealthcare_worker(contactDTO.getHealthcare_worker());
             }
             contactRepository.save(contactEntity);
+            ContactDTO returnContactDTO = new ContactDTO(contactEntity);
+            RESTfulUtility.addRestToContactDTO(returnContactDTO);
+            return returnContactDTO;
         }
+        return null;
     }
     public void delete(Long contact_id){
         contactRepository.deleteById(contact_id);

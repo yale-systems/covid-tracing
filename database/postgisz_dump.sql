@@ -156,7 +156,29 @@ ALTER TABLE public.contacts_contact_id_seq OWNER TO apiclient;
 
 ALTER SEQUENCE public.contacts_contact_id_seq OWNED BY public.contacts.contact_id;
 
+CREATE TABLE public.tags (
+    tag_id integer NOT NULL,
+    mac_address text,
+    info text,
+    worst_case_rssi text,
+    flags text,
+    minutes_of_appr_contact integer
+);
 
+
+ALTER TABLE public.tags OWNER TO apiclient;
+
+CREATE SEQUENCE public.tags_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE public.tags_id_seq OWNER TO apiclient;
+
+ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.tag_id;
 --
 -- Name: dummy_data; Type: TABLE; Schema: public; Owner: apiclient
 --
@@ -19401,7 +19423,11 @@ SELECT pg_catalog.setval('public.volunteers_id_seq', 41, false);
 ALTER TABLE ONLY public.dummy_data
     ADD CONSTRAINT dummy_data_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY public.contacts
+    ADD CONSTRAINT contacts_pkey PRIMARY KEY (contact_id);
 
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (tag_id);
 --
 -- Name: managers managers_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
 --
