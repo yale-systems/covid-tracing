@@ -1,40 +1,18 @@
 # Covid_Tracing
 
 This is the backend repository for Yale's Covid Tracing project using Spring Frameworks.
+More documentation is coming soon. For a rough sketch of the entities and fields, please refer to [this document](https://docs.google.com/document/d/1oObs0OEUgjgdBHZPQiFAQswYdpVXNwY6DABrJI0pXHs/edit?usp=sharing). 
 
 ## Startup
 
-1. If you don't have gradle, run brew install gradle. If you don't have brew, I'd recommend getting it just so we have
-   the same versions.
-2. Make sure Java version 8 is installed.
-3. Run gradle build in the directory.
-4. cd to build/libs
-5. there should be a war file in there. Run java -jar warfilename.
-6. if port refused, make sure nothing is running on port 8080.
-7. You can now access the api! Call endpoint getone (ie: localhost:8080/getonerandom) to retrieve a random piece of dummy
-   data. Call endpoint getrange with query parameter range (ie: localhost:8080/getrange?range=100) to retrieve a list of
-   size range entities from the api (up to 9000). You can now also inset with the insert endpoint and use the getone 
-   endpoint to retrieve a record by id.
+1. Install [Docker](https://www.docker.com/get-started), which will help set up the database for you.
+2. In the `covid_tracing/backend` directory, run `./gradlew build`.
+3. In the `covid_tracing` directory, run `./host_start_backend/sh`. This can take up to a minute. Once the terminal shows `Started ResearchApplication in ____ seconds`, you can now access the api!
+4. To test the backend, call the root (localhost:8080) to see all the entities. Call endpoint patient (ie: localhost:8080/patient/getbypatientid/1) to see all the data associated with the patient. 
 
-## To run the backend + database, do either (1) or (2a) then (2b).
-
-## 1. Docker for Backend + Database
-1. From backend directory: `./host_start_backend.sh`
-2. To stop: `Ctrl-c`
-
-## 2a. Postgres Docker (Individual)
-
-To run the database in a separate docker container
-1. `cd backend/db`
-2. `./build.sh`
-3. `./start.sh`
-4. To stop the docker container: `./stop.sh`
-
-## 2b. Backend Docker (Individual)
-
-1. Build Docker Image `docker build -t tracing .`
-2. Run `docker run -p 8080:8080 tracing`
-3. Test `http://localhost:8080/getonerandom`
+### Troubleshooting
+- make sure nothing is running on port 8080 before you run the third step
+- check to see if you have Java version 8 installed
 
 # Contents
 
@@ -74,31 +52,4 @@ of the entity for different client certifications. One client may have permissio
 another, even though the information exists in the same underlying entity. It can also be useful if we want to make
 transformation to the entity data to return to the client that we never want persisted to the database.
 
-# TODOS
 
-For any tasks assigned to you, please create a new branch from the master. **Do not commit to master**.
-
-1. Establish a connection with a postgresql database. You'll need to change the application.properties file under
-   resources to something similar to this:
-   spring.datasource.url=jdbc:postgresql://localhost:5432/registry  
-   spring.datasource.username=apiclient  
-   spring.datasource.password=testingrole  
-   spring.datasource.driver-class-name=org.postgresql.Driver  
-   spring.jpa.show-sql=true  
-   logging.level.org.hibernate.SQL=DEBUG  
-   logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE  
-   spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true  
-   spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect  
-   spring.session.store-type=none  
-   spring.session.jdbc.initialize-schema=never  
-   I'll modify gradle to have the Java dependencies on the API end, just establish via the log that the connection was
-   successful. (ALEX)
-2. Extend postgres with postgis and create triggers within postgres to first retrieve the longitude and latitude
-   within a certain radius of a specified point. I have the command history I used to make a finalized schema, but I have
-   to transfer it into a sql script and will send it out tomorrow. Start with the previous task. (ALEX)
-3. Create an insertion operation that will apply jitter to a longitude and latitude in a dto and then insert it into
-   the dummy database. Just make an endpoint and ignore the input to it. Right now, don't worry about processing physical
-   request, just make an hard-coded DTO when the endpoint is called, add random jitter to it of a constant radius, and
-   insert into database. You can verify insertion by logging into the h2 console at localhost:8080/h2-console. Enable it
-   in applications.properties first, though (it's commented out). (HAO)  
-   If we could get some of these task done by monday, we'd be in great shape!
