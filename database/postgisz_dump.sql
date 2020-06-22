@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS public.contacts;
 DROP TABLE IF EXISTS public.managers;
 DROP TABLE IF EXISTS public.volunteers;
 DROP TABLE IF EXISTS public.patients;
-DROP TABLE IF EXISTS public.patient_locations;
+DROP TABLE IF EXISTS public.events;
 DROP TABLE IF EXISTS public.public_users;
 DROP TABLE IF EXISTS public.public_users_locations;
 
@@ -275,10 +275,10 @@ ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.manager_id;
 
 
 --
--- Name: patient_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
 --
 
-CREATE SEQUENCE public.patient_locations_id_seq
+CREATE SEQUENCE public.events_id_seq
     AS integer
     START WITH 4351
     INCREMENT BY 1
@@ -287,13 +287,13 @@ CREATE SEQUENCE public.patient_locations_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.patient_locations_id_seq OWNER TO apiclient;
+ALTER TABLE public.events_id_seq OWNER TO apiclient;
 
 --
--- Name: patient_locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
 --
 
-ALTER SEQUENCE public.patient_locations_id_seq OWNED BY public.events.event_id;
+ALTER SEQUENCE public.events_id_seq OWNED BY public.events.event_id;
 
 
 --
@@ -504,7 +504,7 @@ ALTER TABLE ONLY public.dummy_data ALTER COLUMN id SET DEFAULT nextval('public.d
 -- Name: events event_id; Type: DEFAULT; Schema: public; Owner: apiclient
 --
 
-ALTER TABLE ONLY public.events ALTER COLUMN event_id SET DEFAULT nextval('public.patient_locations_id_seq'::regclass);
+ALTER TABLE ONLY public.events ALTER COLUMN event_id SET DEFAULT nextval('public.events_id_seq'::regclass);
 
 
 --
@@ -19420,10 +19420,10 @@ SELECT pg_catalog.setval('public.managers_id_seq', 5, false);
 
 
 --
--- Name: patient_locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.patient_locations_id_seq', 4351, false);
+SELECT pg_catalog.setval('public.events_id_seq', 4351, false);
 
 
 --
@@ -19494,11 +19494,11 @@ ALTER TABLE ONLY public.managers
 
 
 --
--- Name: events patient_locations_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
+-- Name: events events_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.events
-    ADD CONSTRAINT patient_locations_pk PRIMARY KEY (event_id);
+    ADD CONSTRAINT events_pk PRIMARY KEY (event_id);
 
 
 --
@@ -19542,10 +19542,10 @@ ALTER TABLE ONLY public.volunteers
 
 
 --
--- Name: patient_locations_geom_index; Type: INDEX; Schema: public; Owner: apiclient
+-- Name: events_geom_index; Type: INDEX; Schema: public; Owner: apiclient
 --
 
-CREATE INDEX patient_locations_geom_index ON public.events USING gist (public.st_transform(geom, 32618));
+CREATE INDEX events_geom_index ON public.events USING gist (public.st_transform(geom, 32618));
 
 
 --
@@ -19580,11 +19580,11 @@ ALTER TABLE ONLY public.event_contact
 
 
 --
--- Name: events patient_locations_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
+-- Name: events events_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.events
-    ADD CONSTRAINT patient_locations_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
+    ADD CONSTRAINT events_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
 
 
 --

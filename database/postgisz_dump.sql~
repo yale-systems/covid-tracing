@@ -220,7 +220,7 @@ CREATE TABLE public.event_contact (
 );
 
 
-ALTER TABLE public.event_contact OWNER TO postgres;
+ALTER TABLE public.event_contact OWNER TO apiclient;
 
 --
 -- Name: events; Type: TABLE; Schema: public; Owner: apiclient
