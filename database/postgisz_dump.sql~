@@ -162,8 +162,6 @@ CREATE TABLE public.tags (
     info text,
     worst_case_rssi text,
     flags text,
-    first_contact text,
-    last_contact text,
     minutes_of_appr_contact integer
 );
 
