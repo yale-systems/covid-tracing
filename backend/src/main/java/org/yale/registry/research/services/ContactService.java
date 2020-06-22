@@ -38,6 +38,12 @@ public class ContactService {
         return contactDTOS;
     }
 
+    public List<ContactDTO> getContactDTOByEventId(Long event_id){
+        List<ContactDTO> contactDTOS = contactRepository.findContactDTOsByEventId(event_id);
+        RESTfulUtility.addRestToContactDTOs(contactDTOS);
+        return contactDTOS;
+    }
+
     public ContactDTO insert(ContactDTO contactDTO){
         ContactEntity contactEntity = new ContactEntity(
                 contactDTO.getContact_id(), contactDTO.getFirst_name(),

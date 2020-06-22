@@ -7,14 +7,14 @@ import org.yale.registry.research.controllers.*;
 import java.util.List;
 
 public class RESTfulUtility {
-    public static void addRestToPatientLocationDTO(PatientLocationDTO patientLocationDTO){
-        patientLocationDTO.add(
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
-                        getById(patientLocationDTO.getId())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
-                        update(patientLocationDTO)).withRel("update"),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
-                        delete(patientLocationDTO.getId())).withRel("delete")
+    public static void addRestToEventDTO(EventDTO eventDTO){
+        eventDTO.add(
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
+                        getByEventId(eventDTO.getEvent_id())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
+                        update(eventDTO)).withRel("update"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
+                        delete(eventDTO.getEvent_id())).withRel("delete")
         );
 //        WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
 //                getById(patientLocationDTO.getId())).withSelfRel().andAffordance(
@@ -25,9 +25,9 @@ public class RESTfulUtility {
 //                        delete(patientLocationDTO.getId())).withRel("delete")
     }
 
-    public static void addRestToPatientLocationDTOs(List<PatientLocationDTO> patientLocationDTOS){
-        for(PatientLocationDTO patientLocationDTO: patientLocationDTOS){
-            addRestToPatientLocationDTO(patientLocationDTO);
+    public static void addRestToEventDTOs(List<EventDTO> eventDTOS){
+        for(EventDTO eventDTO : eventDTOS){
+            addRestToEventDTO(eventDTO);
         }
     }
 
@@ -43,11 +43,11 @@ public class RESTfulUtility {
                         delete(patientDTO.getPatient_id())).withRel("delete"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
                         getByPatientId(patientDTO.getPatient_id())).withRel("get_contacts"),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
                         getByPatientId(patientDTO.getPatient_id())).withRel("get_locations"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
                         insert(null)).withRel("insert_contact"),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientLocationController.class).
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
                         insert(null)).withRel("insert_location")
                 );
     }

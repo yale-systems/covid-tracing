@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.locationtech.jts.geom.Point;
 import org.springframework.hateoas.RepresentationModel;
-import org.yale.registry.research.entities.PatientLocationEntity;
+import org.yale.registry.research.entities.EventEntity;
 
 import java.util.Date;
+import java.util.List;
 
-public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> {
+public class EventDTO extends RepresentationModel<EventDTO> {
 
-    private Long id;
+    private Long event_id;
 
     private Date start_time;
 
@@ -26,13 +27,15 @@ public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> 
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Point geom;
 
-    public PatientLocationDTO() {
+    private List<Long> contact_ids;
+
+    public EventDTO() {
     }
 
-    public PatientLocationDTO(Long id, Date start_time,
-                              Date end_time, Boolean confirmed,
-                              Point geom, Long patient_id) {
-        this.id = id;
+    public EventDTO(Long event_id, Date start_time,
+                    Date end_time, Boolean confirmed,
+                    Point geom, Long patient_id) {
+        this.event_id = event_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -40,17 +43,27 @@ public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> 
         this.patient_id = patient_id;
     }
 
-    public PatientLocationDTO(PatientLocationEntity patientLocationEntity) {
-        this.id = patientLocationEntity.getId();
-        this.start_time = patientLocationEntity.getStart_time();
-        this.end_time = patientLocationEntity.getEnd_time();
-        this.confirmed = patientLocationEntity.getConfirmed();
-        this.geom = patientLocationEntity.getGeom();
-        this.patient_id = patientLocationEntity.getPatient_id();
+    public EventDTO(EventEntity eventEntity) {
+        this.event_id = eventEntity.getEvent_id();
+        this.start_time = eventEntity.getStart_time();
+        this.end_time = eventEntity.getEnd_time();
+        this.confirmed = eventEntity.getConfirmed();
+        this.geom = eventEntity.getGeom();
+        this.patient_id = eventEntity.getPatient_id();
     }
 
-    public Long getId() {
-        return id;
+    public EventDTO(Long event_id, Date start_time, Date end_time, Boolean confirmed, Long patient_id, Point geom, List<Long> contact_ids) {
+        this.event_id = event_id;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.confirmed = confirmed;
+        this.patient_id = patient_id;
+        this.geom = geom;
+        this.contact_ids = contact_ids;
+    }
+
+    public Long getEvent_id() {
+        return event_id;
     }
 
     public Date getStart_time() {
@@ -73,8 +86,8 @@ public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> 
         return patient_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEvent_id(Long event_id) {
+        this.event_id = event_id;
     }
 
     public void setStart_time(Date start_time) {
@@ -95,6 +108,14 @@ public class PatientLocationDTO extends RepresentationModel<PatientLocationDTO> 
 
     public void setPatient_id(Long patient_id) {
         this.patient_id = patient_id;
+    }
+
+    public List<Long> getContact_ids() {
+        return contact_ids;
+    }
+
+    public void setContact_ids(List<Long> contact_ids) {
+        this.contact_ids = contact_ids;
     }
 }
 
