@@ -1,96 +1,59 @@
 ![Yale COVID-19 Contact Tracing System](NewLogo.png)
 
-The purpose of this project is to develop a database for storing contact tracing information, as well as information that can be used for predictive modeling, and accompanying infrastructure for visualization of the data. In addition, we aim to improve the data-input experience for contact tracing volunteers. Read more about each segment of the project below.
+The purpose of this project is to develop a database for storing contact tracing information, as well as information that can be used for predictive modeling, and accompanying infrastructure for streamlined input and visualization of the data. This will vastly improve the contact-tracing workflow for patients, managers, and volunteers alike, and will also provide public health experts with valuable information to aid their research. Our hope is to also make some of the aggregate information available to the public, whether through our own publicly-accessible website, or through a public-facing API that apps like [Hunala](https://news.yale.edu/2020/06/05/yale-app-hunala-aims-be-waze-coronavirus) could integrate into their product. 
 
-Please visit [here] (http://oasis.cs.yale.edu:8081) to see a demo of our website.
+Read more about each segment of the project below.
+
+## Websites
+
+We're currently in the process of building 4 websites, each targeted at a different user group. Using all these systems together, we hope to streamline the contact tracing project for patients and contact tracers alike. The anonymized aggregate data will then be made accessible on the public facing website. 
+
+### Patient Portal
+
+One of the major bottlenecks in the current contact tracing system is simply the time lag inherent in interviewing patients and notifying contacts due to the time required to interview patients. Our patient portal enables COVID-19 patients to complete their interview online individually. This cuts down on the number of patients contact tracers need to call, and allows patients to fill out the form at their earliest convenience. If patients would still prefer to conduct a phone interview, they can also request one easily through the website. Upon completion of either the phone interview or the form, all the patient's information is easily visible and editable in the website. 
+
+The form will be integrated with the volunteer and manager portals through a centralized database, allowing a smooth handoff from the hostpial to the contact tracers. After diagnosis, medical professionals could simply enter the patient into the database. On the backend, the database would create credentials for the patient and send these to the patient through a secure link at a phone number or email on record. 
+
+Furthermore, this website provides another touchstone to interact with patients and provide support to them after leaving the hospital. For example, our resources page contains a list of hotlines and organizations both national and local to New Haven that could be useful to patients. 
+
+Please visit [http://oasis-patient.cs.yale.edu](http://oasis-patient.cs.yale.edu) on Yale VPN to see a demo of this website. The login credentials are "username1" and "password".
+
+### Volunteer Portal
+
+The volunteer website is intended to provide a centralized portal for contact tracer volunteers to view and input information on assigned patients and contacts. The main dashboard features an easy way to view key information on assigned people, as well as as a large interface to view and interact with all the information associated with one particular person. 
+
+For volunteers who interview patients, the portal leads directly to a modified version of the interview form on the patient website. This provides the volunteer with more strucure during the interview, as well as an intuitive user interface to input information. For volunteers who notify contacts, the contact information is formatted in a highly human-readable format. A call script is embedded in the main website, with important information (exposure date, notification status) highlighted for easy access. Both approaches are designed to guide the volunteer through an interview or call, reminding them of the information that needs to be conveyed and gathered. No more transcribing notes from interviews; just input them directly into the website. 
+
+Volunteers will be given more agency to edit their profiles to reflect their working capacity or language skills. Depending on the manager's preference, they can also self-assign patients/contacts, reducing administrative time on the part of the manager. 
+
+Please visit [this link](http://172.28.229.7:8082/) on Yale VPN to see a demo. 
+
+### Manager Portal and Public Portal
+
+These two websites are still in the works...
+
+
+## Database 
+The goal of the centralized spatial database is to both provide a simple visualization tool for doctors, researchers, and the general public and to improve the ease of database entry. Additional factors considered include time and location, in addition to contacts. An informational risk-analysis system for the general public is built into the map visualization (to see what places are hot-spots). All data in the database is voluntarily provided and anonymous.
 
 ## **Team**
 
+Current Members
 * [Avi Silberschatz](https://codex.cs.yale.edu/avi/)
 * [Robert Soul&eacute;](https://www.cs.yale.edu/homes/soule/)
+* Tucker Moses (backend)
+* Tom Coile (frontend and design)
+* Ivy Fan (frontend and design)
+* David Foster (design)
+
+Past Members
 * Alex Briasco-Stewart
-* Tom Coile
-* Ivy Fan 
-* David Foster
 * Hao Li
-* Tucker Moses
 * Vikram Mullick
+
 
 ## **Installation Instructions**
 
 * [Backend](backend/backend.md)
 * [Frontend](frontend/frontend.md)
 
-### **A Centralized Spatial Database**
-The goal of the centralized spacial database is to both provide a simple visualization tool for doctors, researchers, and the general public and to improve the ease of database entry. Additional factors considered include time and location, in addition to contacts. An informational risk-analysis system for the general public is built into the map visualization (to see what places are hot-spots). All data in the database is voluntarily provided and anonymous.
-
-### **Long Term, University-Specific COVID-19 Tracking**
-Once the University begins to reopen, we hope to provide a proactive tracing system. This will help the population feel more comfortable opening and pull together contact tracing data to better track the virus if it appears on campus. This project could also aid in random testing on campus by making random selections more informed.
-
-# Covid_Tracing
-This is the backend repository for Yale's Covid Tracing project using Spring Frameworks.
-#Startup
-1. If you don't have gradle, run brew install gradle. If you don't have brew, I'd recommend getting it just so we have 
-the same versions.
-2. Make sure Java version 8 is installed.
-3. Run gradle build in the directory.
-4. cd to build/libs
-5. there should be a war file in there. Run java -jar warfilename.
-6. if port refused, make sure nothing is running on port 8080.
-7. You can now access the api! Call endpoint getone (ie: localhost:8080/getone) to retrieve a random piece of dummy 
-data. Call endpoint getrange with query parameter range (ie: localhost:8080/getrange?range=100) to retrieve a list of 
-size range entities from the api (up to 9000).  
-# Contents
-This section hosts information on the different directories within the Spring Frameworks. A general flow of the 
-application is a\) an endpoint is called in the controller b\) That end attempts to process the request through its
-respective service c\) that service uses a repository to retrieve the data d\) that data is stored in the entity that
-represents said data and returned to the service e\) the service translates the data from the entity class to the data
-transfer object \(DTO\) as to not directly expose access to any underlying databases f\) the DTOs are returned to the
-controller which responds to the client with the payload if the request is not fualty. Responds with a non-200 http
-status otherwise.
-### Controllers
-This is where we host our actual endpoints. From here we control direct communication with the client and retrieve
-request payloads.
-### Entities
-Entities are an object oriented way of representing database relations as classes via object relational mapping \(ORM\).
-A standard relation may be an entity representing a simple row in a database, but they can be much more complex.
-**Do Not** directly manipulate entities unless you are just receiving them from database retrieval, updating an entry in the
-database, inserting an entry, or deleting one. These should only perfectly reflect the mapping between the program and
-database. Any other transformation should be processed in DTO.
-### Repositories
-Repositories are a Spring Frameworks abstraction over Java Persistence API, the defined suite of APIs for ORM. Well
-JPA defines the APIs, its just a specification. There exists different implementation of Java JPA. The one currently
-implemented under the hood of the repositories interface is hibernate.
-### Services
-Services actually defines what actions the service called can do. More specifically, it's where we run the actions the
-controller needs to retrieve the expected payload.
-### DTOs
-This is the object we either retrieve from the client or return to them, depending on the type of operation. We don't
-want to return the actual entity, as that allows direct exposure to our database. Often, we might want different subsets
-of the entity for different client certifications. One client may have permission to view more tracing information than
-another, even though the information exists in the same underlying entity. It can also be useful if we want to make
-transformation to the entity data to return to the client that we never want persisted to the database.
-
-
-What I (Alex) have done:
-1. Set up a local postgres instance:
-
-```
-brew services start postgres
-```
-
-Initialize a database called 'registry', as well as an authorized user as outlined in src/main/resources/application.properties. Install postgis with brew and follow the instructions in the 'enabling postgis' section of https://postgis.net/install/
-
-Afterwards feed the dump file to initialize the dummy data: 
-
-```
-psql registry < dummy_data_dump.sql
-```
-
-I use the psql to interact with the database:
-
-```
-psql registry
-```
-
-The changes in the schema.sql script in src/main/resources are to try to add a piece of data (a string) to another table I created called test_data. Right now it's commented out. 
