@@ -14,6 +14,10 @@ public class TagDTO extends RepresentationModel<TagDTO> {
 
     private String flags;
 
+    private String first_contact;
+
+    private String last_contact;
+
     private Integer minutes_of_appr_contact;
 
 
@@ -21,12 +25,15 @@ public class TagDTO extends RepresentationModel<TagDTO> {
 
     }
 
-    public TagDTO(Long tag_id, String mac_address, String info, String worst_case_rssi, String flags, Integer minutes_of_appr_contact) {
+    public TagDTO(Long tag_id, String mac_address, String info, String worst_case_rssi, String flags,
+                  String first_contact, String last_contact, Integer minutes_of_appr_contact) {
         this.tag_id = tag_id;
         this.mac_address = mac_address;
         this.info = info;
         this.worst_case_rssi = worst_case_rssi;
         this.flags = flags;
+        this.first_contact = first_contact;
+        this.last_contact = last_contact;
         this.minutes_of_appr_contact = minutes_of_appr_contact;
     }
 
@@ -77,6 +84,22 @@ public class TagDTO extends RepresentationModel<TagDTO> {
 
     public void setFlags(String flags) {
         this.flags = flags;
+    }
+
+    public String getFirst_contact() {
+        return first_contact;
+    }
+
+    public void setFirst_contact(String first_contact) {
+        this.first_contact = first_contact;
+    }
+
+    public String getLast_contact() {
+        return last_contact;
+    }
+
+    public void setLast_contact(String last_contact) {
+        this.last_contact = last_contact;
     }
 
     public Integer getMinutes_of_appr_contact() {

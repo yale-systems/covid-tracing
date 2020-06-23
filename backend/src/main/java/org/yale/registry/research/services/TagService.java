@@ -30,7 +30,8 @@ public class TagService {
         TagEntity tagEntity = new TagEntity(
                 tagDTO.getTag_id(), tagDTO.getMac_address(),
                 tagDTO.getInfo(), tagDTO.getWorst_case_rssi(),
-                tagDTO.getFlags(), tagDTO.getMinutes_of_appr_contact()
+                tagDTO.getFlags(), tagDTO.getFirst_contact(),
+                tagDTO.getLast_contact(), tagDTO.getMinutes_of_appr_contact()
         );
         tagRepository.save(tagEntity);
         return new TagDTO(tagEntity);

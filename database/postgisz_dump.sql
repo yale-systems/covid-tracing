@@ -171,6 +171,29 @@ ALTER TABLE public.contacts_contact_id_seq OWNER TO apiclient;
 
 ALTER SEQUENCE public.contacts_contact_id_seq OWNED BY public.contacts.contact_id;
 
+CREATE TABLE public.tags (
+    tag_id integer NOT NULL,
+    mac_address text,
+    info text,
+    worst_case_rssi text,
+    flags text,
+    first_contact text,
+    last_contact text,
+    minutes_of_appr_contact integer
+);
+
+
+ALTER TABLE public.tags OWNER TO apiclient;
+
+CREATE SEQUENCE public.tags_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE public.tags_id_seq OWNER TO apiclient;
 
 --
 -- Name: dummy_data; Type: TABLE; Schema: public; Owner: apiclient
@@ -408,44 +431,6 @@ ALTER TABLE public.public_users_locations_id_seq OWNER TO apiclient;
 --
 
 ALTER SEQUENCE public.public_users_locations_id_seq OWNED BY public.public_users_locations.id;
-
-
---
--- Name: tags; Type: TABLE; Schema: public; Owner: apiclient
---
-
-CREATE TABLE public.tags (
-    tag_id integer NOT NULL,
-    mac_address text,
-    info text,
-    worst_case_rssi text,
-    flags text,
-    minutes_of_appr_contact integer
-);
-
-
-ALTER TABLE public.tags OWNER TO apiclient;
-
---
--- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.tags_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.tags_id_seq OWNER TO apiclient;
-
---
--- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
---
-
-ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.tag_id;
 
 
 --
