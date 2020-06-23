@@ -55,7 +55,7 @@ public class EventController {
     public ResponseEntity<EventDTO> insert(@RequestBody EventDTO eventDTO) {
         EventDTO finalEventDTO = eventService.insert(eventDTO);
         if(eventDTO.getContact_ids() != null){
-            eventContactService.insertEventContacts(eventDTO.getEvent_id(), eventDTO.getContact_ids());
+            eventContactService.insertEventContacts(finalEventDTO.getEvent_id(), eventDTO.getContact_ids());
         }
         return ResponseEntity.ok(finalEventDTO);
     }
@@ -65,7 +65,7 @@ public class EventController {
     public ResponseEntity<EventDTO> update(@RequestBody EventDTO eventDTO){
         EventDTO finalEventDTO = eventService.update(eventDTO);
         if(eventDTO.getContact_ids() != null){
-            eventContactService.updateEventContacts(eventDTO.getEvent_id(), eventDTO.getContact_ids());
+            eventContactService.updateEventContacts(finalEventDTO.getEvent_id(), eventDTO.getContact_ids());
         }
         return ResponseEntity.ok(finalEventDTO);
     }

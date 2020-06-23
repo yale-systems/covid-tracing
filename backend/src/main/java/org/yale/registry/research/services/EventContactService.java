@@ -29,5 +29,21 @@ public class EventContactService {
     }
     public void updateEventContacts(Long event_id, List<Long> contact_ids){
         List<EventContactEntity> eventContactEntities = eventContactRepository.findByEventId(event_id);
+        List<EventContactEntity> toDelete = new ArrayList<>();
+        for(EventContactEntity eventContactEntity: eventContactEntities){
+            boolean delete = true;
+            for(Long contact_id: contact_ids){
+                if(eventContactEntity.getEventContactId().getEvent_id().equals(event_id) &&
+                        eventContactEntity.getEventContactId().getContact_id().equals(contact_id)){
+                    delete = false;
+                    break;
+                }
+            }
+            if(delete = true){
+                toDelete.add(eventContactEntity);
+            }
+        }
+        eventContactRepository.deleteAll(toDelete);
+        insertEventContacts(event_id, contact_ids);
     }
 }
