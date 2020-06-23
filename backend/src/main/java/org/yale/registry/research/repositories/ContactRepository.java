@@ -21,4 +21,10 @@ public interface ContactRepository extends PagingAndSortingRepository<ContactEnt
             "c.last_name, c.email, c.phone_number, c.age, c.household, c.nature_of_contact, " +
             "c.healthcare_worker, c.patient_id) from ContactEntity c WHERE c.patient_id = :patient_id")
     public List<ContactDTO> findContactDTOsByPatient_id(@Param("patient_id") Long patient_id);
+
+    @Query("SELECT new org.yale.registry.research.DTOs.ContactDTO(c.contact_id, c.first_name, " +
+            "c.last_name, c.email, c.phone_number, c.age, c.household, c.nature_of_contact, " +
+            "c.healthcare_worker, c.patient_id) from ContactEntity c, EventContactEntity ec WHERE " +
+            "ec.eventContactId.event_id = :event_id AND ec.eventContactId.contact_id = c.contact_id")
+    public List<ContactDTO> findContactDTOsByEventId(@Param("event_id") Long event_id);
 }

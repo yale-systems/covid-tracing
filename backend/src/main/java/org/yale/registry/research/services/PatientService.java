@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.yale.registry.research.DTOs.PatientDTO;
 import org.yale.registry.research.entities.PatientEntity;
-import org.yale.registry.research.repositories.PatientLocationRepository;
+import org.yale.registry.research.repositories.EventRepository;
 import org.yale.registry.research.repositories.PatientRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
 
@@ -21,15 +21,15 @@ import java.util.Optional;
 public class PatientService {
     public static final String SUBJECT = "Yale Health Patient Creation";
     private PatientRepository patientRepository;
-    private PatientLocationRepository patientLocationRepository;
+    private EventRepository eventRepository;
     private GeometryFactory geometryFactory;
     private MailSender mailSender;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository, PatientLocationRepository patientLocationRepository,
+    public PatientService(PatientRepository patientRepository, EventRepository eventRepository,
                           GeometryFactory geometryFactory, MailSender mailSender){
         this.patientRepository = patientRepository;
-        this.patientLocationRepository = patientLocationRepository;
+        this.eventRepository = eventRepository;
         this.geometryFactory = geometryFactory;
         this.mailSender = mailSender;
     }
@@ -115,7 +115,7 @@ public class PatientService {
     }
 
     public void delete(Long patient_id){
-        patientLocationRepository.deleteByPatientId(patient_id);
+        eventRepository.deleteByPatientId(patient_id);
         patientRepository.deleteById(patient_id);
     }
 

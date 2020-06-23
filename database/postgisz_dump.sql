@@ -21,11 +21,26 @@ DROP TABLE IF EXISTS public.contacts;
 DROP TABLE IF EXISTS public.managers;
 DROP TABLE IF EXISTS public.volunteers;
 DROP TABLE IF EXISTS public.patients;
-DROP TABLE IF EXISTS public.patient_locations;
+DROP TABLE IF EXISTS public.events;
 DROP TABLE IF EXISTS public.public_users;
 DROP TABLE IF EXISTS public.public_users_locations;
 
 CREATE USER apiclient WITH PASSWORD 'testing';
+
+--
+-- Name: topology; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+
+
+ALTER SCHEMA topology OWNER TO postgres;
+
+--
+-- Name: SCHEMA topology; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA topology IS 'PostGIS Topology schema';
+
 
 --
 -- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
@@ -180,7 +195,6 @@ CREATE SEQUENCE public.tags_id_seq
 
 ALTER TABLE public.tags_id_seq OWNER TO apiclient;
 
-ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.tag_id;
 --
 -- Name: dummy_data; Type: TABLE; Schema: public; Owner: apiclient
 --
@@ -220,6 +234,34 @@ ALTER SEQUENCE public.dummy_data_id_seq OWNED BY public.dummy_data.id;
 
 
 --
+-- Name: event_contact; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.event_contact (
+    event_id integer NOT NULL,
+    contact_id integer NOT NULL
+);
+
+
+ALTER TABLE public.event_contact OWNER TO apiclient;
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: apiclient
+--
+
+CREATE TABLE public.events (
+    event_id integer NOT NULL,
+    patient_id integer NOT NULL,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    confirmed boolean,
+    geom public.geometry(Point,4326)
+);
+
+
+ALTER TABLE public.events OWNER TO apiclient;
+
+--
 -- Name: managers; Type: TABLE; Schema: public; Owner: apiclient
 --
 
@@ -256,26 +298,10 @@ ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.manager_id;
 
 
 --
--- Name: patient_locations; Type: TABLE; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
 --
 
-CREATE TABLE public.patient_locations (
-    id integer NOT NULL,
-    patient_id integer NOT NULL,
-    start_time timestamp without time zone,
-    end_time timestamp without time zone,
-    confirmed boolean,
-    geom public.geometry(Point,4326)
-);
-
-
-ALTER TABLE public.patient_locations OWNER TO apiclient;
-
---
--- Name: patient_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: apiclient
---
-
-CREATE SEQUENCE public.patient_locations_id_seq
+CREATE SEQUENCE public.events_id_seq
     AS integer
     START WITH 4351
     INCREMENT BY 1
@@ -284,13 +310,13 @@ CREATE SEQUENCE public.patient_locations_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.patient_locations_id_seq OWNER TO apiclient;
+ALTER TABLE public.events_id_seq OWNER TO apiclient;
 
 --
--- Name: patient_locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: apiclient
 --
 
-ALTER SEQUENCE public.patient_locations_id_seq OWNED BY public.patient_locations.id;
+ALTER SEQUENCE public.events_id_seq OWNED BY public.events.event_id;
 
 
 --
@@ -460,17 +486,17 @@ ALTER TABLE ONLY public.dummy_data ALTER COLUMN id SET DEFAULT nextval('public.d
 
 
 --
+-- Name: events event_id; Type: DEFAULT; Schema: public; Owner: apiclient
+--
+
+ALTER TABLE ONLY public.events ALTER COLUMN event_id SET DEFAULT nextval('public.events_id_seq'::regclass);
+
+
+--
 -- Name: managers manager_id; Type: DEFAULT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.managers ALTER COLUMN manager_id SET DEFAULT nextval('public.managers_id_seq'::regclass);
-
-
---
--- Name: patient_locations id; Type: DEFAULT; Schema: public; Owner: apiclient
---
-
-ALTER TABLE ONLY public.patient_locations ALTER COLUMN id SET DEFAULT nextval('public.patient_locations_id_seq'::regclass);
 
 
 --
@@ -10018,22 +10044,18 @@ COPY public.dummy_data (id, trace_id, start_time, end_time, confirmed, geom) FRO
 
 
 --
--- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: apiclient
+-- Data for Name: event_contact; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.managers (manager_id, username, password, name) FROM stdin;
-1	manager1	pw_manager1	Manager1
-2	manager2	pw_manager2	Manager2
-3	manager3	pw_manager3	Manager3
-4	manager4	pw_manager4	Manager4
+COPY public.event_contact (event_id, contact_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: patient_locations; Type: TABLE DATA; Schema: public; Owner: apiclient
+-- Data for Name: events; Type: TABLE DATA; Schema: public; Owner: apiclient
 --
 
-COPY public.patient_locations (id, patient_id, start_time, end_time, confirmed, geom) FROM stdin;
+COPY public.events (event_id, patient_id, start_time, end_time, confirmed, geom) FROM stdin;
 1	1	2008-02-08 01:42:55	2008-02-08 01:44:55	f	0101000020E6100000F91A82E3323A52C056F146E691D54440
 2	1	2008-02-08 01:46:59	2008-02-08 01:48:59	t	0101000020E6100000223D450E113952C0465F419AB1D24440
 3	1	2008-02-08 01:47:57	2008-02-08 01:49:57	f	0101000020E6100000501F813FFC3852C0ECC039234AD14440
@@ -14384,6 +14406,18 @@ COPY public.patient_locations (id, patient_id, start_time, end_time, confirmed, 
 4348	100	2008-02-04 00:42:30	2008-02-04 00:44:30	t	0101000020E6100000DDF5D214013252C015CB2DAD86D24440
 4349	100	2008-02-04 00:51:20	2008-02-04 00:53:20	t	0101000020E6100000F37C06D49B3152C016A4198BA6D54440
 4350	100	2008-02-04 00:52:34	2008-02-04 00:54:34	f	0101000020E6100000C88157CB9D3152C0C7F484251ED64440
+\.
+
+
+--
+-- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: apiclient
+--
+
+COPY public.managers (manager_id, username, password, name) FROM stdin;
+1	manager1	pw_manager1	Manager1
+2	manager2	pw_manager2	Manager2
+3	manager3	pw_manager3	Manager3
+4	manager4	pw_manager4	Manager4
 \.
 
 
@@ -19267,6 +19301,14 @@ COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM
 
 
 --
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: apiclient
+--
+
+COPY public.tags (tag_id, mac_address, info, worst_case_rssi, flags, minutes_of_appr_contact) FROM stdin;
+\.
+
+
+--
 -- Data for Name: volunteers; Type: TABLE DATA; Schema: public; Owner: apiclient
 --
 
@@ -19322,28 +19364,7 @@ COPY tiger.geocode_settings (name, setting, unit, category, short_desc) FROM std
 \.
 
 
---
--- Data for Name: pagc_gaz; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
 
-COPY tiger.pagc_gaz (id, seq, word, stdword, token, is_custom) FROM stdin;
-\.
-
-
---
--- Data for Name: pagc_lex; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.pagc_lex (id, seq, word, stdword, token, is_custom) FROM stdin;
-\.
-
-
---
--- Data for Name: pagc_rules; Type: TABLE DATA; Schema: tiger; Owner: postgres
---
-
-COPY tiger.pagc_rules (id, rule, is_custom) FROM stdin;
-\.
 
 
 --
@@ -19363,7 +19384,7 @@ COPY topology.layer (topology_id, layer_id, schema_name, table_name, feature_col
 
 
 --
--- Name: contacts_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: contacts_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
 SELECT pg_catalog.setval('public.contacts_contact_id_seq', 500, true);
@@ -19384,10 +19405,10 @@ SELECT pg_catalog.setval('public.managers_id_seq', 5, false);
 
 
 --
--- Name: patient_locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
+-- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.patient_locations_id_seq', 4351, false);
+SELECT pg_catalog.setval('public.events_id_seq', 4351, false);
 
 
 --
@@ -19412,10 +19433,25 @@ SELECT pg_catalog.setval('public.public_users_locations_id_seq', 4651, false);
 
 
 --
+-- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
+--
+
+SELECT pg_catalog.setval('public.tags_id_seq', 1, false);
+
+
+--
 -- Name: volunteers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
 SELECT pg_catalog.setval('public.volunteers_id_seq', 41, false);
+
+
+--
+-- Name: contacts contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: apiclient
+--
+
+ALTER TABLE ONLY public.contacts
+    ADD CONSTRAINT contacts_pkey PRIMARY KEY (contact_id);
 
 
 --
@@ -19425,11 +19461,15 @@ SELECT pg_catalog.setval('public.volunteers_id_seq', 41, false);
 ALTER TABLE ONLY public.dummy_data
     ADD CONSTRAINT dummy_data_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY public.contacts
-    ADD CONSTRAINT contacts_pkey PRIMARY KEY (contact_id);
 
-ALTER TABLE ONLY public.tags
-    ADD CONSTRAINT tags_pkey PRIMARY KEY (tag_id);
+--
+-- Name: event_contact event_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.event_contact
+    ADD CONSTRAINT event_contact_pkey PRIMARY KEY (event_id, contact_id);
+
+
 --
 -- Name: managers managers_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
 --
@@ -19439,11 +19479,11 @@ ALTER TABLE ONLY public.managers
 
 
 --
--- Name: patient_locations patient_locations_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
+-- Name: events events_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
 --
 
-ALTER TABLE ONLY public.patient_locations
-    ADD CONSTRAINT patient_locations_pk PRIMARY KEY (id);
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_pk PRIMARY KEY (event_id);
 
 
 --
@@ -19471,6 +19511,14 @@ ALTER TABLE ONLY public.public_users
 
 
 --
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: apiclient
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (tag_id);
+
+
+--
 -- Name: volunteers volunteers_pk; Type: CONSTRAINT; Schema: public; Owner: apiclient
 --
 
@@ -19479,10 +19527,10 @@ ALTER TABLE ONLY public.volunteers
 
 
 --
--- Name: patient_locations_geom_index; Type: INDEX; Schema: public; Owner: apiclient
+-- Name: events_geom_index; Type: INDEX; Schema: public; Owner: apiclient
 --
 
-CREATE INDEX patient_locations_geom_index ON public.patient_locations USING gist (public.st_transform(geom, 32618));
+CREATE INDEX events_geom_index ON public.events USING gist (public.st_transform(geom, 32618));
 
 
 --
@@ -19493,7 +19541,7 @@ CREATE INDEX public_users_locations_geom_index ON public.public_users_locations 
 
 
 --
--- Name: contacts contacts_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: contacts contacts_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
 --
 
 ALTER TABLE ONLY public.contacts
@@ -19501,11 +19549,27 @@ ALTER TABLE ONLY public.contacts
 
 
 --
--- Name: patient_locations patient_locations_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
+-- Name: event_contact event_contact_contact_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.patient_locations
-    ADD CONSTRAINT patient_locations_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
+ALTER TABLE ONLY public.event_contact
+    ADD CONSTRAINT event_contact_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.contacts(contact_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_contact event_contact_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.event_contact
+    ADD CONSTRAINT event_contact_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: events events_patient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: apiclient
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(patient_id);
 
 
 --

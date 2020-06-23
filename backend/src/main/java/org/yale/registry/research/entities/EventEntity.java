@@ -7,16 +7,16 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "patient_locations")
-public class PatientLocationEntity implements Serializable {
+@Table(name = "events")
+public class EventEntity implements Serializable {
     @Id
     @SequenceGenerator(
-            name = "patient_locations_generator",
-            sequenceName = "patient_locations_id_seq",
+            name = "events_generator",
+            sequenceName = "events_id_seq",
             allocationSize = 1
     )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_locations_generator")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "events_generator")
+    private Long event_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
@@ -31,12 +31,12 @@ public class PatientLocationEntity implements Serializable {
     private Long patient_id;
 
 
-    public PatientLocationEntity(){}
+    public EventEntity(){}
 
-    public PatientLocationEntity(Long id, Date start_time, Date end_time,
-                                 Boolean confirmed, Point geom,
-                                 Long patient_id) {
-        this.id = id;
+    public EventEntity(Long event_id, Date start_time, Date end_time,
+                       Boolean confirmed, Point geom,
+                       Long patient_id) {
+        this.event_id = event_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -44,9 +44,9 @@ public class PatientLocationEntity implements Serializable {
         this.patient_id = patient_id;
     }
 
-    public PatientLocationEntity(Date start_time, Date end_time,
-                                 Boolean confirmed, Point geom,
-                                 Long patient_id) {
+    public EventEntity(Date start_time, Date end_time,
+                       Boolean confirmed, Point geom,
+                       Long patient_id) {
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
@@ -54,12 +54,12 @@ public class PatientLocationEntity implements Serializable {
         this.patient_id = patient_id;
     }
 
-    public Long getId() {
-        return id;
+    public Long getEvent_id() {
+        return event_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEvent_id(Long id) {
+        this.event_id = id;
     }
 
     public Date getStart_time() {

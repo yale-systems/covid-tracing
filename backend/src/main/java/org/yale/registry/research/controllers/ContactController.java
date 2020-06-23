@@ -49,4 +49,10 @@ public class ContactController {
         contactService.delete(contact_id);
         return ResponseEntity.ok(contact_id);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/getbyeventid/{event_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ContactDTO> getByEventId(@PathVariable Long event_id){
+        return contactService.getContactDTOByEventId(event_id);
+    }
 }
