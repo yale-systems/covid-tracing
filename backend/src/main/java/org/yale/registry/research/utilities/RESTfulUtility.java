@@ -50,7 +50,7 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
                         insert(null)).withRel("insert_contact"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
-                        insert(null)).withRel("insert_location")
+                        insert(null)).withRel("insert_event")
                 );
     }
 
