@@ -46,7 +46,7 @@ public class RESTfulUtility {
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
                         getByPatientId(patientDTO.getPatient_id())).withRel("get_contacts"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
-                        getByPatientId(patientDTO.getPatient_id())).withRel("get_locations"),
+                        getByPatientId(patientDTO.getPatient_id())).withRel("get_events"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
                         insert(null)).withRel("insert_contact"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
