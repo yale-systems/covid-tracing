@@ -11,6 +11,8 @@ public class RESTfulUtility {
         eventDTO.add(
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
                         getByEventId(eventDTO.getEvent_id())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        getByEventId(eventDTO.getEvent_id())).withRel("get_contacts"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
                         update(eventDTO)).withRel("update"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EventController.class).
