@@ -548,13 +548,13 @@ CREATE TABLE public.patients (
     gender public.gender_t,
     race public.race_t,
     self_isolate public.self_isolate_t,
-    preexisting_conditions public.preexisting_condition_t,
+    preexisting_conditions public.preexisting_condition_t[],
     employment public.employment_t,
     suspected_exposure public.suspected_exposure_t[],
     home_location public.geometry(Point,4326),
     housing_insecure boolean,
     shelter_name text,
-    assistance public.assistance_t[],
+    assistances public.assistance_t[],
     date_of_birth timestamp without time zone,
     referral boolean,
     flagged boolean,
@@ -5881,8 +5881,8 @@ COPY public.tags (tag_id, mac_address, info, worst_case_rssi, flags, minutes_of_
 -- Data for Name: volunteers; Type: TABLE DATA; Schema: public; Owner: apiclient
 --
 
-COPY public.volunteers (volunteer_id, username, password, first_name, last_name, email, manager_id, interviewer, total_capacity, remaining_capacity, current_cases, completed_cases) FROM stdin;
-1	volunteer1.uname	volunteer1.pw	volunteer1.first_name	volunteer1.last_name	volunteer1@health_example.com	1	t	6	3	3	3
+COPY public.volunteers (volunteer_id, username, password, first_name, last_name, email, manager_id, interviewer, total_capacity, remaining_capacity, current_cases, completed_cases, languages) FROM stdin;
+1	volunteer1.uname	volunteer1.pw	volunteer1.first_name	volunteer1.last_name	volunteer1@health_example.com	1	t	6	3	3	3	{ENGLISH, SPANISH}
 \.
 
 

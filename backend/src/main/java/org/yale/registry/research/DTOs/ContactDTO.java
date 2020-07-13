@@ -8,10 +8,13 @@ import org.yale.registry.research.enums.EnumTypes.ContactCallStatus;
 import org.yale.registry.research.enums.EnumTypes.Relationship;
 import org.yale.registry.research.enums.EnumTypes.Language;
 import org.yale.registry.research.enums.EnumTypes.Symptomatic;
+import org.yale.registry.research.enums.EnumTypes.Symptom;
 import org.yale.registry.research.enums.EnumTypes.SelfIsolate;
+import org.yale.registry.research.enums.EnumTypes.Assistance;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 public class ContactDTO extends RepresentationModel<ContactDTO> {
     private Long contact_id;
@@ -44,11 +47,11 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
 
     private Symptomatic symptomatic;
 
-    // TODO: ADD ARRAY ENUM symptoms
+    private List<Symptom> symptoms;
 
     private SelfIsolate self_isolate;
 
-    // TODO: ADD ARRAY ENUM assistance
+    private List<Assistance> assistances;
 
     private String notes;
 
@@ -61,12 +64,13 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
     public ContactDTO(){}
 
     public ContactDTO(Long contact_id, String first_name, String last_name,
-                         String email, String phone_number, AgeDemographic age_group,
-                         Boolean household, ContactType contact_type, Integer times_called,
-                         ContactCallStatus contact_call_status, Date contact_date,
-                         Date update_date, Relationship relationship, Language language,
-                         Symptomatic symptomatic, SelfIsolate self_isolate, String notes,
-                         Boolean isolated_from_patient, Boolean healthcare_worker, Long patient_id) {
+                      String email, String phone_number, AgeDemographic age_group,
+                      Boolean household, ContactType contact_type, Integer times_called,
+                      ContactCallStatus contact_call_status, Date contact_date,
+                      Date update_date, Relationship relationship, Language language,
+                      Symptomatic symptomatic, List<Symptom> symptoms, SelfIsolate self_isolate,
+                      List<Assistance> assistances, String notes, Boolean isolated_from_patient,
+                      Boolean healthcare_worker, Long patient_id) {
         this.contact_id = contact_id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -82,7 +86,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.relationship = relationship;
         this.language = language;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.self_isolate = self_isolate;
+        this.assistances = assistances;
         this.notes = notes;
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
@@ -90,12 +96,13 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
     }
 
     public ContactDTO(String first_name, String last_name,
-                         String email, String phone_number, AgeDemographic age_group,
-                         Boolean household, ContactType contact_type, Integer times_called,
-                         ContactCallStatus contact_call_status, Date contact_date,
-                         Date update_date, Relationship relationship, Language language,
-                         Symptomatic symptomatic, SelfIsolate self_isolate, String notes,
-                         Boolean isolated_from_patient, Boolean healthcare_worker, Long patient_id) {
+                      String email, String phone_number, AgeDemographic age_group,
+                      Boolean household, ContactType contact_type, Integer times_called,
+                      ContactCallStatus contact_call_status, Date contact_date,
+                      Date update_date, Relationship relationship, Language language,
+                      Symptomatic symptomatic, List<Symptom> symptoms, SelfIsolate self_isolate,
+                      List<Assistance> assistances, String notes, Boolean isolated_from_patient,
+                      Boolean healthcare_worker, Long patient_id) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
@@ -110,7 +117,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.relationship = relationship;
         this.language = language;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.self_isolate = self_isolate;
+        this.assistances = assistances;
         this.notes = notes;
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
@@ -133,7 +142,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.relationship = contactEntity.getRelationship();
         this.language = contactEntity.getLanguage();
         this.symptomatic = contactEntity.getSymptomatic();
+        this.symptoms = contactEntity.getSymptoms();
         this.self_isolate = contactEntity.getSelf_isolate();
+        this.assistances = contactEntity.getAssistances();
         this.notes = contactEntity.getNotes();
         this.isolated_from_patient = contactEntity.getIsolated_from_patient();
         this.healthcare_worker = contactEntity.getHealthcare_worker();
@@ -260,8 +271,24 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.symptomatic = symptomatic;
     }
 
+    public List<Symptom> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<Symptom> symptoms) {
+        this.symptoms = symptoms;
+    }
+
     public SelfIsolate getSelf_isolate() {
         return self_isolate;
+    }
+
+    public List<Assistance> getAssistances() {
+        return assistances;
+    }
+
+    public void setAssistances(List<Assistance> assistances) {
+        this.assistances = assistances;
     }
 
     public void setSelf_isolate(SelfIsolate self_isolate) {

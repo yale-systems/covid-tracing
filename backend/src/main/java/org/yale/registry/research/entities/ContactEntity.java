@@ -1,5 +1,6 @@
 package org.yale.registry.research.entities;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.yale.registry.research.DTOs.ContactDTO;
@@ -9,12 +10,15 @@ import org.yale.registry.research.enums.EnumTypes.ContactCallStatus;
 import org.yale.registry.research.enums.EnumTypes.Relationship;
 import org.yale.registry.research.enums.EnumTypes.Language;
 import org.yale.registry.research.enums.EnumTypes.Symptomatic;
+import org.yale.registry.research.enums.EnumTypes.Symptom;
 import org.yale.registry.research.enums.EnumTypes.SelfIsolate;
+import org.yale.registry.research.enums.EnumTypes.Assistance;
 import org.yale.registry.research.enums.PostgreSQLEnumType;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "contacts")
@@ -80,14 +84,34 @@ public class ContactEntity implements Serializable {
     @Type(type = "pgsql_enum")
     private Symptomatic symptomatic;
 
-    // TODO: ADD ARRAY ENUM symptoms
+    @Type(
+            type = "com.vladmihalcea.hibernate.type.array.ListArrayType",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(
+                            name = ListArrayType.SQL_ARRAY_TYPE,
+                            value = "symptom_t"
+                    )
+            }
+    )
+    @Column(columnDefinition = "symptom_t[]")
+    private List<Symptom> symptoms;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "self_isolate_t")
     @Type(type = "pgsql_enum")
     private SelfIsolate self_isolate;
 
-    // TODO: ADD ARRAY ENUM assistance
+    @Type(
+            type = "com.vladmihalcea.hibernate.type.array.ListArrayType",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(
+                            name = ListArrayType.SQL_ARRAY_TYPE,
+                            value = "assistance_t"
+                    )
+            }
+    )
+    @Column(columnDefinition = "assistance_t[]")
+    private List<Assistance> assistances;
 
     private String notes;
 
@@ -104,8 +128,9 @@ public class ContactEntity implements Serializable {
                          Boolean household, ContactType contact_type, Integer times_called,
                          ContactCallStatus contact_call_status, Date contact_date,
                          Date update_date, Relationship relationship, Language language,
-                         Symptomatic symptomatic, SelfIsolate self_isolate, String notes,
-                         Boolean isolated_from_patient, Boolean healthcare_worker, Long patient_id) {
+                         Symptomatic symptomatic, List<Symptom> symptoms, SelfIsolate self_isolate,
+                         List<Assistance> assistances, String notes, Boolean isolated_from_patient,
+                         Boolean healthcare_worker, Long patient_id) {
         this.contact_id = contact_id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -121,7 +146,9 @@ public class ContactEntity implements Serializable {
         this.relationship = relationship;
         this.language = language;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.self_isolate = self_isolate;
+        this.assistances = assistances;
         this.notes = notes;
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
@@ -133,8 +160,8 @@ public class ContactEntity implements Serializable {
                          Boolean household, ContactType contact_type, Integer times_called,
                          ContactCallStatus contact_call_status, Date contact_date,
                          Date update_date, Relationship relationship, Language language,
-                         Symptomatic symptomatic, SelfIsolate self_isolate, String notes,
-                         Boolean isolated_from_patient, Boolean healthcare_worker, Long patient_id) {
+                         Symptomatic symptomatic, List<Symptom> symptoms, SelfIsolate self_isolate,
+                         List<Assistance> assistances, String notes, Boolean isolated_from_patient, Boolean healthcare_worker, Long patient_id) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
@@ -149,7 +176,9 @@ public class ContactEntity implements Serializable {
         this.relationship = relationship;
         this.language = language;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.self_isolate = self_isolate;
+        this.assistances = assistances;
         this.notes = notes;
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
@@ -172,7 +201,9 @@ public class ContactEntity implements Serializable {
         this.relationship = contactDTO.getRelationship();
         this.language = contactDTO.getLanguage();
         this.symptomatic = contactDTO.getSymptomatic();
+        this.symptoms = contactDTO.getSymptoms();
         this.self_isolate = contactDTO.getSelf_isolate();
+        this.assistances = contactDTO.getAssistances();
         this.notes = contactDTO.getNotes();
         this.isolated_from_patient = contactDTO.getIsolated_from_patient();
         this.healthcare_worker = contactDTO.getHealthcare_worker();
@@ -194,7 +225,9 @@ public class ContactEntity implements Serializable {
         this.relationship = contactDTO.getRelationship();
         this.language = contactDTO.getLanguage();
         this.symptomatic = contactDTO.getSymptomatic();
+        this.symptoms = contactDTO.getSymptoms();
         this.self_isolate = contactDTO.getSelf_isolate();
+        this.assistances = contactDTO.getAssistances();
         this.notes = contactDTO.getNotes();
         this.isolated_from_patient = contactDTO.getIsolated_from_patient();
         this.healthcare_worker = contactDTO.getHealthcare_worker();
@@ -321,8 +354,24 @@ public class ContactEntity implements Serializable {
         this.symptomatic = symptomatic;
     }
 
+    public List<Symptom> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<Symptom> symptoms) {
+        this.symptoms = symptoms;
+    }
+
     public SelfIsolate getSelf_isolate() {
         return self_isolate;
+    }
+
+    public List<Assistance> getAssistances() {
+        return assistances;
+    }
+
+    public void setAssistances(List<Assistance> assistances) {
+        this.assistances = assistances;
     }
 
     public void setSelf_isolate(SelfIsolate self_isolate) {

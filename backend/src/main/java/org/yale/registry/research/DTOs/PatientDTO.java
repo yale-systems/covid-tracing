@@ -7,6 +7,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.locationtech.jts.geom.Point;
 import org.springframework.hateoas.RepresentationModel;
 import org.yale.registry.research.entities.PatientEntity;
+import org.yale.registry.research.enums.EnumTypes.ReasonFlagged;
+import org.yale.registry.research.enums.EnumTypes.Assistance;
+import org.yale.registry.research.enums.EnumTypes.SuspectedExposure;
+import org.yale.registry.research.enums.EnumTypes.PreexistingCondition;
+import org.yale.registry.research.enums.EnumTypes.Symptom;
 import org.yale.registry.research.enums.EnumTypes.Language;
 import org.yale.registry.research.enums.EnumTypes.CaseCallStatus;
 import org.yale.registry.research.enums.EnumTypes.SawDoctor;
@@ -19,6 +24,7 @@ import org.yale.registry.research.enums.EnumTypes.Employment;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 public class PatientDTO extends RepresentationModel<PatientDTO> {
     private Long patient_id;
@@ -55,7 +61,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private Symptomatic symptomatic;
 
-    // TODO: MAKE ARRAY ENUM SYMPTOMS
+    private List<Symptom> symptoms;
 
     private Gender gender;
 
@@ -63,11 +69,11 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private SelfIsolate self_isolate;
 
-    // TODO: MAKE ARRAY ENUM PREEXISTING_CONDITIONS
+    private List<PreexistingCondition> preexisting_conditions;
 
     private Employment employment;
 
-    // TODO: MAKE ARRAY ENUM SUSPECTED_EXPOSURE
+    private List<SuspectedExposure> suspected_exposures;
 
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
@@ -77,7 +83,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private String shelter_name;
 
-    // TODO: MAKE ARRAY ENUM ASSISTANCE
+    private List<Assistance> assistances;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date date_of_birth;
@@ -86,7 +92,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private Boolean flagged;
 
-    // TODO: MAKE ARRAY ENUM REASONS_FLAGGED
+    private List<ReasonFlagged> reasons_flagged;
 
     private Boolean requested_interview;
 
@@ -102,16 +108,17 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
     public PatientDTO(){}
 
     public PatientDTO(Long patient_id, String username, String password,
-                         String first_name, String last_name, Language language,
-                         Date diagnosis_date, Date onset_date, Date last_worked_date,
-                         CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
-                         Boolean knows_status, Insurance insurance, Long times_called,
-                         Long phone_number, Symptomatic symptomatic, Gender gender,
-                         Race race, SelfIsolate self_isolate, Employment employment,
-                         Point home_location, Boolean housing_insecure, String shelter_name,
-                         Date date_of_birth, Boolean referral, Boolean flagged,
-                         Boolean requested_interview, String notes, String email,
-                         Long manager_id, Long volunteer_id) {
+                      String first_name, String last_name, Language language,
+                      Date diagnosis_date, Date onset_date, Date last_worked_date,
+                      CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
+                      Boolean knows_status, Insurance insurance, Long times_called,
+                      Long phone_number, Symptomatic symptomatic, List<Symptom> symptoms,
+                      Gender gender, Race race, SelfIsolate self_isolate,
+                      List<PreexistingCondition> preexisting_conditions, Employment employment,
+                      List<SuspectedExposure> suspected_exposures, Point home_location, Boolean housing_insecure,
+                      String shelter_name, List<Assistance> assistances, Date date_of_birth, Boolean referral,
+                      Boolean flagged, List<ReasonFlagged> reasons_flagged, Boolean requested_interview,
+                      String notes, String email, Long manager_id, Long volunteer_id) {
         this.patient_id = patient_id;
         this.username = username;
         this.password = password;
@@ -129,16 +136,21 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.times_called = times_called;
         this.phone_number = phone_number;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.gender = gender;
         this.race = race;
         this.self_isolate = self_isolate;
+        this.preexisting_conditions = preexisting_conditions;
         this.employment = employment;
+        this.suspected_exposures = suspected_exposures;
         this.home_location = home_location;
         this.housing_insecure = housing_insecure;
         this.shelter_name = shelter_name;
+        this.assistances = assistances;
         this.date_of_birth = date_of_birth;
         this.referral = referral;
         this.flagged = flagged;
+        this.reasons_flagged = reasons_flagged;
         this.requested_interview = requested_interview;
         this.notes = notes;
         this.email = email;
@@ -146,18 +158,17 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.volunteer_id = volunteer_id;
     }
 
-
-    public PatientDTO(String username, String password,
-                         String first_name, String last_name, Language language,
-                         Date diagnosis_date, Date onset_date, Date last_worked_date,
-                         CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
-                         Boolean knows_status, Insurance insurance, Long times_called,
-                         Long phone_number, Symptomatic symptomatic, Gender gender,
-                         Race race, SelfIsolate self_isolate, Employment employment,
-                         Point home_location, Boolean housing_insecure, String shelter_name,
-                         Date date_of_birth, Boolean referral, Boolean flagged,
-                         Boolean requested_interview, String notes, String email,
-                         Long manager_id, Long volunteer_id) {
+    public PatientDTO(String username, String password, String first_name, String last_name,
+                      Language language, Date diagnosis_date, Date onset_date, Date last_worked_date,
+                      CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
+                      Boolean knows_status, Insurance insurance, Long times_called, Long phone_number,
+                      Symptomatic symptomatic, List<Symptom> symptoms, Gender gender, Race race,
+                      SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions,
+                      Employment employment, List<SuspectedExposure> suspected_exposures,
+                      Point home_location, Boolean housing_insecure, String shelter_name,
+                      List<Assistance> assistances, Date date_of_birth, Boolean referral,
+                      Boolean flagged, List<ReasonFlagged> reasons_flagged, Boolean requested_interview,
+                      String notes, String email, Long manager_id, Long volunteer_id) {
         this.username = username;
         this.password = password;
         this.first_name = first_name;
@@ -174,16 +185,21 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.times_called = times_called;
         this.phone_number = phone_number;
         this.symptomatic = symptomatic;
+        this.symptoms = symptoms;
         this.gender = gender;
         this.race = race;
         this.self_isolate = self_isolate;
+        this.preexisting_conditions = preexisting_conditions;
         this.employment = employment;
+        this.suspected_exposures = suspected_exposures;
         this.home_location = home_location;
         this.housing_insecure = housing_insecure;
         this.shelter_name = shelter_name;
+        this.assistances = assistances;
         this.date_of_birth = date_of_birth;
         this.referral = referral;
         this.flagged = flagged;
+        this.reasons_flagged = reasons_flagged;
         this.requested_interview = requested_interview;
         this.notes = notes;
         this.email = email;
@@ -209,16 +225,21 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.times_called = patientEntity.getTimes_called();
         this.phone_number = patientEntity.getPhone_number();
         this.symptomatic = patientEntity.getSymptomatic();
+        this.symptoms = patientEntity.getSymptoms();
         this.gender = patientEntity.getGender();
         this.race = patientEntity.getRace();
         this.self_isolate = patientEntity.getSelf_isolate();
+        this.preexisting_conditions = patientEntity.getPreexisting_conditions();
         this.employment = patientEntity.getEmployment();
+        this.suspected_exposures = patientEntity.getSuspected_exposures();
         this.home_location = patientEntity.getHome_location();
         this.housing_insecure = patientEntity.getHousing_insecure();
         this.shelter_name = patientEntity.getShelter_name();
+        this.assistances = patientEntity.getAssistances();
         this.date_of_birth = patientEntity.getDate_of_birth();
         this.referral = patientEntity.getReferral();
         this.flagged = patientEntity.getFlagged();
+        this.reasons_flagged = patientEntity.getReasons_flagged();
         this.requested_interview = patientEntity.getRequested_interview();
         this.notes = patientEntity.getNotes();
         this.email = patientEntity.getEmail();
@@ -362,6 +383,14 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.symptomatic = symptomatic;
     }
 
+    public List<Symptom> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<Symptom> symptoms) {
+        this.symptoms = symptoms;
+    }
+
     public Gender getGender() {
         return gender;
     }
@@ -386,12 +415,28 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.self_isolate = self_isolate;
     }
 
+    public List<PreexistingCondition> getPreexisting_conditions() {
+        return preexisting_conditions;
+    }
+
+    public void setPreexisting_conditions(List<PreexistingCondition> preexisting_conditions) {
+        this.preexisting_conditions = preexisting_conditions;
+    }
+
     public Employment getEmployment() {
         return employment;
     }
 
     public void setEmployment(Employment employment) {
         this.employment = employment;
+    }
+
+    public List<SuspectedExposure> getSuspected_exposures() {
+        return suspected_exposures;
+    }
+
+    public void setSuspected_exposures(List<SuspectedExposure> suspected_exposures) {
+        this.suspected_exposures = suspected_exposures;
     }
 
     public Point getHome_location() {
@@ -418,6 +463,14 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.shelter_name = shelter_name;
     }
 
+    public List<Assistance> getAssistances() {
+        return assistances;
+    }
+
+    public void setAssistances(List<Assistance> assistances) {
+        this.assistances = assistances;
+    }
+
     public Date getDate_of_birth() {
         return date_of_birth;
     }
@@ -440,6 +493,14 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     public void setFlagged(Boolean flagged) {
         this.flagged = flagged;
+    }
+
+    public List<ReasonFlagged> getReasons_flagged() {
+        return reasons_flagged;
+    }
+
+    public void setReasons_flagged(List<ReasonFlagged> reasons_flagged) {
+        this.reasons_flagged = reasons_flagged;
     }
 
     public Boolean getRequested_interview() {

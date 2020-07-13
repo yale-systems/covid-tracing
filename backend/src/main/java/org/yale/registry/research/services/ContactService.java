@@ -8,6 +8,7 @@ import org.yale.registry.research.repositories.ContactRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,24 +23,32 @@ public class ContactService {
     }
 
     public ContactDTO getContactDTOById(Long id){
-        Optional<ContactDTO> optionalContactDTO =
-                contactRepository.findContactDTOByContact_id(id);
-        if(!optionalContactDTO.isPresent()){
+        Optional<ContactEntity> optionalContactEntity =
+                contactRepository.findContactEntityByContact_id(id);
+        if(!optionalContactEntity.isPresent()){
             return null;
         }
-        ContactDTO contactDTO = optionalContactDTO.get();
+        ContactDTO contactDTO = new ContactDTO(optionalContactEntity.get());
         RESTfulUtility.addRestToContactDTO(contactDTO);
         return contactDTO;
     }
 
     public List<ContactDTO> getContactDTOByPatientId(Long patient_id){
-        List<ContactDTO> contactDTOS = contactRepository.findContactDTOsByPatient_id(patient_id);
+        List<ContactDTO> contactDTOS = new ArrayList<>();
+        List<ContactEntity> contactEntities = contactRepository.findContactEntitiesByPatient_id(patient_id);
+        for(ContactEntity contactEntity: contactEntities){
+            contactDTOS.add(new ContactDTO(contactEntity));
+        }
         RESTfulUtility.addRestToContactDTOs(contactDTOS);
         return contactDTOS;
     }
 
     public List<ContactDTO> getContactDTOByEventId(Long event_id){
-        List<ContactDTO> contactDTOS = contactRepository.findContactDTOsByEventId(event_id);
+        List<ContactDTO> contactDTOS = new ArrayList<>();
+        List<ContactEntity> contactEntities = contactRepository.findContactEntitiesByEventId(event_id);
+        for(ContactEntity contactEntity: contactEntities){
+            contactDTOS.add(new ContactDTO(contactEntity));
+        }
         RESTfulUtility.addRestToContactDTOs(contactDTOS);
         return contactDTOS;
     }
