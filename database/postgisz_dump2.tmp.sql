@@ -216,7 +216,7 @@ CREATE TYPE public.case_call_status_t AS ENUM (
 
 ALTER TYPE public.case_call_status_t OWNER TO apiclient;
 
-CREATE TYPE public.preexisting_conditions_t AS ENUM (
+CREATE TYPE public.preexisting_condition_t AS ENUM (
     'CHRONIC_RESPIRATORY_ILLNESS',
     'CARDIOVASCULAR_DISEASE',
     'DIABETES',
@@ -227,7 +227,7 @@ CREATE TYPE public.preexisting_conditions_t AS ENUM (
     'OTHER'
 );
 
-ALTER TYPE public.preexisting_conditions_t OWNER TO apiclient;
+ALTER TYPE public.preexisting_condition_t OWNER TO apiclient;
 
 CREATE TYPE public.gender_t AS ENUM (
     'FEMALE',
@@ -330,9 +330,21 @@ CREATE TABLE public.contacts (
     last_name text,
     email text,
     phone_number text,
-    age public.age_demographic_t,
+    age_group public.age_demographic_t,
     household boolean,
-    nature_of_contact text,
+    contact_type public.contact_type_t,
+    times_called integer,
+    contact_call_status public.contact_call_status_t,
+    contact_date timestamp without time zone,
+    update_date timestamp without time zone,
+    relationship public.relationship_t,
+    language public.language_t,
+    symptomatic public.symptomatic_t,
+    --symptoms public.symptom_t[],
+    self_isolate public.self_isolate_t,
+    --assistances public.assistance_t[],
+    notes text,
+    isolated_from_patient boolean,
     healthcare_worker boolean,
     patient_id integer NOT NULL
 );
@@ -445,6 +457,7 @@ CREATE TABLE public.events (
     start_time timestamp without time zone,
     end_time timestamp without time zone,
     confirmed boolean,
+    notes text,
     geom public.geometry(Point,4326)
 );
 
@@ -459,7 +472,7 @@ CREATE TABLE public.managers (
     manager_id integer NOT NULL,
     username text,
     password text,
-    name text
+    org_name text
 );
 
 
@@ -517,7 +530,37 @@ CREATE TABLE public.patients (
     patient_id integer NOT NULL,
     username text,
     password text,
-    name text,
+    first_name text,
+    last_name text,
+    language public.language_t,
+    diagnosis_date timestamp without time zone,
+    onset_date timestamp without time zone,
+    last_worked_date timestamp without time zone,
+    case_call_status public.case_call_status_t,
+    travelled boolean,
+    saw_doctor public.saw_doctor_t,
+    knows_status boolean,
+    insurance public.insurance_t,
+    times_called integer,
+    phone_number text,
+    symptomatic boolean,
+    --symptoms public.symptom[],
+    gender public.gender_t,
+    race public.race_t,
+    self_isolated public.self_isolate_t,
+    --preexisting_conditions public.preexisting_condition_t,
+    employment public.employment_t,
+    --suspected_exposure public.suspected_exposure_t[],
+    home_address public.geometry(Point,4326),
+    housing_insecure boolean,
+    shelter_name text,
+    --assistance public.assistance[],
+    date_of_birth timestamp without time zone,
+    referral boolean,
+    flagged boolean,
+    --reasons_flagged public.reason_flagged_t[],
+    requested_interview boolean,
+    notes text,
     email text,
     manager_id integer NOT NULL,
     volunteer_id integer
@@ -631,7 +674,14 @@ CREATE TABLE public.volunteers (
     volunteer_id integer NOT NULL,
     username text,
     password text,
-    name text,
+    first_name text,
+    last_name text,
+    --languages public.language_t[],
+    interviewer boolean,
+    total_capacity integer,
+    remaining_capacity integer,
+    current_cases integer,
+    completed_cases integer,
     email text,
     manager_id integer NOT NULL
 );

@@ -45,13 +45,7 @@ public class ContactService {
     }
 
     public ContactDTO insert(ContactDTO contactDTO){
-        ContactEntity contactEntity = new ContactEntity(
-                contactDTO.getContact_id(), contactDTO.getFirst_name(),
-                contactDTO.getLast_name(), contactDTO.getEmail(),
-                contactDTO.getPhone_number(), contactDTO.getAge(),
-                contactDTO.getHousehold(), contactDTO.getNature_of_contact(),
-                contactDTO.getHealthcare_worker(), contactDTO.getPatient_id()
-        );
+        ContactEntity contactEntity = new ContactEntity(contactDTO);
         contactRepository.save(contactEntity);
         ContactDTO returnContactDTO = new ContactDTO(contactEntity);
         RESTfulUtility.addRestToContactDTO(returnContactDTO);
@@ -63,30 +57,7 @@ public class ContactService {
                 contactRepository.findById(contactDTO.getContact_id());
         if(optionalContactEntity.isPresent()){
             ContactEntity contactEntity = optionalContactEntity.get();
-            if(contactDTO.getFirst_name() != null){
-                contactEntity.setFirst_name(contactDTO.getFirst_name());
-            }
-            if(contactDTO.getLast_name() != null){
-                contactEntity.setLast_name(contactDTO.getLast_name());
-            }
-            if(contactDTO.getEmail() != null){
-                contactEntity.setEmail(contactDTO.getEmail());
-            }
-            if(contactDTO.getPhone_number() != null){
-                contactEntity.setPhone_number(contactDTO.getPhone_number());
-            }
-            if(contactDTO.getAge() != null){
-                contactEntity.setAge(contactDTO.getAge());
-            }
-            if(contactDTO.getHousehold() != null){
-                contactEntity.setHousehold(contactDTO.getHousehold());
-            }
-            if(contactDTO.getNature_of_contact() != null){
-                contactEntity.setNature_of_contact(contactDTO.getNature_of_contact());
-            }
-            if(contactDTO.getHealthcare_worker() != null){
-                contactEntity.setHealthcare_worker(contactDTO.getHealthcare_worker());
-            }
+            contactEntity.update(contactDTO);
             contactRepository.save(contactEntity);
             ContactDTO returnContactDTO = new ContactDTO(contactEntity);
             RESTfulUtility.addRestToContactDTO(returnContactDTO);

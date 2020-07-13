@@ -1,6 +1,7 @@
 package org.yale.registry.research.entities;
 
 import org.locationtech.jts.geom.Point;
+import org.yale.registry.research.DTOs.EventDTO;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,6 +19,8 @@ public class EventEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "events_generator")
     private Long event_id;
 
+    private Long patient_id;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_time;
 
@@ -26,40 +29,66 @@ public class EventEntity implements Serializable {
 
     private Boolean confirmed;
 
-    private Point geom;
+    private String notes;
 
-    private Long patient_id;
+    private Point geom;
 
 
     public EventEntity(){}
 
-    public EventEntity(Long event_id, Date start_time, Date end_time,
-                       Boolean confirmed, Point geom,
-                       Long patient_id) {
+    public EventEntity(Long event_id, Long patient_id, Date start_time,
+                       Date end_time, Boolean confirmed, String notes,
+                       Point geom) {
         this.event_id = event_id;
+        this.patient_id = patient_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
+        this.notes = notes;
         this.geom = geom;
-        this.patient_id = patient_id;
     }
 
-    public EventEntity(Date start_time, Date end_time,
-                       Boolean confirmed, Point geom,
-                       Long patient_id) {
+    public EventEntity(Long patient_id, Date start_time, Date end_time,
+                       Boolean confirmed, String notes, Point geom) {
+        this.patient_id = patient_id;
         this.start_time = start_time;
         this.end_time = end_time;
         this.confirmed = confirmed;
+        this.notes = notes;
         this.geom = geom;
-        this.patient_id = patient_id;
+    }
+
+    public EventEntity(EventDTO eventDTO){
+        this.patient_id = eventDTO.getPatient_id();
+        this.start_time = eventDTO.getStart_time();
+        this.end_time = eventDTO.getEnd_time();
+        this.confirmed = eventDTO.getConfirmed();
+        this.notes = eventDTO.getNotes();
+        this.geom = eventDTO.getGeom();
+    }
+
+    public void update(EventDTO eventDTO){
+        this.start_time = eventDTO.getStart_time();
+        this.end_time = eventDTO.getEnd_time();
+        this.confirmed = eventDTO.getConfirmed();
+        this.notes = eventDTO.getNotes();
+        this.geom = eventDTO.getGeom();
     }
 
     public Long getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(Long id) {
-        this.event_id = id;
+    public void setEvent_id(Long event_id) {
+        this.event_id = event_id;
+    }
+
+    public Long getPatient_id() {
+        return patient_id;
+    }
+
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
     }
 
     public Date getStart_time() {
@@ -86,19 +115,19 @@ public class EventEntity implements Serializable {
         this.confirmed = confirmed;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public Point getGeom() {
         return geom;
     }
 
     public void setGeom(Point geom) {
         this.geom = geom;
-    }
-
-    public Long getPatient_id() {
-        return patient_id;
-    }
-
-    public void setPatient_id(Long patient_id) {
-        this.patient_id = patient_id;
     }
 }

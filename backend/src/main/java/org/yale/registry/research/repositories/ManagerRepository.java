@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ManagerRepository extends PagingAndSortingRepository<ManagerEntity, Long> {
     @Query("SELECT new org.yale.registry.research.DTOs.ManagerDTO(m.manager_id, m.username, " +
-            "m.password, m.name) from " +
+            "m.password, m.org_name) from " +
             "ManagerEntity m WHERE m.manager_id = :manager_id")
     public Optional<ManagerDTO> findManagerDTOByManager_id(@Param("manager_id") Long manager_id);
 }
