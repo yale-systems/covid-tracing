@@ -21,10 +21,13 @@ import org.yale.registry.research.enums.EnumTypes.Gender;
 import org.yale.registry.research.enums.EnumTypes.Race;
 import org.yale.registry.research.enums.EnumTypes.SelfIsolate;
 import org.yale.registry.research.enums.EnumTypes.Employment;
+import org.yale.registry.research.utilities.EnumMapUtility;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class PatientDTO extends RepresentationModel<PatientDTO> {
     private Long patient_id;
@@ -104,6 +107,8 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private Long volunteer_id;
 
+    private Map<String, Map<String, Integer>> enums;
+
 
     public PatientDTO(){}
 
@@ -156,6 +161,10 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.email = email;
         this.manager_id = manager_id;
         this.volunteer_id = volunteer_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class, CaseCallStatus.class, SawDoctor.class,
+                Insurance.class, Symptomatic.class, Symptom.class, Gender.class, Race.class, SelfIsolate.class,
+                PreexistingCondition.class, Employment.class, SuspectedExposure.class, Assistance.class,
+                ReasonFlagged.class));
     }
 
     public PatientDTO(String username, String password, String first_name, String last_name,
@@ -205,6 +214,10 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.email = email;
         this.manager_id = manager_id;
         this.volunteer_id = volunteer_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class, CaseCallStatus.class, SawDoctor.class,
+                Insurance.class, Symptomatic.class, Symptom.class, Gender.class, Race.class, SelfIsolate.class,
+                PreexistingCondition.class, Employment.class, SuspectedExposure.class, Assistance.class,
+                ReasonFlagged.class));
     }
 
     public PatientDTO(PatientEntity patientEntity) {
@@ -245,6 +258,10 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.email = patientEntity.getEmail();
         this.manager_id = patientEntity.getManager_id();
         this.volunteer_id = patientEntity.getVolunteer_id();
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class, CaseCallStatus.class, SawDoctor.class,
+                Insurance.class, Symptomatic.class, Symptom.class, Gender.class, Race.class, SelfIsolate.class,
+                PreexistingCondition.class, Employment.class, SuspectedExposure.class, Assistance.class,
+                ReasonFlagged.class));
     }
 
     public Long getPatient_id() {
@@ -541,5 +558,13 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     public void setVolunteer_id(Long volunteer_id) {
         this.volunteer_id = volunteer_id;
+    }
+
+    public Map<String, Map<String, Integer>> getEnums() {
+        return enums;
+    }
+
+    public void setEnums(Map<String, Map<String, Integer>> enums) {
+        this.enums = enums;
     }
 }

@@ -3,8 +3,11 @@ package org.yale.registry.research.DTOs;
 import org.springframework.hateoas.RepresentationModel;
 import org.yale.registry.research.entities.VolunteerEntity;
 import org.yale.registry.research.enums.EnumTypes.Language;
+import org.yale.registry.research.utilities.EnumMapUtility;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
     private Long volunteer_id;
@@ -33,6 +36,8 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
 
     private Long manager_id;
 
+    private Map<String, Map<String, Integer>> enums;
+
 
     public VolunteerDTO(){}
 
@@ -53,6 +58,7 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
         this.completed_cases = completed_cases;
         this.email = email;
         this.manager_id = manager_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class));
     }
 
     public VolunteerDTO(String username, String password,
@@ -71,6 +77,7 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
         this.completed_cases = completed_cases;
         this.email = email;
         this.manager_id = manager_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class));
     }
 
     public VolunteerDTO(VolunteerEntity volunteerEntity) {
@@ -87,6 +94,7 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
         this.completed_cases = volunteerEntity.getCompleted_cases();
         this.email = volunteerEntity.getEmail();
         this.manager_id = volunteerEntity.getManager_id();
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(Language.class));
     }
 
     public Long getVolunteer_id() {
@@ -191,5 +199,13 @@ public class VolunteerDTO extends RepresentationModel<VolunteerDTO> {
 
     public void setManager_id(Long manager_id) {
         this.manager_id = manager_id;
+    }
+
+    public Map<String, Map<String, Integer>> getEnums() {
+        return enums;
+    }
+
+    public void setEnums(Map<String, Map<String, Integer>> enums) {
+        this.enums = enums;
     }
 }

@@ -11,10 +11,10 @@ import org.yale.registry.research.enums.EnumTypes.Symptomatic;
 import org.yale.registry.research.enums.EnumTypes.Symptom;
 import org.yale.registry.research.enums.EnumTypes.SelfIsolate;
 import org.yale.registry.research.enums.EnumTypes.Assistance;
+import org.yale.registry.research.utilities.EnumMapUtility;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ContactDTO extends RepresentationModel<ContactDTO> {
     private Long contact_id;
@@ -61,6 +61,8 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
 
     private Long patient_id;
 
+    private Map<String, Map<String, Integer>> enums;
+
     public ContactDTO(){}
 
     public ContactDTO(Long contact_id, String first_name, String last_name,
@@ -93,6 +95,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
         this.patient_id = patient_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(AgeDemographic.class, ContactType.class,
+                ContactCallStatus.class, Relationship.class, Language.class, Symptomatic.class, Symptom.class,
+                SelfIsolate.class, Assistance.class));
     }
 
     public ContactDTO(String first_name, String last_name,
@@ -124,6 +129,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.isolated_from_patient = isolated_from_patient;
         this.healthcare_worker = healthcare_worker;
         this.patient_id = patient_id;
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(AgeDemographic.class, ContactType.class,
+                ContactCallStatus.class, Relationship.class, Language.class, Symptomatic.class, Symptom.class,
+                SelfIsolate.class, Assistance.class));
     }
 
     public ContactDTO(ContactEntity contactEntity) {
@@ -149,6 +157,9 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
         this.isolated_from_patient = contactEntity.getIsolated_from_patient();
         this.healthcare_worker = contactEntity.getHealthcare_worker();
         this.patient_id = contactEntity.getPatient_id();
+        this.enums = EnumMapUtility.generateEnumMap(Arrays.asList(AgeDemographic.class, ContactType.class,
+                ContactCallStatus.class, Relationship.class, Language.class, Symptomatic.class, Symptom.class,
+                SelfIsolate.class, Assistance.class));
     }
 
     public Long getContact_id() {
@@ -325,5 +336,13 @@ public class ContactDTO extends RepresentationModel<ContactDTO> {
 
     public void setPatient_id(Long patient_id) {
         this.patient_id = patient_id;
+    }
+
+    public Map<String, Map<String, Integer>> getEnums() {
+        return enums;
+    }
+
+    public void setEnums(Map<String, Map<String, Integer>> enums) {
+        this.enums = enums;
     }
 }
