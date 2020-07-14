@@ -1,77 +1,105 @@
 <template>
-    <v-expansion-panel v-on:delete-contact="deleteContact">
-        <v-expansion-panel-header >
-            <h2> {{defaultTitle}} </h2>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-            <v-form>
-                <v-row>
-                    <v-menu
-                        ref="menu"
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        transition="slide-y-transition"
-                        offset-y
-                        min-width="290px"
-                        mr-2
-                        >
-                        <template v-slot:activator="{ on }">
-                            <v-text-field
-                                class="mr-4"
-                                v-model="value.date"
-                                label="Date"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                v-on="on"
-                                :error-messages="dateErrors"
-                                @focus="v.date.$reset"
-                                @blur="v.date.$touch"
-                            ></v-text-field>
-                        </template>
-                        <v-date-picker 
-                            v-model="value.date" 
-                            :max="todayDate"
-                            no-title 
-                            scrollable
-                            @input="menu=false">
-                        </v-date-picker>
-                    </v-menu>
-                    <v-text-field
-                        class="ml-4"
-                        v-model="value.location.streetName"
-                        label="Location"
-                        prepend-icon="mdi-map"
-                        placeholder="choose a location using the map icon to the left"
-                        @click:prepend="showMap = true"
-                        readonly
-                        append-icon="mdi-close"
-                        @click:append="location = ''"
-                    >
-                    </v-text-field>
+    <v-container fluid class="event-spacing">
+        <v-card class="mx-2 my-2">
+            <v-card-title class="pt-6 mb-0 pb-0 ml-2">
+                
+                <h2 v-text="title"></h2>
+                <v-spacer></v-spacer>
+                <v-btn
+                    outlined
+                    color="error"
+                    @click="deleteEvent">
+                    delete event
+                </v-btn>
+            </v-card-title>
+                <!-- first row, includes the date and the contacts + add contacts button -->
+                <v-row class="mx-4 pt-0 padding-bottom">
+                    <v-col cols="4">
+                        <v-menu
+                            ref="menu"
+                            v-model="menu"
+                            :close-on-content-click="false"
+                            transition="slide-y-transition"
+                            offset-y
+                            min-width="290px"
+                            mr-2
+                            >
+                            <template v-slot:activator="{ on }">
+                                <v-form
+                                    ref="dateForm"
+                                    v-model="value.dateValid"
+                                >
+                                <v-text-field
+                                    class="mr-4"
+                                    v-model="value.date"
+                                    label="Date"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-on="on"
+                                    @click:prepend="menu=true"
+                                    :rules="dateRules"
+                                ></v-text-field>
+                                </v-form>
+                            </template>
+                            <v-date-picker 
+                                v-model="value.date" 
+                                :max="endDate"
+                                :min="startDate"
+                                no-title 
+                                scrollable
+                                @input="menu=false">
+                            </v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col>
+                        <v-text-field
+                            class="pr-3"
+                            v-model="value.location.streetName"
+                            label="Location"
+                            prepend-icon="mdi-map"
+                            placeholder="click the map icon to pick a location"
+                            @click:prepend="showMap = true"
+                            @click="showMap = true"
+                            readonly
+                            append-icon="mdi-close"
+                            @click:append="value.location = ''"
+                        > </v-text-field>
+                    </v-col>
                 </v-row>
-                <v-divider></v-divider>
-                <v-container>
-                    <v-row class="mb-2">
-                        <h3> Contacts </h3>
-                        <v-spacer></v-spacer>
-                        <v-btn 
-                            @click="newContact"
-                            justify-right
-                            outlined>
-                            Add contact
+                
+                <v-row class="mx-4 pt-0 ">
+                    <v-col>
+                        <v-text-field
+                            class="pr-3"   
+                            label="Nature of Contact"       
+                            prepend-icon="mdi-account"
+                            placeholder="e.g. Dinner with Susan"
+                            v-model="value.contactNature"
+                            @blur="setTitle"
+                        > </v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row class="mx-5 pt-0">
+                    <v-col cols="2" style="padding-left:1%; padding-bottom: 3%;" >
+                        <v-btn
+                            outlined
+                            @click="newContact"> 
                             <v-icon> mdi-plus </v-icon>
+                            add contact
                         </v-btn>
-                    </v-row>
-                    <InterviewContact 
-                        v-for="contact in v.contacts.$each.$iter"
-                        :key="contact.$model.contactID"
-                        :ID="contact.$model.contactID"
-                        v-model="contact.$model"
-                        :v="contact"
-                    />
-                </v-container>
-            </v-form>
-        </v-expansion-panel-content>
+                    </v-col>
+                    <v-col style="margin-top:-25px;">
+                        <OutsideContact 
+                            v-for="c of contacts"
+                            :key="c"
+                            :value="c"
+                            v-on:splice-contact="deleteContact"
+                            class= "pl-3"
+                        />
+                    </v-col>
+                </v-row>
+        </v-card>
+
         <v-dialog
             v-model="showMap"
             >
@@ -94,96 +122,123 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-    </v-expansion-panel>
-
+    </v-container>
 </template>
 
 <script>
-import InterviewContact from '@/components/InterviewContact.vue'
-import SearchMap from '@/components/SearchMap.vue'
+import SearchMap from '@/components/map/SearchMap.vue'
+import OutsideContact from '@/components/OutsideContact.vue'
 
 export default {
-    name : "InterviewEvent",
-    components : {
-        InterviewContact,
-        SearchMap
+    name: "InterviewEvent",
+    components: {
+        SearchMap,
+        OutsideContact
     },
     props: {
-        value : {
-            type : Object,
-            required : true
+        value: {
+            type: Object,
+            required: true
         },
-        v : {
-            type : Object,
-            required : true
-        }
+        noContacts: null,
+        validate: Boolean
     },
     data () {
         return {
-            date: new Date().toISOString().substr(0, 10),
+            endDate: '',
+            startDate: '',
             menu: false,
             showMap : false,
+            contacts: [],
+            // fields for the search bar, doesn't go directly into value
             addressInfo : {
                 adr: '',
                 ll: null
             },
+            contacts: [],
+            dateRules: [
+                v => !!v || 'Date is required'
+            ],
+            editTitle: false,
+            title: '',
+            incrementVal: 0,
         }
     },
-    computed : {
-        defaultTitle () {
-            return 'Event ' + this.value.eventID.toString()
+    mounted() {
+        this.title = this.defaultTitle
+        this.startDate = this.$store.state.startDate 
+        this.endDate = this.$store.state.endDate 
+    },
+    computed: {
+        defaultTitle() {
+            let num = this.value.eventID + 1
+            return 'Event ' + num.toString()
         },
-        dateErrors() {
-            const errors = []
-            if (!this.v.date.$dirty) return errors
-            !this.v.date.required && errors.push('This field is required, please select a date.')
-            return errors
-        },
-        todayDate() {
-            let today = new Date();
-            let day = String(today.getDate()).padStart(2, '0');
-            let month = String(today.getMonth() + 1).padStart(2, '0');
-            let year = today.getFullYear();
-
-            return (year + '-' + month + '-' + day)
+        titleID() {
+            return 'title-' + this._uid
         }
     },
-    methods : {
+    methods: {
         handleOk() {
             this.showMap = !this.showMap
             this.value.location.streetName = this.addressInfo.adr
             this.value.location.coordinates = this.addressInfo.ll
         },
         newContact() {
-            let contact = {
-                firstName : '',
-                lastName : '',
-                phone : null,
-                email : '',
-                healthcareWorker : false,
-                age : 'adult',
-                contactType : null,
-                contactNature : '',
-                contactID : this.value.contacts.length
-            }
-            this.value.contacts.push(contact)
+            this.contacts.push(this.incrementVal)
+            this.incrementVal += 1
         },
-        deleteContact(contactID) {
-            for (contact in this.value.contacts) {
-                if (contact.contactID = contactID) {
-                    this.value.contacts.splice(contactID, 1)
+        deleteEvent() {
+            // if originally loaded in, queue the event to delete from the backend as well
+            if (this.value.add == false) {
+                this.$store.commit('qDeleteLocation', this.value.eventID)
+            }
+            this.$emit('splice', this.value.eventID)
+        },
+        deleteContact(deleteMe) {
+            for(var c in this.contacts) {
+                if (this.contacts[c] == deleteMe) {
+                    this.contacts.splice(c, 1)
                 }
+            }
+        },
+        setTitle() {
+            var res = this.value.contactNature.split(" ")
+            if (res.length == 1 && res[0] == "") {
+                this.title = this.defaultTitle
+                return
+            }
+            let end = res.length > 5 ? 5 : res.length
+            this.title = res[0]
+            for (var i = 1; i < end; i++) {
+                this.title += " " + res[i]
+            }
+            if (res.length > 5) {
+                this.title += "..."
             }
         }
     },
-    mounted () {
-        this.newContact()
+    watch : {
+        validate: function() {
+            this.$refs.dateForm.validate()
+        }
     }
+
 }
 </script>
 
 <style>
+
+.padding-bottom {
+    margin-bottom: -25px;
+}
 .search-map {
     height: 400px;
 }
+
+.event-spacing {
+    margin-bottom: -25px;
+}
+
+
 </style>

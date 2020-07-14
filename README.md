@@ -56,4 +56,3 @@ Past Members
 
 * [Backend](backend/backend.md)
 * [Frontend](frontend/frontend.md)
-
