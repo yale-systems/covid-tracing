@@ -1,4 +1,4 @@
-package org.yale.registry.research.exceptions;
+package org.yale.registry.research.exceptions.handling;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +39,11 @@ public class APIError {
         this.status = status;
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
+    }
+
+    public APIError noDebug() {
+        RuntimeException obf_ex = new RuntimeException();
+        return new APIError(status, message, obf_ex);
     }
 
     public HttpStatus getStatus() {

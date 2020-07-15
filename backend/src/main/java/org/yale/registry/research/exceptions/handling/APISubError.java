@@ -1,4 +1,4 @@
-package org.yale.registry.research.exceptions;
+package org.yale.registry.research.exceptions.handling;
 
 import java.util.Objects;
 

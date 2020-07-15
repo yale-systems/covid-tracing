@@ -1,18 +1,20 @@
-package org.yale.registry.research.exceptions;
+package org.yale.registry.research.exceptions.handling;
 
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.yale.registry.research.exceptions.custom.IDNotFoundException;
 
-// Reference: https://docs.spring.io/spring/docs/5.2.7.RELEASE/spring-framework-reference/web.html#mvc-ann-rest-exceptions
+
+/*
+* Reference:
+* https://docs.spring.io/spring/docs/5.2.7.RELEASE/spring-framework-reference/web.html#mvc-ann-rest-exceptions
+* https://www.toptal.com/java/spring-boot-rest-api-error-handling
+*/
 
 //@Order(Ordered.HIGHEST_PRECEDENCE) // need to verify this should be done
 @ControllerAdvice // @RestControllerAdvice not needed--we are handling responses manually
@@ -21,6 +23,10 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
     // Custom Response Entity
     private ResponseEntity<Object> buildResponseEntity(APIError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+    // Debug-less Custom Response Entity
+    private ResponseEntity<Object> buildNoDebugResponseEntity(APIError apiError) {
+        return new ResponseEntity<>(apiError.noDebug(), apiError.getStatus());
     }
 
     // Custom Exception Handlers
@@ -40,6 +46,15 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
         String error = "Resource not found";
+        System.out.println(error);
+        return buildResponseEntity(new APIError(HttpStatus.NOT_FOUND, error, ex));
+    }
+
+    // ID Not Found Exception
+    @ExceptionHandler(IDNotFoundException.class)
+    protected ResponseEntity<?> handleIDNotFoundException(
+            IDNotFoundException ex, WebRequest request) {
+        String error = String.format("%s with id = %d not found", ex.typeName, ex.id);
         System.out.println(error);
         return buildResponseEntity(new APIError(HttpStatus.NOT_FOUND, error, ex));
     }
