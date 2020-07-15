@@ -10,6 +10,7 @@ import org.yale.registry.research.repositories.VolunteerRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,19 +27,23 @@ public class VolunteerService {
     }
 
     public VolunteerDTO getVolunteerDTOById(Long volunteer_id){
-        Optional<VolunteerDTO> optionalVolunteerDTO =
-                volunteerRepository.findVolunteerDTOByVolunteer_id(volunteer_id);
-        if(!optionalVolunteerDTO.isPresent()){
+        Optional<VolunteerEntity> optionalVolunteerEntity =
+                volunteerRepository.findVolunteerEntityByVolunteer_id(volunteer_id);
+        if(!optionalVolunteerEntity.isPresent()){
             return null;
         }
-        VolunteerDTO volunteerDTO = optionalVolunteerDTO.get();
+        VolunteerDTO volunteerDTO = new VolunteerDTO(optionalVolunteerEntity.get());
         RESTfulUtility.addRestToVolunteerDTO(volunteerDTO);
         return volunteerDTO;
     }
 
     public List<VolunteerDTO> getVolunteersByManagerId(Long manager_id){
-        List<VolunteerDTO> volunteerDTOS =
-                volunteerRepository.findVolunteerDTOsByManager_id(manager_id);
+        List<VolunteerDTO> volunteerDTOS = new ArrayList<>();
+        List<VolunteerEntity> volunteerEntities =
+                volunteerRepository.findVolunteerEntitiesByManager_id(manager_id);
+        for(VolunteerEntity volunteerEntity: volunteerEntities){
+            volunteerDTOS.add(new VolunteerDTO(volunteerEntity));
+        }
         RESTfulUtility.addRestToVolunteerDTOs(volunteerDTOS);
         return volunteerDTOS;
     }
@@ -48,18 +53,7 @@ public class VolunteerService {
                 volunteerRepository.findById(volunteerDTO.getVolunteer_id());
         if(optionalVolunteerEntity.isPresent()){
             VolunteerEntity volunteerEntity = optionalVolunteerEntity.get();
-            if(volunteerDTO.getUsername() != null){
-                volunteerEntity.setUsername(volunteerDTO.getUsername());
-            }
-            if(volunteerDTO.getPassword() != null){
-                volunteerEntity.setPassword(volunteerDTO.getPassword());
-            }
-            if(volunteerDTO.getName() != null){
-                volunteerEntity.setName(volunteerDTO.getName());
-            }
-            if(volunteerDTO.getEmail() != null){
-                volunteerEntity.setEmail(volunteerDTO.getEmail());
-            }
+            volunteerEntity.update(volunteerDTO);
             volunteerRepository.save(volunteerEntity);
             VolunteerDTO returnVolunteerDTO = new VolunteerDTO(volunteerEntity);
             RESTfulUtility.addRestToVolunteerDTO(returnVolunteerDTO);
@@ -69,11 +63,7 @@ public class VolunteerService {
     }
 
     public VolunteerDTO insert(VolunteerDTO volunteerDTO){
-        VolunteerEntity volunteerEntity = new VolunteerEntity(
-                volunteerDTO.getVolunteer_id(), volunteerDTO.getUsername(),
-                volunteerDTO.getPassword(), volunteerDTO.getName(),
-                volunteerDTO.getEmail(), volunteerDTO.getManager_id()
-        );
+        VolunteerEntity volunteerEntity = new VolunteerEntity(volunteerDTO);
         volunteerRepository.save(volunteerEntity);
         VolunteerDTO returnVolunteerDTO = new VolunteerDTO(volunteerEntity);
         RESTfulUtility.addRestToVolunteerDTO(returnVolunteerDTO);

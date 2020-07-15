@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <v-card class="align-center justify-center ma-10">
+    <v-container fluid>
+        <v-card class="submit-margins align-center justify-center ma-10">
             <v-card-title> Thank you for your time. </v-card-title>
             <v-card-text>
                     We appreciate and value the time you took to fill out this form. 
@@ -22,20 +22,20 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer> </v-spacer>
-                <v-btn @click="handleResources" depressed> View Resources </v-btn> 
-                <v-btn color="primary" @click="handleEdit">  Edit Submission </v-btn> 
+                <v-btn text color="primary" @click="handleResources" depressed> View Resources </v-btn> 
+                <v-btn dark color="primary" @click="handleEdit">  Edit Submission </v-btn> 
             </v-card-actions>
         </v-card>
-    </div>
+    </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 export default Vue.extend({
     name : "SubmitPage",
     methods : {
         handleEdit() {
-            this.$router.push({path: "/form"})
+            this.$router.push({path: "/completeform/3"})
         },
         handleResources() {
             this.$router.push({path: "/resources"})
@@ -46,4 +46,7 @@ export default Vue.extend({
 
 <style scoped>
 
+.submit-margins {
+    padding: 1%;
+}
 </style>

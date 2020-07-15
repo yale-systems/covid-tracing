@@ -1,5 +1,7 @@
 package org.yale.registry.research.entities;
 
+import org.yale.registry.research.DTOs.ManagerDTO;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -19,17 +21,32 @@ public class ManagerEntity implements Serializable {
 
     private String password;
 
-    private String name;
+    private String org_name;
 
     public ManagerEntity() {
     }
 
     public ManagerEntity(Long manager_id, String username,
-                         String password, String name) {
+                         String password, String org_name) {
         this.manager_id = manager_id;
         this.username = username;
         this.password = password;
-        this.name = name;
+        this.org_name = org_name;
+    }
+
+
+    public ManagerEntity(String username,
+                         String password, String org_name) {
+        this.username = username;
+        this.password = password;
+        this.org_name = org_name;
+    }
+
+    public ManagerEntity(ManagerDTO managerDTO){
+        this.manager_id = managerDTO.getManager_id();
+        this.username = managerDTO.getUsername();
+        this.password = managerDTO.getPassword();
+        this.org_name = managerDTO.getOrg_name();
     }
 
     public Long getManager_id() {
@@ -56,11 +73,11 @@ public class ManagerEntity implements Serializable {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getOrg_name() {
+        return org_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOrg_name(String name) {
+        this.org_name = name;
     }
 }

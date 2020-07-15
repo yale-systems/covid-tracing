@@ -14,6 +14,7 @@ import org.yale.registry.research.repositories.PatientRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,31 +37,44 @@ public class PatientService {
     }
 
     public PatientDTO getPatientDTOById(Long patient_id){
-        Optional<PatientDTO> optionalPatientDTO = patientRepository.findPatientDTOByPatient_id(patient_id);
-        if(!optionalPatientDTO.isPresent()){
+        Optional<PatientEntity> optionalPatientEntity = patientRepository.findPatientEntityByPatient_id(patient_id);
+        if(!optionalPatientEntity.isPresent()){
             // patient with given ID wasn't found, so throw an IDNotFoundException
             throw new IDNotFoundException(patient_id, "patient");
         }
-        PatientDTO patientDTO = optionalPatientDTO.get();
+        PatientDTO patientDTO = new PatientDTO(optionalPatientEntity.get());
         RESTfulUtility.addRestToPatientDTO(patientDTO);
         return patientDTO;
     }
 
     public List<PatientDTO> getPatientsByManagerId(Long manager_id){
-        List<PatientDTO> patientDTOS = patientRepository.findPatientDTOsByManager_id(manager_id);
+        List<PatientDTO> patientDTOS = new ArrayList<>();
+        List<PatientEntity> patientEntities = patientRepository.findPatientEntitiesByManager_id(manager_id);
+        for(PatientEntity patientEntity: patientEntities){
+            patientDTOS.add(new PatientDTO(patientEntity));
+        }
         RESTfulUtility.addRestToPatientDTOs(patientDTOS);
         return patientDTOS;
     }
 
     public List<PatientDTO> getOrphanedPatientsByManagerId(Long manager_id){
-        List<PatientDTO> patientDTOS =
-                patientRepository.findOrphanedPatientDTOsByManager_id(manager_id);
+        List<PatientDTO> patientDTOS = new ArrayList<>();
+        List<PatientEntity> patientEntities =
+                patientRepository.findOrphanedPatientEntitiesByManager_id(manager_id);
+        for(PatientEntity patientEntity: patientEntities){
+            patientDTOS.add(new PatientDTO(patientEntity));
+        }
         RESTfulUtility.addRestToPatientDTOs(patientDTOS);
         return patientDTOS;
     }
 
     public List<PatientDTO> getPatientsByVolunteerId(Long volunteer_id){
-        List<PatientDTO> patientDTOS = patientRepository.findPatientDTOsByVolunteer_id(volunteer_id);
+        List<PatientDTO> patientDTOS = new ArrayList<>();
+        List<PatientEntity> patientEntities =
+                patientRepository.findPatientEntitiesByVolunteer_id(volunteer_id);
+        for(PatientEntity patientEntity: patientEntities){
+            patientDTOS.add(new PatientDTO(patientEntity));
+        }
         RESTfulUtility.addRestToPatientDTOs(patientDTOS);
         return patientDTOS;
     }
@@ -70,18 +84,7 @@ public class PatientService {
                 patientRepository.findById(patientDTO.getPatient_id());
         if(optionalPatientEntity.isPresent()){
             PatientEntity patientEntity = optionalPatientEntity.get();
-            if(patientDTO.getUsername() != null){
-                patientEntity.setUsername(patientDTO.getUsername());
-            }
-            if(patientDTO.getPassword() != null){
-                patientEntity.setPassword(patientDTO.getPassword());
-            }
-            if(patientDTO.getName() != null){
-                patientEntity.setName(patientDTO.getName());
-            }
-            if(patientDTO.getEmail() != null){
-                patientEntity.setEmail(patientDTO.getEmail());
-            }
+            patientEntity.update(patientDTO);
             patientRepository.save(patientEntity);
             PatientDTO returnPatientDTO = new PatientDTO(patientEntity);
             RESTfulUtility.addRestToPatientDTO(returnPatientDTO);
@@ -105,12 +108,7 @@ public class PatientService {
     }
 
     public PatientDTO insert(PatientDTO patientDTO){
-        PatientEntity patientEntity = new PatientEntity(
-                patientDTO.getPatient_id(), patientDTO.getUsername(),
-                patientDTO.getPassword(), patientDTO.getName(),
-                patientDTO.getEmail(), patientDTO.getManager_id(),
-                patientDTO.getVolunteer_id()
-        );
+        PatientEntity patientEntity = new PatientEntity(patientDTO);
         patientRepository.save(patientEntity);
         PatientDTO returnPatientDTO = new PatientDTO(patientEntity);
         RESTfulUtility.addRestToPatientDTO(returnPatientDTO);

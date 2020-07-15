@@ -1,16 +1,17 @@
 <template>
     <v-app>
         <v-app-bar app color="primary" dark>
-            <div class="d-flex align-center large-bold ml-1">
-                Contact Tracing
+            <div class="d-flex align-center large-bold ml-1 pointerOnHover"
+                @click="goHome">
+                Oasis Contact Tracing
             </div>
             <div class="ml-4">
-                <v-tabs background-color="primary" v-if="loggedIn">
+                <!-- <v-tabs background-color="teal lighten-2" v-if="loggedIn && showMe">
                     <v-tab
                         to="form">
                         Interview Form
                     </v-tab>
-                </v-tabs>
+                </v-tabs> -->
             </div>
         
             <v-spacer></v-spacer>
@@ -39,27 +40,27 @@
                         >
                             <v-list-item-content>Logout</v-list-item-content>
                         </v-list-item>
-                        <v-list-item
+                        <!-- <v-list-item
                             to="profile"
                         >
                             <v-list-item-content>Profile</v-list-item-content>
-                        </v-list-item>
+                        </v-list-item> -->
                     </v-list>
                 </v-menu>             
             </div>
         </v-app-bar>
-        <v-content>
+        <v-main>
             <router-view />
-        </v-content>
+        </v-main>
     </v-app>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from "vue";
 import LoginPage from "@/views/LoginPage.vue"
 import Welcome from "@/views/Welcome.vue"
 
-export default Vue.extend({
+export default {
     name: "App",
     components: {
         LoginPage,
@@ -71,12 +72,22 @@ export default Vue.extend({
         },
         name() {
             return this.$store.state.patientInfo.name
+        },
+        showMe() {
+            return this.$store.state.showNavBar
         }
     },
-
-    data: () => ({
-    })
-});
+    methods: {
+        goHome() {
+            if(this.loggedIn) {
+                this.$router.push({name: "welcome"})
+            } else {
+                this.$router.push({name: "login"})
+            }
+            
+        }
+    }
+};
 </script>
 
 <style scoped>
@@ -84,6 +95,10 @@ export default Vue.extend({
 .large-bold {
     font-size: larger;
     font-weight: bold
+}
+
+.pointerOnHover {
+    cursor: pointer;
 }
 
 </style>

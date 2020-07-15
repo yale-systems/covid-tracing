@@ -33,7 +33,7 @@ public class EventService {
     public EventDTO getByEventId(Long id){
         Optional<EventEntity> optionalEventEntity = eventRepository.findById(id);
         EventDTO eventDTO =
-                optionalEventEntity.map(DTOUtility::eventEntityToDTO).
+                optionalEventEntity.map(EventDTO::new).
                         orElse(null);
         if(eventDTO != null){
             RESTfulUtility.addRestToEventDTO(eventDTO);
@@ -51,7 +51,7 @@ public class EventService {
     }
 
     public EventDTO insert(EventDTO eventDTO){
-        EventEntity eventEntity = DTOUtility.eventDTOToEntity(eventDTO);
+        EventEntity eventEntity = new EventEntity(eventDTO);
         eventRepository.save(eventEntity);
         EventDTO returnEventDTO = new EventDTO(eventEntity);
         RESTfulUtility.addRestToEventDTO(returnEventDTO);
@@ -63,21 +63,7 @@ public class EventService {
                 eventRepository.findById(eventDTO.getEvent_id());
         if(optionalEventEntity.isPresent()){
             EventEntity eventEntity = optionalEventEntity.get();
-            if(eventDTO.getStart_time() != null){
-                eventEntity.setStart_time(eventDTO.getStart_time());
-            }
-            if(eventDTO.getEnd_time() != null){
-                eventEntity.setEnd_time(eventDTO.getEnd_time());
-            }
-            if(eventDTO.isConfirmed() != null){
-                eventEntity.setConfirmed(eventDTO.isConfirmed());
-            }
-            if(eventDTO.getGeom() != null){
-                eventEntity.setGeom(eventDTO.getGeom());
-            }
-            if(eventDTO.getPatient_id() != null){
-                eventEntity.setPatient_id(eventDTO.getPatient_id());
-            }
+            eventEntity.update(eventDTO);
             eventRepository.save(eventEntity);
             EventDTO returnEventDTO = new EventDTO(eventEntity);
             RESTfulUtility.addRestToEventDTO(returnEventDTO);
