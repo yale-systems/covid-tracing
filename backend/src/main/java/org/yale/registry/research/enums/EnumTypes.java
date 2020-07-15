@@ -1,26 +1,14 @@
 package org.yale.registry.research.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public class EnumTypes {
     public enum ContactType{
         MINIMAL,
-        CLOSE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        CLOSE
     }
     public enum AgeDemographic {
         MINOR,
         ADULT,
-        ELDERLY;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        ELDERLY
     }
     public enum ContactCallStatus {
         HAVE_NOT_NOTIFIED_YET,
@@ -30,12 +18,7 @@ public class EnumTypes {
         UNABLE_TO_REACH_BAD_NUMBER,
         YES_NOTIFIED_CONTACT,
         YES_NOTIFIED_FAMILY,
-        YES_NOTIFIED_PROXY;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        YES_NOTIFIED_PROXY
     }
     public enum Relationship{
         PARENT,
@@ -44,36 +27,21 @@ public class EnumTypes {
         FRIEND,
         WORK_COLLEAGUE,
         OTHER,
-        DONT_WANT_TO_SAY;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DONT_WANT_TO_SAY
     }
     public enum Language {
         ENGLISH,
         SPANISH,
         CHINESE,
-        ARABIC;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        ARABIC
     }
     public enum Symptomatic {
         TESTED_POSITIVE,
         SYMPTOMATIC_NOT_TESTED,
         NO_SYMPTOMS,
-        DONT_KNOW;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DONT_KNOW
     }
-    public enum Symptom {
+    public enum Symptoms {
         MILD_FATIGUE,
         LOW_GRADE_FEVER,
         COUGH,
@@ -84,22 +52,12 @@ public class EnumTypes {
         HEADACHE,
         MUSCLE_AND_JOINT_PAIN,
         TIGHT_FEELING_IN_CHEST,
-        TROUBLE_BREATHING;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        TROUBLE_BREATHING
     }
     public enum SelfIsolate {
         YES,
         YES_BUT_NEED_ASSISTANCE,
-        NO;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        NO
     }
     public enum Assistance {
         FOOD_SUPPORT,
@@ -113,12 +71,7 @@ public class EnumTypes {
         PERSONAL_CARE_HYGEINE_ITEMS,
         MENTAL_HEALTH_SUPPORT,
         CLOTHING,
-        OTHER;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        OTHER
     }
     public enum CaseCallStatus {
         HAVE_NOT_CALLED_YET,
@@ -130,14 +83,9 @@ public class EnumTypes {
         PARTIAL_COMPLETED_INTERVIEW,
         PATIENT_COMPLETED_INTERVIEW,
         UNABLE_TO_REACH,
-        UNABLE_TO_REACH_BAD_NUMBER;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        UNABLE_TO_REACH_BAD_NUMBER
     }
-    public enum PreexistingCondition {
+    public enum PreexistingConditions {
         CHRONIC_RESPIRATORY_ILLNESS,
         CARDIOVASCULAR_DISEASE,
         DIABETES,
@@ -145,23 +93,13 @@ public class EnumTypes {
         IMMUNOCOMPROMISED,
         IMMUNOSUPPRESSED,
         NONE_INDICATED,
-        OTHER;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        OTHER
     }
     public enum Gender {
         FEMALE,
         MALE,
         OTHER,
-        PREFER_NOT_TO_DISCLOSE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        PREFER_NOT_TO_DISCLOSE
     }
     public enum Race {
         AMERICAN_INDIAN_OR_ALASKA_NATIVE,
@@ -170,12 +108,7 @@ public class EnumTypes {
         HISPANIC_OR_LATINO,
         NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER,
         WHITE,
-        PREFER_NOT_TO_ANSWER;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        PREFER_NOT_TO_ANSWER
     }
     public enum SuspectedExposure {
         TRAVEL,
@@ -183,12 +116,7 @@ public class EnumTypes {
         WORK,
         CLOSE_CONTACT_WITH_CONFIRMED_COVID19,
         OTHER,
-        DONT_KNOW_UNSURE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DONT_KNOW_UNSURE
     }
     public enum Employment {
         EMPLOYED,
@@ -197,22 +125,12 @@ public class EnumTypes {
         STAY_AT_HOME_PARENT,
         UNEMPLOYED,
         RETIRED,
-        DISABILITY;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DISABILITY
     }
     public enum SawDoctor {
         YES,
         NO,
-        DO_NOT_HAVE_ONE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DO_NOT_HAVE_ONE
     }
     public enum Insurance {
         PRIVATE_INSURANCE,
@@ -222,21 +140,11 @@ public class EnumTypes {
         COMBINATION_OF_HEALTH_INSURANCES,
         SELF_PAY_CASH,
         UNINSURED,
-        DONT_KNOW_REFUSE_TO_SHARE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DONT_KNOW_REFUSE_TO_SHARE
     }
     public enum ReasonFlagged {
         MEDICAL_EMERGENCY,
         RISK_OF_SELF_HARM_OR_HARM_TO_OTHERS,
-        DOMESTIC_VIOLENCE;
-
-        @JsonValue
-        public int toValue() {
-            return ordinal();
-        }
+        DOMESTIC_VIOLENCE
     }
 }

@@ -14612,6 +14612,18 @@ COPY public.managers (manager_id, username, password, name) FROM stdin;
 
 
 --
+-- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: apiclient
+--
+
+COPY public.managers (manager_id, username, password, name) FROM stdin;
+1	manager1	pw_manager1	Manager1
+2	manager2	pw_manager2	Manager2
+3	manager3	pw_manager3	Manager3
+4	manager4	pw_manager4	Manager4
+\.
+
+
+--
 -- Data for Name: patients; Type: TABLE DATA; Schema: public; Owner: apiclient
 --
 
@@ -19487,6 +19499,14 @@ COPY public.public_users_locations (id, public_user_id, start_time, end_time, co
 --
 
 COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: apiclient
+--
+
+COPY public.tags (tag_id, mac_address, info, worst_case_rssi, flags, minutes_of_appr_contact) FROM stdin;
 \.
 
 
