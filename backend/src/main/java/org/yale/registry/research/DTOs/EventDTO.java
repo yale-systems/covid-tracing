@@ -55,6 +55,7 @@ public class EventDTO extends RepresentationModel<EventDTO> {
         this.contact_ids = contact_ids;
     }
 
+
     public EventDTO(Long patient_id, Date start_time, Date end_time,
                        Boolean confirmed, String notes, Point geom, List<Long> contact_ids) {
         this.patient_id = patient_id;
@@ -81,8 +82,12 @@ public class EventDTO extends RepresentationModel<EventDTO> {
         return event_id;
     }
 
-    public void setEvent_id(Long event_id) {
-        this.event_id = event_id;
+    public void setPatient_id(Long patient_id) {
+        this.patient_id = patient_id;
+    }
+
+    public Date getStart_time() {
+        return start_time;
     }
 
     public Long getPatient_id() {
@@ -91,6 +96,12 @@ public class EventDTO extends RepresentationModel<EventDTO> {
 
     public void setPatient_id(Long patient_id) {
         this.patient_id = patient_id;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.confirmed = confirmed;
+        this.notes = notes;
+        this.geom = geom;
+        this.contact_ids = contact_ids;
     }
 
     public Date getStart_time() {
