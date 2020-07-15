@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.yale.registry.research.DTOs.PatientDTO;
 import org.yale.registry.research.entities.PatientEntity;
+import org.yale.registry.research.exceptions.custom.IDNotFoundException;
 import org.yale.registry.research.repositories.EventRepository;
 import org.yale.registry.research.repositories.PatientRepository;
 import org.yale.registry.research.utilities.RESTfulUtility;
@@ -38,7 +39,8 @@ public class PatientService {
     public PatientDTO getPatientDTOById(Long patient_id){
         Optional<PatientEntity> optionalPatientEntity = patientRepository.findPatientEntityByPatient_id(patient_id);
         if(!optionalPatientEntity.isPresent()){
-            return null;
+            // patient with given ID wasn't found, so throw an IDNotFoundException
+            throw new IDNotFoundException(patient_id, "patient");
         }
         PatientDTO patientDTO = new PatientDTO(optionalPatientEntity.get());
         RESTfulUtility.addRestToPatientDTO(patientDTO);
@@ -101,7 +103,8 @@ public class PatientService {
             RESTfulUtility.addRestToPatientDTO(returnPatientDTO);
             return returnPatientDTO;
         }
-        return null;
+        // patient with given ID wasn't found, so throw an IDNotFoundException
+        throw new IDNotFoundException(patient_id, "patient");
     }
 
     public PatientDTO insert(PatientDTO patientDTO){
