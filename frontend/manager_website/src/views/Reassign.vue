@@ -19,14 +19,17 @@
 					<div>
 						<v-row class="mx-3" v-if="priorityPatients.length > 0">
 							<h3>
-								Select priority patients to assign to one volunteer.
+								Select priority and foreign language patients to assign.
 							</h3>
 							<v-spacer>
 							</v-spacer>
-							<v-btn text @click="seeAllPatients"> skip to see all unassigned patients </v-btn>
+							<v-btn color="primary" class="mr-2" outlined @click="seeAllPatients"> skip to see all unassigned patients </v-btn>
+							<v-btn color="primary" @click="currentTable++" :disabled="selectedNames.length == 0">
+								Next
+							</v-btn>
 						</v-row>
 						<v-row v-else class="mx-3">
-							<h3> Select patients to assign to one volunteer. </h3>
+							<h3> Select patients to assign. </h3>
 						</v-row>
 						<DataTable class="ma-3" 
 							v-model="activePatient"
@@ -35,11 +38,6 @@
 							:people="seeAll ? unassignedPatients : priorityPatients" 
 							:showSelect="true"
 						/>
-						<v-row class="mx-3 d-flex align-end">
-							<v-btn @click="currentTable++" :disabled="selectedNames.length == 0">
-								Next
-							</v-btn>
-						</v-row>
 						<v-divider></v-divider>
 						<PatientCard :patient="activePatient" />
 					</div>
@@ -49,17 +47,17 @@
 						<v-col cols="8">
 							<h3>
 								Select a volunteer to assign these patients to.
-							</h3>
+							</h3><br>
 							<p> Selected patients are {{selectedNames}}. They speak {{ gettersHelper(item, 'languages') }} </p>
 							<p> Selected volunteer is {{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}, who speaks {{ activeVolunteer ? gettersHelper(activeVolunteer, 'languages') : ''}}. </p>
 						</v-col>
 						<v-col cols="4">
 							<v-row class="mx-3">
 								<v-spacer></v-spacer>
-								<v-btn @click="currentTable--">
+								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
 									Previous
 								</v-btn>
-								<v-btn @click="currentTable++" :disabled="!activeVolunteer">
+								<v-btn color="primary" @click="currentTable++" :disabled="!activeVolunteer">
 									Next
 								</v-btn>
 							</v-row>
@@ -75,32 +73,40 @@
 				<v-stepper-content step="3">
 					<v-container v-if="!submitted">
 						<v-row>
-							<h3> Please confirm your assignment. </h3>
-						</v-row>
+							<v-col cols="5">
+								<h3> Please confirm your assignment. </h3>
+							</v-col><v-spacer></v-spacer>
+							<v-col-auto>
+								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
+									Previous
+								</v-btn>
+								<v-btn color="primary" @click="handleAssign">
+									Confirm Assignment
+								</v-btn>
+							</v-col-auto>
+						</v-row><br>
 						<v-row>
-							<h3> Patients </h3>
 							<v-col>
-								<v-row v-for="name in selectedNames"
-								:key="name">
-									<h4> {{name}} </h4>
-								</v-row>
+								<h3 class="mr-1"> Patients </h3>
 							</v-col>
 						</v-row>
 						<v-row>
-							<h3> will be assigned to volunteer </h3>
+							<v-col v-for="name in selectedNames"
+								:key="name">
+									<h3 style="font-weight:normal;"> {{name}} </h3>
+							</v-col>
 						</v-row>
 						<v-row>
-							<h4>
-								{{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}
-							</h4>
+							<v-col>
+								<h3> Will be assigned to volunteer </h3>
+							</v-col>
 						</v-row>
 						<v-row>
-							<v-btn @click="currentTable--">
-								Previous
-							</v-btn>
-							<v-btn @click="handleAssign">
-								Confirm Assignment
-							</v-btn>
+							<v-col>
+								<h3 style="font-weight:normal;">
+									{{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}
+								</h3>
+							</v-col>
 						</v-row>
 						<v-alert color="error" v-if="error">
 							There was an error submitting the assignment. Please try again. 
@@ -115,7 +121,7 @@
 						</p>
 						<div v-else>
 							<p> There are no other priority patients to assign. </p>
-							<v-btn text @click="seeAllPatients">
+							<v-btn outlined color="primary" @click="seeAllPatients">
 								Go to all other patients 
 							</v-btn> 
 						</div>
@@ -123,7 +129,7 @@
 				</v-stepper-content>
 			</v-stepper-items>
 		</v-stepper>
-		<v-btn @click="handleBack">
+		<v-btn  class="mt-4" @click="handleBack">
 			<v-icon>"mdi-arrow-left"</v-icon>
 			back to dashboard
 		</v-btn>
