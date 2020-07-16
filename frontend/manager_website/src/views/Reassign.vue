@@ -16,10 +16,18 @@
 			</v-stepper-header>
 			<v-stepper-items>
 				<v-stepper-content step="1">
-					<div v-if="priorityPatients.length > 0">
-						<h3>
-							Select patients to assign to one volunteer.
-						</h3>
+					<div>
+						<v-row class="mx-3" v-if="priorityPatients.length > 0">
+							<h3>
+								Select priority patients to assign to one volunteer.
+							</h3>
+							<v-spacer>
+							</v-spacer>
+							<v-btn text @click="seeAllPatients"> skip to see all unassigned patients </v-btn>
+						</v-row>
+						<v-row v-else class="mx-3">
+							<h3> Select patients to assign to one volunteer. </h3>
+						</v-row>
 						<DataTable class="ma-3" 
 							v-model="activePatient"
 							type="patient" 
@@ -28,16 +36,12 @@
 							:showSelect="true"
 						/>
 						<v-row class="mx-3 d-flex align-end">
-							<v-btn @click="currentTable++">
+							<v-btn @click="currentTable++" :disabled="selectedNames.length == 0">
 								Next
 							</v-btn>
 						</v-row>
 						<v-divider></v-divider>
 						<PatientCard :patient="activePatient" />
-					</div>
-					<div v-else>
-						<h4> There are no priority patients to assign at this time. </h4>
-						<v-btn @click="seeAllPatients"> Continue to all other patients </v-btn>
 					</div>
 				</v-stepper-content>
 				<v-stepper-content step="2">
@@ -111,7 +115,7 @@
 						</p>
 						<div v-else>
 							<p> There are no other priority patients to assign. </p>
-							<v-btn text @click="seeAll">
+							<v-btn text @click="seeAllPatients">
 								Go to all other patients 
 							</v-btn> 
 						</div>
@@ -255,6 +259,7 @@ export default {
     },
     methods: {
         handleBack() {
+			this.$store.commit('clearSelect')
             this.$router.push({name: 'PDash'})
         },
         customFilter(item, queryText) {

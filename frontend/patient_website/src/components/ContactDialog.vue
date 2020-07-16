@@ -2,7 +2,7 @@
     <v-dialog 
         v-model="value.showDialog" 
         persistent 
-        scrollable="false"
+        :scrollable="false"
         class="ma-0 pa-0"
         max-width="845px"
     >
@@ -64,18 +64,27 @@ export default {
             this.value.showDialog = false
             this.$emit('reload', this.id)
         },
-        submitAndReload(data) {
-            this.value.showDialog = false
+        async submitAndReload(data) {
             // when opened, was new contact
             if (this.id == -1) {
-                this.$store.commit('addContact', data)
-                this.$nextTick(() => {
-                    this.$emit('reload', this.$store.state.contactID - 1)
-                })
+                let newID = await this.$store.dispatch('contacts/add', data)
+                if(newID < 0) {
+                    alert("Contact was not able to be added, please try again.")
+                    return
+                } else {
+                    this.$nextTick(() => {
+                        this.$emit('reload', newID)
+                    })
+                }
             } else {
-                this.$store.commit('modifyContact', data)
+                let updated = this.$store.dispatch('contacts/update', data)
+                if (!updated) {
+                    alert("there was an error updating your request, please enter the information andtry again")
+                    return
+                }
                 this.$emit('reload', this.id)
             }
+            this.value.showDialog = false
         }
     }
 }

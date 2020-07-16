@@ -11,18 +11,21 @@
                     single-line
                     hide-details
                 ></v-text-field>
-            </v-col><v-spacer></v-spacer>
-            <v-col-auto>
-                <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
-                    add fields 
-                </v-btn>
-				<v-btn color="primary" class="mx-2">
-					Add Cases
-				</v-btn>
-				<v-btn color="primary" to='reassign'>
-					Assign Cases
-				</v-btn>
-            </v-col-auto>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col>
+                <v-row>
+                    <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
+                        add fields 
+                    </v-btn>
+                    <v-btn color="primary" to='add' class="mx-2">
+                        Add Cases
+                    </v-btn>
+                    <v-btn color="primary" to='reassign'>
+                        Assign Cases
+                    </v-btn>
+                </v-row>
+            </v-col>
         </v-row>
         <v-data-table
             :headers="headers"

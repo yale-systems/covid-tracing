@@ -3,19 +3,6 @@
 		<v-container fluid class="my-3" style="max-width:95%;">
 			<v-row>
 				<h1> Case Interview Assignments </h1>
-<<<<<<< HEAD
-				<v-spacer>
-				</v-spacer>
-				<v-btn class="mx-2"
-					to='add'>
-					Add Cases
-				</v-btn>
-				<v-btn
-					to='reassign'>
-					Assign Cases
-				</v-btn>
-=======
->>>>>>> b93c679a15b1d1797b4bfd2a38a3fb79230a4923
 			</v-row>
 			<DataTable 
 				:people="patients" 
