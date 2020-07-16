@@ -484,7 +484,7 @@ ALTER TABLE public.managers OWNER TO apiclient;
 
 CREATE SEQUENCE public.managers_id_seq
     AS integer
-    START WITH 5
+    START WITH 2
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -506,7 +506,7 @@ ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.manager_id;
 
 CREATE SEQUENCE public.events_id_seq
     AS integer
-    START WITH 4351
+    START WITH 226
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -575,7 +575,7 @@ ALTER TABLE public.patients OWNER TO apiclient;
 
 CREATE SEQUENCE public.patients_id_seq
     AS integer
-    START WITH 101
+    START WITH 8
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -695,7 +695,7 @@ ALTER TABLE public.volunteers OWNER TO apiclient;
 
 CREATE SEQUENCE public.volunteers_id_seq
     AS integer
-    START WITH 41
+    START WITH 2
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -1096,6 +1096,7 @@ COPY public.patients (patient_id, username, password, first_name, last_name, ema
 4	patient4.username	patient4.pw	patient4.first_name	patient4.last_name	patient4@example.com	1	1	ENGLISH	2020-01-08 00:00:00	2020-01-05 00:00:00	2020-01-08 00:00:00	HAVE_NOT_CALLED_YET	f	YES	t	YALE_HEALTH_PLAN	0	TESTED_POSITIVE	MALE	BLACK_OR_AFRICAN_AMERICAN	YES	EMPLOYED	0101000020E6100000C1E8F2E6703F52C0EEB60BCD75D44440	f	2000-04-11 00:00:00	f	f	f	new haven resident
 5	patient5.username	patient5.pw	patient5.first_name	patient5.last_name	patient5@example.com	1	1	ENGLISH	2020-01-08 00:00:00	2020-01-05 00:00:00	2020-01-08 00:00:00	HAVE_NOT_CALLED_YET	f	YES	t	YALE_HEALTH_PLAN	0	TESTED_POSITIVE	MALE	BLACK_OR_AFRICAN_AMERICAN	YES	EMPLOYED	0101000020E610000039D73043E3E355C065AA6054522B3D40	f	2000-04-11 00:00:00	f	f	f	new haven resident
 6	patient6.username	patient6.pw	patient6.first_name	patient6.last_name	patient6@example.com	1	1	ENGLISH	2020-01-08 00:00:00	2020-01-05 00:00:00	2020-01-08 00:00:00	HAVE_NOT_CALLED_YET	f	YES	t	YALE_HEALTH_PLAN	0	NO_SYMPTOMS	MALE	BLACK_OR_AFRICAN_AMERICAN	YES	EMPLOYED	0101000020E61000000B12DBDD034052C0EB39E97DE3D54440	f	2000-04-11 00:00:00	f	f	f	new haven resident
+7	patient7.username	patient7.pw	patient7.first_name	patient7.last_name	patient7@example.com	1	1	ENGLISH	2020-03-12 00:00:00	2020-03-10 00:00:00	2020-03-12 00:00:00	HAVE_NOT_CALLED_YET	f	YES	t	YALE_HEALTH_PLAN	0	NO_SYMPTOMS	MALE	BLACK_OR_AFRICAN_AMERICAN	YES	EMPLOYED	0101000020E61000002B1900AAB83352C0FBAE08FEB7DC4440	f	2000-04-11 00:00:00	f	f	f	new haven resident
 \.
 
 --
@@ -5931,21 +5932,21 @@ SELECT pg_catalog.setval('public.dummy_data_id_seq', 9000, true);
 -- Name: managers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.managers_id_seq', 5, false);
+SELECT pg_catalog.setval('public.managers_id_seq', 2, false);
 
 
 --
 -- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.events_id_seq', 4351, false);
+SELECT pg_catalog.setval('public.events_id_seq', 226, false);
 
 
 --
 -- Name: patients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.patients_id_seq', 101, false);
+SELECT pg_catalog.setval('public.patients_id_seq', 8, false);
 
 
 --
@@ -5973,7 +5974,7 @@ SELECT pg_catalog.setval('public.tags_id_seq', 1, false);
 -- Name: volunteers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: apiclient
 --
 
-SELECT pg_catalog.setval('public.volunteers_id_seq', 41, false);
+SELECT pg_catalog.setval('public.volunteers_id_seq', 2, false);
 
 
 --

@@ -13,6 +13,6 @@ public interface VolunteerRepository extends PagingAndSortingRepository<Voluntee
     @Query("SELECT v from VolunteerEntity v WHERE v.volunteer_id = :volunteer_id")
     public Optional<VolunteerEntity> findVolunteerEntityByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
 
-    @Query("SELECT v from VolunteerEntity v WHERE v.manager_id = :manager_id")
+    @Query("SELECT v from VolunteerEntity v WHERE v.manager_id = :manager_id ORDER BY v.volunteer_id")
     public List<VolunteerEntity> findVolunteerEntitiesByManager_id(@Param("manager_id") Long manager_id);
 }
