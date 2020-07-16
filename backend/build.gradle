@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
     id 'war'
+    id 'io.freefair.lombok' version '5.1.0' // https://projectlombok.org/setup/gradle
 }
 
 group = 'org.yale.registry'

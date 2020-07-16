@@ -1,5 +1,9 @@
 package org.yale.registry.research.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 import org.yale.registry.research.DTOs.EventDTO;
 
@@ -9,6 +13,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "events")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventEntity implements Serializable {
     @Id
     @SequenceGenerator(
@@ -33,20 +41,6 @@ public class EventEntity implements Serializable {
 
     private Point geom;
 
-
-    public EventEntity(){}
-
-    public EventEntity(Long event_id, Long patient_id, Date start_time,
-                       Date end_time, Boolean confirmed, String notes,
-                       Point geom) {
-        this.event_id = event_id;
-        this.patient_id = patient_id;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.confirmed = confirmed;
-        this.notes = notes;
-        this.geom = geom;
-    }
 
     public EventEntity(Long patient_id, Date start_time, Date end_time,
                        Boolean confirmed, String notes, Point geom) {
@@ -73,61 +67,5 @@ public class EventEntity implements Serializable {
         this.confirmed = eventDTO.getConfirmed();
         this.notes = eventDTO.getNotes();
         this.geom = eventDTO.getGeom();
-    }
-
-    public Long getEvent_id() {
-        return event_id;
-    }
-
-    public void setEvent_id(Long event_id) {
-        this.event_id = event_id;
-    }
-
-    public Long getPatient_id() {
-        return patient_id;
-    }
-
-    public void setPatient_id(Long patient_id) {
-        this.patient_id = patient_id;
-    }
-
-    public Date getStart_time() {
-        return start_time;
-    }
-
-    public void setStart_time(Date start_time) {
-        this.start_time = start_time;
-    }
-
-    public Date getEnd_time() {
-        return end_time;
-    }
-
-    public void setEnd_time(Date end_time) {
-        this.end_time = end_time;
-    }
-
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Point getGeom() {
-        return geom;
-    }
-
-    public void setGeom(Point geom) {
-        this.geom = geom;
     }
 }

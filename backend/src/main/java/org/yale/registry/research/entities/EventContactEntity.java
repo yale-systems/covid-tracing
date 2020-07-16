@@ -1,5 +1,9 @@
 package org.yale.registry.research.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.yale.registry.research.CompositeIds.EventContactId;
 
 import javax.persistence.EmbeddedId;
@@ -9,21 +13,11 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "event_contact")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventContactEntity implements Serializable {
     @EmbeddedId
     private EventContactId eventContactId;
-
-    public EventContactEntity(){}
-
-    public EventContactEntity(EventContactId eventContactId) {
-        this.eventContactId = eventContactId;
-    }
-
-    public EventContactId getEventContactId() {
-        return eventContactId;
-    }
-
-    public void setEventContactId(EventContactId eventContactId) {
-        this.eventContactId = eventContactId;
-    }
 }
