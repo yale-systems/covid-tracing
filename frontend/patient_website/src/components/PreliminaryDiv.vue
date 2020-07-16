@@ -67,47 +67,80 @@
 </template>
 
 <script>
+import moment from 'moment'
 
 export default {
     name: "PreliminaryDiv",
     data: () => {
         return {
             symptoms: ["I am symptomatic", "I am asymptomatic"],
-            symptomatic: "",
             menu: false,
-            date: "",
+            patient: {}
         }
     },
+    mounted() {
+        this.patient = this.$store.getters['patients/activePatient']
+    },
     computed: {
+        symptomatic: {
+            get() {
+                return this.patient.symptomatic ? "I am symptomatic" : "I am asymptomatic"
+            },
+            set(newVal) {
+                this.patient.symptomatic = (newVal == "I am symptomatic") ? 1 : 0
+                this.updatePatient()
+            } 
+        },
+        date: {
+            get() {
+                return this.patient.symptomatic ? 
+                    this.patient.onset_date == undefined ? undefined : this.patient.onset_date.format('YYYY-MM-DD') 
+                    : this.patient.diagnosis_date == undefined ? undefined : this.patient.diagnosis_date.format('YYYY-MM-DD')
+            },
+            set(newVal) {
+                if (this.patient.symptomatic) {
+                    this.patient.onset_date = moment(newVal)
+                } else {
+                    this.patient.diagnosis_date = moment(newVal)
+                }
+                this.updatePatient()
+            }
+        },
         todayDate() {
-            return this.$store.state.todayDate
+            return moment().format('YYYY-MM-DD')
         },
         dateMessage() {
             if (this.symptomatic == "I am symptomatic") {
                 return "When did you first begin experiencing symptoms?"
-            } else if (this.symptomatic == "I am asymptomatic") {
+            } else {
                 return "When were you diagnosed?"
             }
         },
     },
-   
     watch: {
-        date: function() {
-            this.$store.commit('setDate', this.date)
+        symptomatic() {
+            this.patient.symptomatic 
+            this.updatePatient()
         },
+        date() {
+            this.updatePatient()
+        },
+    },
+    methods: {
+        updatePatient() {
+            this.$store.commit('patients/updatePatient', this.patient)
+        }
     }
 }
 
 </script>
 
 <style scoped>
+    .inside-stepper-spacing {
+        max-width: 630px;
+    }
 
-.inside-stepper-spacing {
-    max-width: 630px;
-}
-
-.pointerOnHover {
-    cursor: pointer;
-}
-
+    .pointerOnHover {
+        cursor: pointer;
+    }
 </style>

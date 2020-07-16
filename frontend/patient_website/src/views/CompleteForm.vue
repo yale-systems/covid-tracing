@@ -37,7 +37,7 @@
                 Previous
             </v-btn>
             <v-btn
-                :disabled="date =='' || date == undefined"
+                :disabled="date == '' || date == undefined || date == null"
                 :dark="date != '' && date != undefined"
                 color="primary"
                 class="button-padding"
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import PreliminaryDiv from "@/components/PreliminaryDiv.vue"
 import HouseholdContactDiv from '@/components/HouseholdContactDiv.vue'
 import EventsDiv from '@/components/EventsDiv.vue'
@@ -83,7 +82,7 @@ export default {
     },
     computed: {
         date() {
-            return this.$store.state.startDate
+            return this.$store.getters['patients/criticalDate']
         },
         nextMessage() {
             if (this.currentStep == 3) {
@@ -118,11 +117,8 @@ export default {
         },
     },
     mounted() {
-        if(this.$store.state.loggedIn) {
-            this.date = this.$store.state.resultDate
-            if (this.date) {
-                this.currentStep = 3
-            }
+        if(this.$store.state.loggedIn && this.date) {
+            this.currentStep = 3
         }
     }
 }

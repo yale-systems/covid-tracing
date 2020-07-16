@@ -2,7 +2,7 @@
     <div>
         <p>                         
             Please add any household contacts here, including anyone you live with, such as family members or housemates.
-            Add people you have come into contact with since <b>{{ $store.getters.readableStartDate }}</b>. On the next page, you will be able to 
+            Add people you have come into contact with since <b>{{ $store.getters['patients/readableStartDate'] }}</b>. On the next page, you will be able to 
             add people you have come into contact with outside the home. 
         </p>
         <v-container fluid> 
@@ -14,12 +14,11 @@
             </v-btn>
 
             <v-container fluid class="mt-2">
-                <template v-for="contactID in householdContacts">
+                <template v-for="contact in householdContacts">
                     <HouseholdContact 
-                        :key="contactID"
-                        :contactID="contactID" 
+                        :key="contact.contact_id"
+                        :contactID="contact.contact_id" 
                     />
-                    <v-divider :key="contactID"></v-divider>
                 </template>
             </v-container>
         </v-container>
@@ -44,7 +43,7 @@ export default {
     },
     computed: {
         householdContacts() {
-            return this.$store.state.householdContactIDArray
+            return this.$store.getters['contacts/householdContacts']
         },
     },
     data: () => {

@@ -51,7 +51,6 @@ export default {
     data () {
         return {
             contactTypes: ["Minimal", "Close"],
-            selectedID: undefined,
             dialogForceOpen: {
                 showDialog: false
             }
@@ -61,6 +60,9 @@ export default {
         value: {
             Number,
             required: true
+        },
+        index: {
+            Number
         }
     },
     components: {
@@ -68,47 +70,53 @@ export default {
     },
     computed: {
         contactNames() {
-            this.$store.state.fuckThis
-            let contacts = this.$store.state.contacts
+            let contacts = this.$store.getters['contacts/contacts']
             var names = []
-            for (var key in contacts) {
-                names.push({
-                    id: parseInt(key, 10),
-                    name: this.$store.getters.fullName(key)
-                })
-            }
             names.push({
                 id: -1,
                 name: "Make New Contact"
             })
+            for (let contact of contacts) {
+                names.push({
+                    id: parseInt(contact.contact_id, 10),
+                    name: `${contact.first_name} ${contact.last_name}`
+                })
+            }
             return names
         },
         showView() {
-            if (this.selectedID == undefined || this.selectedID == -1) {
+            if (this.value == undefined || this.value == -1) {
                 return true
             } else {
                 return false
+            }
+        },
+        selectedID: {
+            get() {
+                return this.value
+            },
+            set(newVal) {
+                this.$emit('input', newVal)
             }
         }
     },
     watch: {
         selectedID() {
             //toggle it just long enough to open the dialog... 
-            if(this.selectedID == -1) {
+            if(this.value == -1) {
                 this.dialogForceOpen.showDialog = true
             }
         }
     },
     methods: {
         deleteContact() {
-            this.$emit('splice-contact', this.value)
+            this.$emit('splice-contact', this.index)
         },
         getHousehold() {
-            console.log(this.selectedID)
             if(this.selectedID === -1 || this.selectedID === undefined) {
                 return false
             } else {
-                return this.$store.state.contacts[this.selectedID].household
+                return this.$store.getters['contacts/id'](this.selectedID).household
             }
         },
         setSelect(id) {

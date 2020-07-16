@@ -71,6 +71,12 @@ export default {
         handleResources() {
             this.$router.push({name : 'resources'})
         }
+    },
+    mounted() {
+        // load in the contacts and the events
+        let id = this.$store.state.activePatientId
+        this.$store.dispatch('events/load', id)
+        this.$store.dispatch('contacts/load', id)
     }
 }
 </script>

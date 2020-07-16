@@ -16,8 +16,10 @@
                 <v-text-field
                         class="mx-3"
                         label="Phone Number"
+                        v-model="phone"
                 ></v-text-field>
                 <v-text-field label="Preferred Time" 
+                    v-model="notes"
                     class="mx-3"
                     placeholder="e.g. weekends after 6pm">
                 </v-text-field>
@@ -25,7 +27,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="changeDialog"> Cancel </v-btn>
-                <v-btn color="primary" dark @click="request = true"> Yes, I want to talk to someone </v-btn>
+                <v-btn color="primary" dark @click="requestInterview"> Yes, I want to talk to someone </v-btn>
             </v-card-actions>
         </v-container>
     </v-card>
@@ -47,17 +49,39 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
     data: () => {
         return {
-            request: false
+            request: false,
+            phone: undefined,
+            notes: undefined
         }
     },
     methods: {
+        async requestInterview() {
+            let patient = this.$store.getters['patients/activePatient']
+            if (this.phone != undefined && this.phone != '') {
+                patient.phone_number = this.phone
+            } 
+            if (this.notes != undefined && this.notes != '') {
+                let preMsg = moment().format('MMMM Do, YYYY') + " Patient requested interview with the following notes: " 
+                this.notes = preMsg.concat(this.notes)
+                if(patient.notes != undefined) {
+                    patient.notes = patient.notes.concat('\n' + this.notes)
+                } else {
+                    patient.notes = this.notes
+                }
+            }
+            this.request = await this.$store.dispatch('patients/update', patient)
+            if(!this.request) {
+                alert("we had trouble processing this, please try again")
+            }
+        },
         changeDialog() {
             this.$emit('exitDialog')
         },
-        
     }
 }
 </script>

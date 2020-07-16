@@ -6,12 +6,7 @@
                 Oasis Contact Tracing
             </div>
             <div class="ml-4">
-                <!-- <v-tabs background-color="teal lighten-2" v-if="loggedIn && showMe">
-                    <v-tab
-                        to="form">
-                        Interview Form
-                    </v-tab>
-                </v-tabs> -->
+
             </div>
         
             <v-spacer></v-spacer>
@@ -35,16 +30,11 @@
                     </template>
                     <v-list>
                         <v-list-item
-                            @click="$store.commit('logOut')"
+                            @click="$store.dispatch('logOut')"
                             to="login"
                         >
                             <v-list-item-content>Logout</v-list-item-content>
                         </v-list-item>
-                        <!-- <v-list-item
-                            to="profile"
-                        >
-                            <v-list-item-content>Profile</v-list-item-content>
-                        </v-list-item> -->
                     </v-list>
                 </v-menu>             
             </div>
@@ -56,22 +46,15 @@
 </template>
 
 <script>
-import Vue from "vue";
-import LoginPage from "@/views/LoginPage.vue"
-import Welcome from "@/views/Welcome.vue"
 
 export default {
     name: "App",
-    components: {
-        LoginPage,
-        Welcome
-    },
     computed: {
         loggedIn() {
             return this.$store.state.loggedIn;
         },
         name() {
-            return this.$store.state.patientInfo.name
+            return this.$store.getters['patients/activePatient'].first_name
         },
         showMe() {
             return this.$store.state.showNavBar
