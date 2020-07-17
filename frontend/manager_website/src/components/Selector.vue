@@ -43,7 +43,10 @@ export default {
                     return "Employment Status"
                 case 'insurance':
                     return "Insurance Status"
-                
+                case 'assistance':
+                    return 'Assistance Requested'
+                case 'reason_flagged':
+                    return 'Reason for Prioritizing'
                 default:
                     return this.field.charAt(0).toUpperCase() + this.field.slice(1);
             }

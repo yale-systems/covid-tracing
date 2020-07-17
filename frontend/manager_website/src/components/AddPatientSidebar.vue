@@ -1,16 +1,16 @@
 <template>     
     <v-item-group v-model="patientNum" class="mt-2">
-    <v-row class="pb-0">
-        <v-item v-slot:default="{ active, toggle }"> 
-            <v-sheet @click="toggle()"
-                class="customStepper my-0"
-                
-                :elevation="active ? 4 : 1"
-                :color="active ? '#e8f5ff' : 'white'">  
-                    <div class="customStepperText"> Patient Information </div>
-            </v-sheet>
-        </v-item>
-    </v-row>
+        <v-row class="pb-0" v-for="(name, i) in patientNames"
+            :key="i">
+            <v-item v-slot:default="{ active, toggle }"> 
+                <v-sheet @click="toggle()"
+                    class="customStepper my-0"
+                    :elevation="active ? 4 : 1"
+                    :color="active ? '#e8f5ff' : 'white'">  
+                        <div class="customStepperText"> {{name}} </div>
+                </v-sheet>
+            </v-item>
+        </v-row>
     </v-item-group>
 </template>
 
@@ -24,16 +24,20 @@ export default {
         }
     },
     computed: {
+        patientNames() {
+            console.log(this.$store.getters.addPatientsNames)
+            return this.$store.getters.addPatientsNames
+        },
         patientNum: {
             get() {
                 return this.value
             },
             set(newVal) {
-                if(newVal != undefined) {
-                    this.$emit('input', newVal)
-                } else {
-                    this.$nextTick(() => { this.$emit('input', this.value) } )
-                }
+                let oldVal = this.value
+                this.$emit('input', newVal)
+                if(newVal == undefined) {
+                    this.$nextTick(() => { this.$emit('input', oldVal) } )
+                } 
             }
         }
     },

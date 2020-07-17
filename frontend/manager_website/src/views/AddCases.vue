@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols=3>
-        <AddPatientSidebar v-model="smolPatientNum" />
+        <AddPatientSidebar v-model="patientNum" />
       </v-col>
       <v-col>
         <v-stepper v-model="patientNum">
@@ -10,24 +10,26 @@
               <v-stepper-content
                 v-for="n in totalPatientNum"
                 :key="`${n}-content`"
-                :step="n"
+                :step="n-1"
               >
                 <v-container fluid>
-                  <div> hello </div>
-                  <v-card class="overflow-y-auto">
-                      <NewCaseForm />
-                  </v-card>
-                <v-row>
-                  <v-btn 
-                    @click="prevStep(n)">See Previous Case</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="primary"
-                    @click="nextStep(n)"
-                  >
-                    Add Case
-                  </v-btn>
-                </v-row>
+                  <NewCaseForm :save="save"/>
+                  <v-row>
+                    <v-btn 
+                      @click="prevStep(n)">See Previous Case</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary"
+                      @click="handleSave"
+                    >
+                      save
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      @click="nextStep(n)"
+                    >
+                      Save and add case
+                    </v-btn>
+                  </v-row>
                 </v-container>
               </v-stepper-content>
             </v-stepper-items>
@@ -49,30 +51,21 @@ export default {
     },
     data: () => {
         return {
-            patientNum: 1,
-            totalPatientNum: 1
+            patientNum: 0,
+            totalPatientNum: 1,
+            save: false
         }
-    },
-    computed: {
-      smolPatientNum: {
-        get() {
-          return this.patientNum - 1
-        }, 
-        set(newVal) {
-          console.log(newVal)
-          this.patientNum = newVal + 1
-        }
-      }
     },
     methods: {
         nextStep(n) {
+          this.save = !this.save
           if (n === this.totalPatientNum) {
             this.totalPatientNum += 1
             this.$nextTick(() => {
-              this.patientNum = n + 1
+              this.patientNum = n
             })
           } else {
-            this.patientNum = n + 1
+            this.patientNum = n
           }
         },
         prevStep(n) {
@@ -81,10 +74,10 @@ export default {
           } else {
             this.patientNum -= 1
           }
+        },
+        handleSave() {
+          this.save = !this.save
         }
-    }
+    },
 }
 </script>
-
-<style>
-</style>

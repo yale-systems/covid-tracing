@@ -8,10 +8,10 @@ Vue.use(Vuex);
 
 const data = {
 	state: () => ({
-		patients: [],
+		patients: {},
 		addPatients: [],
-		contacts: [],
-		volunteers: [],
+		contacts: {},
+		volunteers: {},
 		touched: 0,
 	}),
 	mutations: {
@@ -35,11 +35,15 @@ const data = {
 			state.touched += 1
 		},
 		addPatient(state, value) {
-			if(value.id == state.addPatients.length) {
+			state.touched = !state.touched
+			if(value.patient_id == state.addPatients.length) {
 				state.addPatients.push(value)
 			} else {
-				const index = state.addPatients.findIndex((element) => element.id == value.id)
+				console.log("checking to see if things are modified")
+				console.log(state.addPatients[0].patient_id, value.patient_id)
+				const index = state.addPatients.findIndex((element) => element.patient_id == value.patient_id)
 				if(index != -1) {
+					console.log("found index!")
 					state.addPatients[index] = value
 				}
 			}
@@ -52,8 +56,20 @@ const data = {
 		}
 	},
 	getters: {
+		addPatientsNames(state) {
+			state.touched
+			return state.addPatients.map((patient) => {
+				if ((patient.first_name == undefined || patient.first_name == '')
+					 && (patient.last_name == undefined || patient.last_name == '')) {
+					return "new case"
+				}
+				let first = patient.first_name == undefined ? '' : patient.first_name
+				let last = patient.last_name == undefined ? '' : patient.last_name
+				return first + ' ' + last
+			})
+		},
 		patientsAsArray: function(state) {
-			state.fuckThis;
+			state.touched;
 			let patDict = state.patients;
 			let patArr = []
 			for (let key of Object.keys(patDict)) {
@@ -64,7 +80,7 @@ const data = {
 			return patArr
 		},
 		volunteersAsArray: function(state) {
-			state.fuckThis;
+			state.touched;
 			let volDict = state.volunteers;
 			let volArr = []
 			for (let key of Object.keys(volDict)) {
@@ -75,7 +91,7 @@ const data = {
 			return volArr
 		},
 		contactsAsArray: function(state) {
-			state.fuckThis;
+			state.touched;
 			let conDict = state.contacts;
 			let conArr = []
 			for (let key of Object.keys(conDict)) {
@@ -115,12 +131,14 @@ const data = {
 				})
 		},
 		// if patient is already in array, then update, else make new
-		async addPatient({state, commit}, patient) {
-			if (patient.id == -1) {
-				patient.id = state.addPatients.length
+		addPatient({state, commit}, patient) {
+			console.log(patient.patient_id)
+			if (patient.patient_id == -1) {
+				patient.patient_id = state.addPatients.length
+				console.log(patient.patient_id)
 			}
 			commit('addPatient', patient)
-			return patient.id
+			return patient.patient_id
 		},
 		//ACTIONS SHOULDN'T BE MUTATING STATE! 
 		reassignPatient({state, rootState}, volunteer) {
