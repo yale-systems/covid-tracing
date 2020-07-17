@@ -39,6 +39,10 @@ export default {
                     return "Able to self isolate?"
                 case 'preexisting_conditions':
                     return "Preexisting conditions"
+                case 'employment':
+                    return "Employment Status"
+                case 'insurance':
+                    return "Insurance Status"
                 
                 default:
                     return this.field.charAt(0).toUpperCase() + this.field.slice(1);

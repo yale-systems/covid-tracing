@@ -8,31 +8,48 @@ Vue.use(Vuex);
 
 const data = {
 	state: () => ({
-		patients: {},
-		contacts: {},
-		volunteers: {},
-		fuckThis: 0,
+		patients: [],
+		addPatients: [],
+		contacts: [],
+		volunteers: [],
+		touched: 0,
 	}),
 	mutations: {
 		setPatients(state, value) {
 			for (let patient of value) {
 				state.patients[patient.patient_id] = patient
 			}
-			state.fuckThis += 1
+			state.touched += 1
 		},
 		setContacts(state, value) {
 			for (let contact of value) {
 				let copy = contact
 				state.contacts[contact.contact_id] = copy
 			}
-			state.fuckThis += 1
+			state.touched += 1
 		},
 		setVolunteers(state, value) {
 			for(let volunteer of value) {
 				state.volunteers[volunteer.volunteer_id] = volunteer
 			}
-			state.fuckThis += 1
+			state.touched += 1
 		},
+		addPatient(state, value) {
+			if(value.id == state.addPatients.length) {
+				state.addPatients.push(value)
+			} else {
+				const index = state.addPatients.findIndex((element) => element.id == value.id)
+				if(index != -1) {
+					state.addPatients[index] = value
+				}
+			}
+		},
+		deletePatient(state, id) {
+			state.addPatients = state.addPatients.filter((element) => element.id != id)
+		},
+		clearAddPatients(state) {
+			state.addPatients = []
+		}
 	},
 	getters: {
 		patientsAsArray: function(state) {
@@ -97,12 +114,20 @@ const data = {
 					console.log(error)
 				})
 		},
-		// make apicall to this
-		async reassignPatient({state, rootState}, volunteer) {
+		// if patient is already in array, then update, else make new
+		async addPatient({state, commit}, patient) {
+			if (patient.id == -1) {
+				patient.id = state.addPatients.length
+			}
+			commit('addPatient', patient)
+			return patient.id
+		},
+		//ACTIONS SHOULDN'T BE MUTATING STATE! 
+		reassignPatient({state, rootState}, volunteer) {
 			for (let patient of rootState.view.selected) {
 				state.patients[patient].volunteer_id = volunteer
 			}
-			state.fuckThis++;
+			state.touched++;
 			return true
 		}
 	}
