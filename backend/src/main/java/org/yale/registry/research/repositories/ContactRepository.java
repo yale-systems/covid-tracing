@@ -23,4 +23,8 @@ public interface ContactRepository extends PagingAndSortingRepository<ContactEnt
             "ec.eventContactId.event_id = :event_id AND ec.eventContactId.contact_id = c.contact_id " +
             "ORDER BY c.contact_id")
     public List<ContactEntity> findContactEntitiesByEventId(@Param("event_id") Long event_id);
+
+    @Query("SELECT c FROM ContactEntity c, PatientEntity p WHERE " +
+            "p.volunteer_id = :volunteer_id AND c.patient_id = p.patient_id")
+    public List<ContactEntity> findContactEntitiesForVolunteer(@Param("volunteer_id") Long volunteer_id);
 }
