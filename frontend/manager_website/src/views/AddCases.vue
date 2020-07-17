@@ -13,20 +13,19 @@
                 :step="n"
               >
                 <v-container fluid>
-                  <div> hello </div>
+                  <div> </div>
                   <v-card class="overflow-y-auto">
                       <NewCaseForm />
                   </v-card>
-                <v-row>
+                <v-row class="mt-4">
                   <v-btn 
-                    @click="prevStep(n)">See Previous Case</v-btn>
+                    @click="handleBack">Back to Dashboard</v-btn>
                   <v-spacer></v-spacer>
+                  <v-btn class="mr-2" outlined color="primary"
+                    @click="prevStep(n)" :disabled="n == 1">See Previous Case</v-btn>
                   <v-btn
                     color="primary"
-                    @click="nextStep(n)"
-                  >
-                    Add Case
-                  </v-btn>
+                    @click="nextStep(n)">Add Case</v-btn>
                 </v-row>
                 </v-container>
               </v-stepper-content>

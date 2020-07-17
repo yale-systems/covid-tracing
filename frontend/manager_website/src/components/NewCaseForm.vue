@@ -217,10 +217,12 @@
                         field="insurance"
                     />
                 </v-row>
-                <v-row>
+                <v-row class="d-flex flex-wrap justify-space-around">
                     <v-textarea
+                        auto-grow
                         label="Notes"
                         rows="1"
+                        style="max-width: 92%" 
                     >
                     </v-textarea>
                 </v-row>

@@ -1,13 +1,13 @@
 <template>     
     <v-item-group v-model="patientNum" class="mt-2">
     <v-row class="pb-0">
-        <v-item v-slot:default="{ active, toggle }"> 
+        <v-item class="ml-7" v-slot:default="{ active, toggle }"> 
             <v-sheet @click="toggle()"
                 class="customStepper my-0"
                 
                 :elevation="active ? 4 : 1"
-                :color="active ? '#e8f5ff' : 'white'">  
-                    <div class="customStepperText"> Patient Information </div>
+                :color="active ? '#f0ebf7' : 'white'">  
+                    <div class="customStepperText ml-2"> Patient Information </div>
             </v-sheet>
         </v-item>
     </v-row>
@@ -42,7 +42,9 @@ export default {
 
 <style>
 .customStepperText {
-    color: #00579a;
+    color: #520078;
+    font-weight: 500;
+    font-size: large;
 }
 
 .customStepper{
@@ -53,7 +55,7 @@ export default {
     align-items: center;
     padding: 10px;
     margin: 5px;
-    box-shadow: 0 0 0 .5pt #00579a;
+    box-shadow: 0 0 0 .5pt #520078;
     transition-property: background-color;
     transition-duration: .4s;
 }
