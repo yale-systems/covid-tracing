@@ -11,10 +11,12 @@
             <v-card class="overflow-y-auto">
                 <NewCaseForm />
             </v-card>
-            <v-row>
+            <v-row class="mt-4">
               <v-btn 
-                @click="prevStep(n)">See Previous Case</v-btn>
+                @click="handleBack">Back to Dashboard</v-btn>
               <v-spacer></v-spacer>
+              <v-btn class="mr-2" outlined color="primary"
+                @click="prevStep(n)">See Previous Case</v-btn>
               <v-btn
                 color="primary"
                 @click="nextStep(n)"
@@ -58,7 +60,11 @@ export default {
           } else {
             this.patientNum -= 1
           }
-        }
+        },
+        handleBack() {
+			  this.$store.commit('clearSelect')
+            this.$router.push({name: 'PDash'})
+        },
     }
 }
 </script>
