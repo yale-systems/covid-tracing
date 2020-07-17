@@ -32,6 +32,12 @@ public class ContactController {
     }
 
     @CrossOrigin
+    @RequestMapping(value = "/getbyvolunteerid/{volunteer_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ContactDTO> getByVolunteerId(@PathVariable Long volunteer_id){
+        return contactService.getContactDTOForVolunteer(volunteer_id);
+    }
+
+    @CrossOrigin
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ContactDTO> insert(@RequestBody ContactDTO contactDTO){
         return ResponseEntity.ok(contactService.insert(contactDTO));
