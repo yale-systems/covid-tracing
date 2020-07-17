@@ -16,7 +16,11 @@
                   <NewCaseForm :save="save"/>
                   <v-row>
                     <v-btn 
-                      @click="prevStep(n)">See Previous Case</v-btn>
+                      @click="prevStep(n)"
+					  v-if="n != 1"
+					>
+						See Previous Case
+					</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn text color="primary"
                       @click="handleSave"
@@ -58,15 +62,15 @@ export default {
     },
     methods: {
         nextStep(n) {
-          this.save = !this.save
-          if (n === this.totalPatientNum) {
-            this.totalPatientNum += 1
-            this.$nextTick(() => {
-              this.patientNum = n
-            })
-          } else {
-            this.patientNum = n
-          }
+			this.save = !this.save
+			if (n === this.totalPatientNum) {
+				this.totalPatientNum += 1
+				this.$nextTick(() => {
+				this.patientNum = n
+				})
+			} else {
+				this.patientNum = n
+			}
         },
         prevStep(n) {
           if (n === 1) {
@@ -77,7 +81,11 @@ export default {
         },
         handleSave() {
           this.save = !this.save
-        }
-    },
+        },
+        handleBack() {
+			  this.$store.commit('clearSelect')
+            this.$router.push({name: 'PDash'})
+        },
+    }
 }
 </script>

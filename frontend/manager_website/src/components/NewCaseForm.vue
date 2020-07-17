@@ -265,9 +265,11 @@
                 </v-row>
                 <v-row class="mx-6">
                     <v-textarea
+                        auto-grow
                         label="Notes"
                         rows="1"
                         v-model="patient.notes"
+                        style="max-width: 92%" 
                     >
                     </v-textarea>
                 </v-row>
