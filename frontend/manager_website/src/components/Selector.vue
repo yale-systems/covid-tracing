@@ -39,7 +39,14 @@ export default {
                     return "Able to self isolate?"
                 case 'preexisting_conditions':
                     return "Preexisting conditions"
-                
+                case 'employment':
+                    return "Employment Status"
+                case 'insurance':
+                    return "Insurance Status"
+                case 'assistance':
+                    return 'Assistance Requested'
+                case 'reason_flagged':
+                    return 'Reason for Prioritizing'
                 default:
                     return this.field.charAt(0).toUpperCase() + this.field.slice(1);
             }

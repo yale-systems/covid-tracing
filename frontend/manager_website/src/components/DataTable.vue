@@ -13,8 +13,7 @@
                 ></v-text-field>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col>
-                <v-row>
+            <v-col-auto>
                     <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
                         add fields 
                     </v-btn>
@@ -24,8 +23,7 @@
                     <v-btn color="primary" to='reassign'>
                         Assign Cases
                     </v-btn>
-                </v-row>
-            </v-col>
+            </v-col-auto>
         </v-row>
         <v-data-table
             :headers="headers"
