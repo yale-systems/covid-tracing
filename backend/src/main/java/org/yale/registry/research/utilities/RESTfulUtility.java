@@ -87,6 +87,8 @@ public class RESTfulUtility {
                         delete(volunteerDTO.getVolunteer_id())).withRel("delete"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         getByVolunteerId(volunteerDTO.getVolunteer_id())).withRel("get_patients"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ContactController.class).
+                        getByVolunteerId(volunteerDTO.getVolunteer_id())).withRel("get_contacts"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).
                         insert(null)).withRel("insert_patient")
         );
