@@ -31,7 +31,7 @@
                     <v-list>
                         <v-list-item
                             @click="$store.dispatch('logOut')"
-                            to="login"
+                            to="/login"
                         >
                             <v-list-item-content>Logout</v-list-item-content>
                         </v-list-item>
