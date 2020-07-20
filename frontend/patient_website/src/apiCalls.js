@@ -51,10 +51,10 @@ export default {
         }
     },
     async updatePatient(url, patient) {
-        if(patient.symptomatic == 0) {
-            patient.symptomatic = 2
-        } else if (patient.symptomatic == 1) {
+        if(patient.symptomatic == 1) {
             patient.symptomatic = 0
+        } else if (patient.symptomatic == 0) {
+            patient.symptomatic = 2
         }
         try {
             await axios.put(url, patient) 
@@ -93,6 +93,7 @@ export default {
                 event.dateValid = true
                 event.delete = false
                 event.update = false
+                event.contact_ids = await this.getContactsForEvents(event.links[1].href)
                 let position = {}
                 let placeholder = ''
                 if (event.geom) {
@@ -100,7 +101,9 @@ export default {
                         lng: event.geom.coordinates[0], 
                         lat: event.geom.coordinates[1]
                     }
-                    placeholder = await geocoder.getStreetName(position, geocoderThing)
+                    await geocoder.getStreetName(position, geocoderThing)
+                        .then((response) => placeholder = response)
+                        .catch(error => {console.error(error)})
                 }
                 event.location = {
                     streetName: placeholder,
@@ -109,25 +112,30 @@ export default {
                 delete event.links
                 res.events.push(event)
             }
-            return res
         } catch(error) {
             console.error(error)
         }
-        
+        return res
     },
     async addEvents(url, events) {
         // return a map of the successful event id with its new id
         let success = {}
+        let links = {}
         await Promise.all(events.map(async (event) => {
             await axios.post(url, event)
                 .then((response) => {
+                    if (Object.keys(links).length === 0) {
+                        for(let key of Object.keys(response.data._links)) {
+                            links[key] = response.data._links[key].href.replace(/\d+$/, "")
+                        }
+                    }
                     success[event.event_id] = response.data.event_id
                 })
                 .catch((error) => {
                     console.error(error)
                 })
         }))
-        return success
+        return {'success': success, 'links': links}
     },
     async updateEvents(url, events) {
         let success = []
@@ -158,6 +166,18 @@ export default {
         return success
     },
 
+    async getContactsForEvents(url) {
+        let res = [];
+        await axios.get(url)
+            .then(function(response) {
+                let contacts = response.data
+                contacts.forEach(contact => {
+                    res.push(contact.contact_id)
+                })
+            })
+            .catch((error) => console.error(error))
+        return res
+    },
     //CONTACT API CALLS
     async getContacts(url) {
         let res = {};
@@ -191,17 +211,24 @@ export default {
         if(contact.update_date) {
             contact.update_date.toISOString()
         }
+        let links = {}
         await axios.post(url, contact)
             .then((response) => {
+                console.log(response)
+                for(let link of Object.keys(response.data._links)) {
+                    console.log(link)
+                    links[link] = response.data._links[link].href.replace(/\d+$/, "")
+                }
+                delete response.data._links
                 delete response.data.enums
-                delete response.data.links
                 if(response.data.contact_date) {
                     response.data.contact_date = moment(response.data.contact_date)
                 }
                 if(response.data.update_date) {
                     response.data.update_date = moment(response.data.update_date)
                 }
-                res = response.data
+                res.success = response.data
+                res.links = links
             })
             .catch(error => {console.error(error)})
         return res

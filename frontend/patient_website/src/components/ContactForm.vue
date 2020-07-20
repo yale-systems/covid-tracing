@@ -199,12 +199,20 @@ export default {
                 this.$set(this.data, 'contact_date', moment(newVal))
             }
         },
-        readableDate() {
-            let date = this.data.contact_date
-            if(date) {
-                return date.format('MMMM Do, YYYY')
-            } else {
-                return ''
+        readableDate: {
+            get() {
+                let date = this.data.contact_date
+                if(date) {
+                    return date.format('MMMM Do, YYYY')
+                } else {
+                    return ''
+                }
+            },
+            set(newVal) {
+                if(this.date) {
+                    this.date = newVal
+                }
+
             }
         },
         endDate() {

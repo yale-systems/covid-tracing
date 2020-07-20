@@ -144,8 +144,6 @@ export default {
     },
     data () {
         return {
-            endDate: '',
-            startDate: '',
             menu: false,
             showMap : false,
             // fields for the search bar, doesn't go directly into value
@@ -164,8 +162,6 @@ export default {
     mounted() {
         this.event = Object.assign({}, this.$store.getters['events/id'](this.id))
         this.setTitle()
-        this.startDate = this.$store.state.startDate 
-        this.endDate = this.$store.state.endDate 
     },
     computed: {
         date: {
@@ -196,6 +192,22 @@ export default {
         },
         titleID() {
             return 'title-' + this._uid
+        },
+        endDate() {
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().add(10, 'days').format('YYYY-MM-DD')
+            }
+        },
+        startDate() {
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().subtract(2, 'days').format('YYYY-MM-DD')
+            }
         }
     },
     methods: {
