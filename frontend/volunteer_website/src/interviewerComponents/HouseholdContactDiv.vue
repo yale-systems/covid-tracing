@@ -97,10 +97,20 @@ export default {
     },
     computed: {
         householdContacts() {
-            return this.$store.state.householdContactIDArray
+            let list = []
+            let contacts = this.$store.getters['contacts/householdContacts']
+            for(let contact of contacts) {
+                list.push(contact.contact_id)
+            }
+            return list;
         },
         outsideContacts() {
-            return this.$store.getters.outsideContacts
+            let list = []
+            let contacts = this.$store.getters['contacts/outsideContacts']
+            for(let contact of contacts) {
+                list.push(contact.contact_id)
+            }
+            return list;
         }
     },
     data: () => {

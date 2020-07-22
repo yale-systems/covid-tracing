@@ -1,5 +1,5 @@
 <template>
-    <v-container class="mb-0 pb-0">
+    <v-container fluid style="padding-right:2%; padding-left:2%;">
         <v-card-title>
             <span class="headline"><b>{{title}}</b></span>
         </v-card-title>
@@ -11,18 +11,18 @@
                 <v-text-field
                     label="First Name*"
                     :error-messages="firstNameErrors"
-                    v-model="data.firstName"
-                    @focus="$v.data.firstName.$reset"
+                    v-model="data.first_name"
+                    @focus="$v.data.first_name.$reset"
                     @blur="setPersonText"
                 ></v-text-field>
             </v-col>
             <v-col>
                 <v-text-field
                     label="Last Name"
-                    v-model="data.lastName"
+                    v-model="data.last_name"
                     :error-messages="lastNameErrors"
-                    @focus="$v.data.lastName.$reset"
-                    @blur="$v.data.lastName.$touch"
+                    @focus="$v.data.last_name.$reset"
+                    @blur="$v.data.last_name.$touch"
                 ></v-text-field>
             </v-col>
         </v-row>
@@ -30,10 +30,10 @@
             <v-col>
                 <v-text-field
                     label="Phone Number"
-                    v-model="data.phone"
+                    v-model="data.phone_number"
                     :error-messages="phoneErrors"
-                    @focus="$v.data.phone.$reset"
-                    @blur="$v.data.phone.$touch"
+                    @focus="$v.data.phone_number.$reset"
+                    @blur="$v.data.phone_number.$touch"
                 ></v-text-field>
             </v-col>
             <v-col>
@@ -50,17 +50,21 @@
             <v-col>
                 <v-select 
                     :items="relationshipTypes"
+                    item-value="key"
+                    item-text="value"
                     label="Relationship to Contact*"
-                    v-model="data.relationshipType"
+                    v-model="data.relationship"
                     :error-messages="relationshipErrors"
-                    @focus="$v.data.relationshipType.$reset"
-                    @blur="$v.data.relationshipType.$touch"
+                    @focus="$v.data.relationship.$reset"
+                    @blur="$v.data.relationship.$touch"
                 ></v-select>
             </v-col>
             <v-col>
                 <v-select
                     :items="languageTypes"
                     label="Language"
+                    item-text="value"
+                    item-value="key"
                     v-model="data.language"
                 ></v-select>
             </v-col>
@@ -80,7 +84,7 @@
                     <template v-slot:activator="{ on }">
                         <v-text-field
                             class="mr-4"
-                            v-model="data.date"
+                            v-model="readableDate"
                             label="Last Date of Contact*"
                             prepend-icon="mdi-calendar"
                             :placeholder="'select the day you last had contact with with ' + personName"
@@ -91,7 +95,7 @@
                         ></v-text-field>
                     </template>
                     <v-date-picker 
-                        v-model="data.date" 
+                        v-model="date" 
                         :max="endDate"
                         :min="startDate"
                         no-title 
@@ -105,16 +109,16 @@
             <v-col
             :cols=1 style="margin-right:80px;"
             >
-                <v-radio-group v-model="data.age" row>
-                    <v-radio label="Minor" value="minor"></v-radio>
-                    <v-radio label="Adult" value="adult"></v-radio>
-                    <v-radio label="Elderly" value="elderly"></v-radio>
+                <v-radio-group v-model="data.age_group" row>
+                    <v-radio label="Minor" value="0"></v-radio>
+                    <v-radio label="Adult" value="1"></v-radio>
+                    <v-radio label="Elderly" value="2"></v-radio>
                 </v-radio-group>
             </v-col>
             <v-col>
                 <v-checkbox
                     :label="'Does ' + personName + ' work in healthcare?'"
-                    v-model="data.healthcareWorker"
+                    v-model="data.healthcare_worker"
                 ></v-checkbox>
             </v-col>
             <v-col style="margin-right:-90px;">
@@ -122,9 +126,11 @@
                     :label="'Is ' + personName + ' currently sick?'"
                     v-model="data.symptomatic"
                 ></v-checkbox>
-            </v-col>  
+            </v-col>
+            
         </v-row>
         </v-form>
+
         </v-card-text>
     </v-container>
 </template>
@@ -132,7 +138,7 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { email, required, requiredIf } from 'vuelidate/lib/validators'
-import { isName, isPhone } from '@/constants/validators'
+import { isPhone } from '@/constants/validators'
 
 export default {
     name: "ContactForm",
@@ -150,51 +156,80 @@ export default {
     mixins: [validationMixin],
     validations: {
         data: {
-            date: {
+            contact_date: {
                 required: requiredIf(function() {
                     return this.household
                 })
             },
-            firstName: { 
-                isName, 
+            first_name: { 
+                // isName, 
                 required 
             },
-            lastName: { isName },
-            phone: { isPhone },
+            last_name: { 
+                // isName 
+            },
+            phone_number: { isPhone },
             email: { email },
-            relationshipType: { required },
-            healthcareWorker: {},
-            age: {},
+            relationship: { required },
+            healthcare_worker: {},
+            age_group: {},
             language: {}
         }
     },
     data: () => {
         return {
-            data: {
-                firstName: undefined,
-                lastName: undefined,
-                phone: undefined,
-                email: undefined,
-                relationshipType: undefined,
-                healthcareWorker: false,
-                age: undefined,
-                symptomatic: false,
-                household: undefined,
-                date: undefined
-            },
+            displayDate: undefined,
+            data: {},
             menu: false,
-            languageTypes: [
-                "English", "Spanish", "Chinese", "Arabic", "Other"
-            ],
             personName: 'this person'
         }
     },
     computed: {
+        date: {
+            get() {
+                let date = this.data.contact_date
+                if(date) {
+                    return date.format('YYYY-MM-DD')
+                } else {
+                    return ''
+                }
+            },
+            set(newVal) {
+                var moment = require('moment')
+                this.$set(this.data, 'contact_date', moment(newVal))
+            }
+        },
+        readableDate: {
+            get() {
+                let date = this.data.contact_date
+                if(date) {
+                    return date.format('MMMM Do, YYYY')
+                } else {
+                    return ''
+                }
+            },
+            set(newVal) {
+                if(this.date) {
+                    this.date = newVal
+                }
+
+            }
+        },
         endDate() {
-            return this.$store.state.endDate.format('YYYY-MM-DD')
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().add(10, 'days').format('YYYY-MM-DD')
+            }
         },
         startDate() {
-            return this.$store.state.startDate.format('YYYY-MM-DD')
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().subtract(2, 'days').format('YYYY-MM-DD')
+            }
         },
         title() {
             if (this.household && this.id == -1) {
@@ -208,23 +243,22 @@ export default {
             }
         },
         relationshipTypes() {
-            if(this.household) {
-                return ["Parent", "Sibling", "Grandparent", "Child", "Other family", "Non-family", "Other/Don't want to say"]
-            } else {
-                return ["Friend", "Work colleague", "Parent", "Sibling", "Grandparent", "Child", "Other family", "Non-family", "Other/Don't want to say"]
-            }
+            return this.$store.state.enums.Relationship
+        },
+        languageTypes() {
+            return this.$store.state.enums.Language
         },
         firstNameErrors() {
             const errors = []
-            if (!this.$v.data.firstName.$dirty) return errors
-            !this.$v.data.firstName.required && errors.push(`First name is required.`)
-            !this.$v.data.firstName.isName && errors.push('Names can only contain alphabetic characters.')
+            if (!this.$v.data.first_name.$dirty) return errors
+            !this.$v.data.first_name.required && errors.push(`First name is required.`)
+            // !this.$v.data.first_name.isName && errors.push('Names can only contain alphabetic characters.')
             return errors
         },
         lastNameErrors() {
             const errors = []
-            if (!this.$v.data.lastName.$dirty) return errors
-            !this.$v.data.lastName.isName && errors.push('Names can only contain alphabetic characters.')
+            if (!this.$v.data.last_name.$dirty) return errors
+            // !this.$v.data.last_name.isName && errors.push('Names can only contain alphabetic characters.')
             return errors
         },
         emailErrors () {
@@ -235,20 +269,20 @@ export default {
         },
         phoneErrors() {
             const errors = []
-            if (!this.$v.data.phone.$dirty) return errors
-            !this.$v.data.phone.isPhone && errors.push('Phone number can only contain numeric digits')
+            if (!this.$v.data.phone_number.$dirty) return errors
+            // !this.$v.data.phone_number.isPhone && errors.push('Phone number can only contain numeric digits')
             return errors
         },
         relationshipErrors() {
             const errors = []
-            if (!this.$v.data.relationshipType.$dirty) return errors
-            !this.$v.data.relationshipType.required && errors.push('Please select the type of contact from the dropdown menu.')
+            if (!this.$v.data.relationship.$dirty) return errors
+            !this.$v.data.relationship.required && errors.push('Please select the type of contact from the dropdown menu.')
             return errors
         },
         dateErrors() {
             const errors = []
-            if (!this.$v.data.date.$dirty) return errors
-            !this.$v.data.date.required && errors.push('Last Date of contact is required')
+            if (!this.$v.data.contact_date.$dirty) return errors
+            !this.$v.data.contact_date.required && errors.push('Last Date of contact is required')
             return errors
         }
     },
@@ -276,35 +310,24 @@ export default {
     methods: {
         open() {
             this.data.contactID = this.id
-            this.data.household = this.household
             if(this.id == -1) {
-                this.personName = 'this person'
                 this.$v.$reset()
                 this.$refs.form.reset()
             } else {
-                if (this.id == undefined || this.$store.state.contacts[this.id] == undefined) {
-                    return
-                }
-                let contact = this.$store.state.contacts[this.id]
-                this.data.firstName = contact.firstName
-                this.personName = contact.firstName
-                this.data.lastName = contact.lastName
-                this.data.phone = contact.phone
-                this.data.email = contact.email
-                this.data.relationshipType = contact.relationshipType
-                this.data.healthcareWorker = false
-                this.data.age = contact.age
-                this.data.symptomatic = contact.symptomatic
-                this.data.date = contact.date
+                if (this.id == undefined ) { return }
+                let contact = this.$store.getters['contacts/id'](this.id)
+                if(contact == null ) { return }
+                this.data = Object.assign({}, contact)
+                this.personName = `${contact.first_name} ${contact.last_name}`
             }
         },
         setPersonText() {
-            this.$v.data.firstName.$touch
+            this.$v.data.first_name.$touch
             this.$nextTick(() => {
-                if (this.data.firstName === '') {
+                if (this.data.first_name === '') {
                     this.personName = "this person"
                 } else {
-                    this.personName = this.data.firstName
+                    this.personName = this.data.first_name
                 }
                 
             })

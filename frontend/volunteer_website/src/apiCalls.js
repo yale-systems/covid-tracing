@@ -3,7 +3,6 @@ import axios from 'axios'
 import { baseurl } from '@/constants/baseurl.js'
 import geocoder from '@/geocoder.js'
 
-
 export default {
     // returns patient information if valid, null otherwise
     async patientCheckLogin(credentials) {
@@ -80,13 +79,12 @@ export default {
         }
     },
     // get all patients associated with a volunteer
-    async getPatients(url, id) {
+    async getPatientsForVol(url) {
       let res = []
-      let link = `${url}${id}`
-      await axios.get(link)
+      await axios.get(url)
         .then((response) => {
           if(response.data) {
-            for(let patient in response.data) {
+            for(let patient of response.data) {
               if(patient.diagnosis_date) {
                 patient.diagnosis_date = moment(patient.diagnosis_date)
               }
@@ -106,11 +104,13 @@ export default {
           }
         })
         .catch(error => {console.error(error)})
-      return res
+        console.log(res)
+        return res
     },
     
     //EVENT API CALLS
     async getEvents(url) {
+        console.log(URL)
         let res = {
             events: [],
             links: {}
@@ -145,7 +145,7 @@ export default {
                         lng: event.geom.coordinates[0], 
                         lat: event.geom.coordinates[1]
                     }
-                    placeholder = await geocoder.getStreetName(position, geocoderThing)
+                    placeholder = await geocoder.getStreetName(position, geocoderThing, function(response) {placeholder = response})
                 }
                 event.location = {
                     streetName: placeholder,
@@ -154,6 +154,8 @@ export default {
                 delete event.links
                 res.events.push(event)
             }
+            console.log("yeah so i got here")
+            console.log(res)
             return res
         } catch(error) {
             console.error(error)
@@ -266,7 +268,7 @@ export default {
     },
 
     
-    //ENUM API CALLS
+    //ENUM API CALLS -- NOTE, UPDATE THIS
     async getEnums(patientURL) {
         let enums = {}
         

@@ -27,9 +27,11 @@
 </template>
 
 <script>
+import getters from '@/methods.js'
+
 export default {
     name: "ContactRow",
-    
+    mixins: [getters],
     props: {
         contactID: {
             Number,
@@ -46,11 +48,10 @@ export default {
     },
     computed: {
         contactInfo() {
-            this.$store.state.fuckThis;
-            let contact = this.$store.state.contacts[this.contactID]
+            let contact = this.$store.getters['contacts/id'](this.contactID)
             return { 
-                name: this.$store.getters.fullName(this.contactID),
-                phone: contact.phone === undefined ? "missing phone number" : contact.phone,
+                name: this.gettersHelper(contact, 'name'),
+                phone: contact.phone_number === undefined ? "missing phone number" : contact.phone_number,
                 date: contact.date,
                 email: contact.email === undefined ? "missing email" : contact.email
             }

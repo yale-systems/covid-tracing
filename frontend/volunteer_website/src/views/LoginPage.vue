@@ -14,7 +14,7 @@
                             <br>
                             <v-row justify="center">
                                 <v-btn
-                                    @click="cardProgress=2, usertype='patient'"
+                                    @click="cardProgress=2, userType='patient'"
                                     color="primary"
                                     min-height=80px
                                     min-width=300px>
@@ -23,7 +23,7 @@
                             </v-row>
                             <v-row justify="center" class="button-spacing">
                                 <v-btn
-                                    @click="cardProgress=2; usertype='contact'"
+                                    @click="cardProgress=2; userType='contact'"
                                     color="primary"
                                     min-height=80px
                                     min-width=300px>
@@ -112,7 +112,7 @@ export default {
             showPassword: false,
             showAlert: false,
             cardProgress: 1,
-            usertype: ''
+            userType: ''
         }
     },
     methods: {
@@ -125,28 +125,30 @@ export default {
                     username: this.username,
                     password : this.password
                 }
-                let curr = this;
                 // if it passes, send to welcome screen
-                apiCalls.checkLogin(credentials)
-                    .then(function (response) {
-                        if (response) {
-                            curr.$store.commit('logIn')
-                            curr.$store.commit('setUserType', curr.usertype)
-                            if (curr.usertype == 'patient') {
+                let data = {
+                    credentials: credentials,
+                    userType: this.userType
+                }
+                let curr = this;
+                await this.$store.dispatch('volunteerLogin', data)
+                    .then(response => {
+                        if(response) {
+                            if (curr.userType == 'patient') {
                                 curr.$router.push({ name: "PDash" });
-                            } else if (curr.usertype == 'contact') {
+                            } else if (curr.userType == 'contact') {
                                 curr.$router.push({ name: "Dashboard" });
                             }
                         } else {
-                            // give feedback that something was wrong
                             curr.password = "";
-                            curr.showAlert = true;
+                            curr.showAlert = true; 
                         }
-                    }) ;
+                    })
+                    .catch((error) => console.error(error))
             }
         },
         handleDemo() {
-            this.username = 'username'
+            this.username = 'username1'
             this.password = 'password'
             this.$nextTick(() => {
                 this.handleSubmit()

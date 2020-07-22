@@ -18,7 +18,7 @@
                 <v-container class="pb-1 pt-0">
                     <v-container fluid class="pt-0">
                         <v-row class="my-0">
-                            <h1> {{getFullName(patient)}} </h1>
+                            <h1> {{gettersHelper(patient, 'name')}} </h1>
                         </v-row>
                         
                     <v-item-group v-model="selectedIndex" class="mt-2">
@@ -77,7 +77,7 @@
                         <v-card>
                             <v-container fluid>
                                 <v-card-title primary-title>
-                                    Were you able to reach {{getFullName(patient)}}?
+                                    Were you able to reach {{gettersHelper(patient, 'name')}}?
                                 </v-card-title>
                                     <v-container fluid class="mx-4 px-4" style="max-width:93%;">
                                         <v-row>
@@ -133,11 +133,12 @@ import circleicon from "@/sharedComponents/circleicon.vue"
 import PreliminaryDiv from "@/interviewerComponents/PreliminaryDiv.vue"
 import HouseholdContactDiv from "@/interviewerComponents/HouseholdContactDiv.vue"
 import EventsDiv from "@/interviewerComponents/EventsDiv.vue"
-import patientGetters from "@/patientGetters.js"
+import getters from "@/methods.js"
 import constants from '@/constants.js'
 
 export default {
     name: "InterviewFormView",
+    mixins: [ getters ],
     data: () => {
         return {
             selectedIndex: 0,
@@ -155,7 +156,7 @@ export default {
             return parseInt(this.$route.params.id)
         },
         patient() {
-            return this.$store.getters.getPatientById(this.patientID)
+            return this.$store.getters['patients/id'](this.patientID)
         },
         formComponent() {
             if(this.selectedIndex == undefined) {
@@ -169,19 +170,10 @@ export default {
                 return 'EventsDiv'
             }
         },
-        formComponentProps() {
-            if (this.selectedIndex == 0) {
-                return {
-                    name: this.getFullName(this.patient),
-                    phone: this.getPhone(this.patient),
-                    age: this.getAge(this.patient),
-                    language: this.getLanguage(this.patient),
-                    symptomatic: this.getSymptomatic(this.patient)
-                }
-            } else {
-                return null
+        formComponentProps() {  
+            return {
+                patient: this.patient
             }
-
         },
         callStatuses() {
             return constants.callStatuses;
@@ -197,18 +189,14 @@ export default {
         },
     },
     mounted() {
-        this.$store.commit('setDate', this.patient.date)
+        // when the form is loaded, we need to load in the events and contacts associated with that patient
+        this.$store.dispatch('loadFormData', this.patientID)
     },
     methods: {
-        getFullName: patientGetters.getFullName,
-        getPhone: patientGetters.getPhone,
-        getAge: patientGetters.getAge,
-        getLanguage: patientGetters.getLanguage,
-        getSymptomatic: patientGetters.getSymptomatic,
-
         handleBack() {
             let pid = this.patientID;
             this.$store.commit('setOpenPID', pid)
+            this.$store.dispatch('clearFormData')
             this.$router.push({name: 'PDash'})
         }
     }

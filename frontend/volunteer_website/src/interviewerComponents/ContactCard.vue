@@ -54,7 +54,6 @@ export default {
     methods: {
         closeAndReload() {
             this.value.viewContact = false
-            this.$store.commit('dialogClose')
             this.$emit('reload', this.id)
         },
         submitAndReload(data) {

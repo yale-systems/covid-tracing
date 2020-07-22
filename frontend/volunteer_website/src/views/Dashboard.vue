@@ -33,21 +33,21 @@
                   <v-list-item class="size-medium" :key="item.contactID">
                     <!-- name and subtitle -->
                       <v-list-item-content>
-                        <v-list-item-title v-text="getFullName(item)"></v-list-item-title>
+                        <v-list-item-title v-text="gettersHelper(item, 'name')"></v-list-item-title>
                         <v-list-item-subtitle
                           class="text--primary"
-                          v-text="getPhone(item)"
+                          v-text="gettersHelper(item, 'phone')"
                         ></v-list-item-subtitle>
                       </v-list-item-content>
                       <!-- last active date and flag -->
                       <v-list-item-action>
                         <v-list-item-action-text
-                          v-text="item.contactDate.format('M/D/YYYY')"
+                          v-text="item.contact_date.format('M/D/YYYY')"
                         ></v-list-item-action-text>
                         <v-progress-circular 
                           rotate="-90"
                           class="mb-2 mr-1"
-                          :value="getProgress(item)"
+                          :value="gettersHelper(item, 'progress')"
                           size=20
                           color="green"
                         ></v-progress-circular>
@@ -81,7 +81,7 @@
 import ContactScript from '@/notifierComponents/ContactScript.vue'
 import Hamburger from "@/sharedComponents/Hamburger.vue"
 import apiCalls from "@/apiCalls";
-import methods from "@/methods";
+import getters from "@/methods.js";
 import constants from '@/constants'
 import cloner from 'lodash'
 
@@ -91,11 +91,11 @@ export default {
     ContactScript,
     Hamburger
   },
+  mixins: [ getters ],
   data: () => {
     return {
       //might be possible for selected Index to become undefined; check this. 
       selectedIndex: 0,
-      items: [],
       showItems: [],
       searchText: undefined,
       showSearch: false,
@@ -112,6 +112,9 @@ export default {
       } else {
         return "mdi-sort-descending"
       }
+    },
+    items() {
+      return this.$store.getters['contacts/contacts']
     }
   },
   watch: {
@@ -170,8 +173,8 @@ export default {
       this.showItems = tempShow
     },
     bySearchText(item) {
-      var text = this.getFullName(item) + this.getStatus(item) +
-        item.contactDate.format("M/D/YYYY") + item.contactDate.format("MMMM")
+      var text = this.gettersHelper(item, 'name') + this.gettersHelper(item, 'contact_call_status') +
+        this.gettersHelper(item, 'contact_date').format("M/D/YYYY") + this.gettersHelper(item, 'contact_date').format("MMMM")
       let lowerSearch = this.searchText.toLowerCase()
       text = text.toLowerCase()
       return text.search(lowerSearch) > -1
@@ -208,17 +211,10 @@ export default {
         this.showSearch = false;
       }
     },
-    getFullName: methods.getFullName,
-    getStatus: methods.getStatus,
-    getPhone: methods.getPhone,
-    getProgress: methods.getProgress
   },
-  async mounted() {
-    await apiCalls.getContacts().then((result) => {
-      this.items = result
-      this.showItems = cloner.cloneDeep(result)
-    })
-  },
+  mounted() {
+    this.showItems = cloner.cloneDeep(this.items)
+  }
 };
 </script>
 

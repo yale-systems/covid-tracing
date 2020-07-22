@@ -31,7 +31,7 @@
                     small
                     outlined
                     class="mb-1 ml-1"
-                    @click="$emit('showDialog', selectedID)" 
+                    @click="emitThing" 
                     >
                     {{viewMessage}}
                 </v-btn>
@@ -42,6 +42,7 @@
 
 <script>
 // import ContactCard from '@/interviewerComponents/ContactCard.vue'
+import get from '@/methods.js'
 export default {
     name: "OutsideContact",
     data () {
@@ -51,6 +52,7 @@ export default {
             
         }
     },
+    mixins: [get],
     props: {
         value: {
             Number,
@@ -69,12 +71,14 @@ export default {
         },
         contactNames() {
             this.$store.state.fuckThis
-            let contacts = this.$store.state.contacts
+            let contacts = this.$store.state.contacts.contacts
+            console.log("contacts is ", contacts)
             var names = []
-            for (var key in contacts) {
+            for (var contact of contacts) {
+                console.log(contact)
                 names.push({
-                    id: parseInt(key, 10),
-                    name: this.$store.getters.fullName(key)
+                    id: contact.contact_id,
+                    name: this.gettersHelper(contact, 'name')
                 })
             }
             names.push({
@@ -118,6 +122,10 @@ export default {
         deleteContact() {
             this.$emit('splice-contact', this.value)
         },
+        emitThing() {
+            console.log(this)
+            this.$emit('showDialog', this.selectedID)
+        }
     }
 }
 </script>

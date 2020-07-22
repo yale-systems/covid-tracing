@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app-bar flat color="#e8f5ff" class="sticky shadow">
-            <v-row class="d-flex" align="center" justify="left">
+            <v-row class="d-flex" align="center">
                 <v-col cols="4"> 
                     <b class="large">Oasis Interviewer Portal</b>
                 </v-col>

@@ -10,24 +10,24 @@
                                 <v-progress-circular 
                                     rotate="-90"
                                     class="mb-2 mr-2"
-                                    :value="getProgress(patient)"
+                                    :value="gettersHelper(patient, 'progress')"
                                     size=20
                                     color="green"
-                                    v-if="getProgress(patient) >= 0"
+                                    v-if="gettersHelper(patient, 'progress') >= 0"
                                 ></v-progress-circular>
                                 <v-icon v-else class="pr-2 pb-2" color="red">mdi-close-thick</v-icon>
                                 <!-- <v-icon class="mr-4" :color="getProgressColor(patient)"> mdi-checkbox-blank-circle </v-icon> -->
-                                <h4 class="mt-1"> {{getFullName(patient)}} </h4>
+                                <h4 class="mt-1"> {{gettersHelper(patient, 'name')}} </h4>
                             </v-row>
                         </v-col>
                         <v-col cols="2">
-                            {{getReadableDate(patient)}}
+                            {{gettersHelper(patient, 'onset_date')}}
                         </v-col>
                         <v-col cols="3">
-                            {{getStatus(patient)}}
+                            {{gettersHelper(patient, 'case_call_status')}}
                         </v-col>
                         <v-col cols="2">
-                            {{getPhone(patient)}}
+                            {{gettersHelper(patient, 'phone')}}
                         </v-col>
                         <v-col cols="1" class="d-flex align-end">
                             <v-btn color="primary" @click="handleStart">
@@ -60,11 +60,12 @@
 </template>
 
 <script>
-import patientGetters from '@/patientGetters.js'
+import getter from '@/methods.js'
 import constants from '@/constants.js'
 
 export default {
     name: 'PatientRow',
+    mixins: [ getter ],
     props: {
         patient: {
             Object,
@@ -83,18 +84,7 @@ export default {
             return constants.callStatuses;
         }
     },
-
     methods: {
-        getPatientID: patientGetters.getPatientID,
-        getFullName: patientGetters.getFullName,
-        getReadableDate: patientGetters.getReadableDate,
-        getStatus: patientGetters.getStatus,
-        getPhone: patientGetters.getPhone,
-        getAge: patientGetters.getAge,
-        getSymptomatic: patientGetters.getSymptomatic,
-        getEmail: patientGetters.getEmail,
-        getLanguage: patientGetters.getLanguage,
-        getProgress: patientGetters.getProgress,
         togglePanel() {
             this.readonly = !this.readonly
 
@@ -113,7 +103,7 @@ export default {
             })
         },
         handleStart() {
-            let pid = this.getPatientID(this.patient)
+            let pid = this.gettersHelper(this.patient, 'patient_id')
             this.$router.push({path: `/form/${pid}`})
         },
         handleSave() {
@@ -121,7 +111,7 @@ export default {
         }
     },
     mounted() {
-        if (this.$store.state.openPID == this.getPatientID(this.patient)) {
+        if (this.$store.state.openPID == this.gettersHelper(this.patient, 'patient_id')) {
             this.togglePanel()
         }
     }

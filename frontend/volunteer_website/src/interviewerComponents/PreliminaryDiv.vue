@@ -1,26 +1,26 @@
 <template>
     <v-container fluid class="ma-5" style="max-width:95%; align-items:center;">
         <div>
-            <p class="title"> {{ name }} </p>
-            {{phone}}
-            <p> {{age}}, speaks {{language}} </p>
-            <p> {{symptomatic ? "Is currently known to have symptoms" : "Is not known to have symptoms"}} </p>
+            <p class="title"> {{ gettersHelper(patient, 'name') }} </p>
+            {{gettersHelper(patient, 'phone')}}
+            <p> {{ gettersHelper(patient, 'age')}}{{ gettersHelper(patient, 'age') ? ', ': ''}}speaks {{ gettersHelper(patient, 'language')}} </p>
+            <p> {{gettersHelper(patient, 'symptomatic') ? "Is currently known to have symptoms" : "Is not known to have symptoms"}} </p>
         </div><hr class="mt-6" style="border-top: 1px solid rgb(226, 226, 226);"><br>
         <div>
             <h4 class="header"> Voicemail </h4><br>
-            <p class="font-weight-medium"> My name is [user.name] and I am calling from [user.department]. This message is for {{ name }}. 
-                Please call me back as soon as you are able at the following number (provide Google phone #). Thank you. 
+            <p class="font-weight-medium"> My name is {{ volunteer.first_name }} and I am calling from [user.department]. This message is for {{ gettersHelper(patient, 'name') }}. 
+                Please call me back as soon as you are able at the following number ___________. Thank you. 
             </p>
             <p style="color:#616161; font-size:small;"><i> Try calling back 30 minutes or so later as the case may be screening calls and the voicemail might help clarify your purpose/intention.
             </i></p><hr class="mt-6" style="border-top: 1px solid rgb(226, 226, 226);"><br>
             <h4 class="header"> Call </h4><br>
-            <p class="font-weight-medium"> Hello, my name is [user.name] and I’m calling on behalf of [user.department]. Can I please speak with {{ name }}?  Would you prefer to continue in English or another language?
+            <p class="font-weight-medium"> Hello, my name is {{ volunteer.first_name }} and I’m calling on behalf of [user.department]. Can I please speak with {{ gettersHelper(patient, 'name') }}?  Would you prefer to continue in English or another language?
             </p>
             <p><i style="color:#616161; font-size:small;"> If not English, please indicate in the "Call Outcome Survey"
             </i></p>
             <p class="font-weight-medium"> First, to ensure I am talking to the right person, can you please verify your date of birth?
             </p>
-            <p class="font-weight-medium header"><i style="font-size:small;"> DOB:
+            <p class="font-weight-medium header"><i style="font-size:small;"> DOB: {{ gettersHelper(patient, 'dob')}}
             </i></p>
             <p><i style="color:#616161; font-size:small;"> Confirm if DOB matches; if not, ensure that you are talking to the correct person or need to speak to an adult/guardian proxy for a child, someone incapacitated, or still in the hospital.
             </i></p>
@@ -176,18 +176,17 @@
 
 <script>
 import moment from 'moment'
+import getters from '@/methods.js'
 
 export default {
     name: "PreliminaryDiv",
     props: {
-        phone: '',
-        name: '',
-        age: '',
-        language: '',
-        symptomatic: {
-            default: false
+        patient: {
+            type: Object,
+            required: true
         }
     },
+    mixins: [ getters ],
     data: () => {
         return {
             symptoms: ["Patient is symptomatic", "Patient is not symptomatic"],
@@ -198,7 +197,7 @@ export default {
     },
     computed: {
         todayDate() {
-            return this.$store.state.todayDate
+            return moment()
         },
         dateMessage() {
             if (this.symptomaticResult == "Patient is symptomatic") {
@@ -207,8 +206,10 @@ export default {
                 return "When were you diagnosed?"
             }
         },
+        volunteer() {
+            return this.$store.getters['volunteers/active']
+        }
     },
-   
     watch: {
         date: function() {
             this.$store.commit('setDate', moment(this.date, 'YYYY-MM-DD'))
