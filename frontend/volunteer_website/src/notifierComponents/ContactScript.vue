@@ -112,7 +112,7 @@
                 <p> Have you been experiencing any symptoms such as a fever, cough, or shortness of breath?
                 </p>
             </v-col>
-            <v-col cols="auto" class="pt-0 input-size">
+            <v-col cols="4" class="pt-0 input-size">
                 <TFToggle v-model="hasSymptoms"/>
             </v-col>
         </v-row>
@@ -127,7 +127,7 @@
                     multiple
                     chips
                     item-value="key"
-                    item-text="status"
+                    item-text="value"
                     class="my-0 py-0"
                 >
                 </v-select>
@@ -159,7 +159,7 @@
                     v-model="self_isolate"
                     :items="selfIsoStatuses"
                     item-value="key"
-                    item-text="status"
+                    item-text="value"
                     class="ml-4 my-0 py-0"
                     min-width="100px">
                 </v-select>
@@ -176,7 +176,7 @@
                     multiple
                     chips
                     item-value="key"
-                    item-text="status"
+                    item-text="value"
                     class="my-0 py-0"
                 >
                 </v-select>
@@ -249,7 +249,7 @@
                     <v-radio
                         v-for="item in notifiedStatuses"
                         :key="item.key"
-                        :label="item.status"
+                        :label="item.value"
                         :value="item.key"
                         color="secondary"
                     ></v-radio>
@@ -262,7 +262,7 @@
                     <v-radio
                         v-for="item in unNotifiedStatuses"
                         :key="item.key"
-                        :label="item.status"
+                        :label="item.value"
                         :value="item.key"
                         color="secondary"
                     ></v-radio>
@@ -326,19 +326,21 @@ export default {
             }
         },
         symptomList() {
-            return enums.symptoms
+            return enums.symptoms.asDict
         },
         selfIsoStatuses() {
-            return enums.self_isolate
+            return enums.self_isolate.asDict
         },
         unNotifiedStatuses() {
-            return enums.contact_call_status.asArray.slice(0, 5)
+            let thing = enums.contact_call_status.asDict.slice(0, 5)
+            console.log(thing)
+            return thing
         },
         notifiedStatuses() {
-            return enums.contact_call_status.asArray.slice(5, 8)
+            return enums.contact_call_status.asDict.slice(5, 8)
         },
         assistanceStatuses() {
-            return enums.assistance
+            return enums.assistance.asDict
         }, 
         symptomaticStatuses() {
             return enums.symptomatic
@@ -381,7 +383,16 @@ export default {
                 this.contact.assitance = newVal
                 this.updateContact()
             }
-        }
+        },
+        contact_call_status: {
+            get() {
+                return this.value.contact_call_status 
+            },
+            set(newVal) {
+                this.contact.contact_call_status = newVal
+                this.updateContact()
+            }
+        },
     },
     watch: {
         value() {
@@ -390,16 +401,18 @@ export default {
         }
     },
     methods: {
-        handleSave() {
-            if (this.tempStatus) {
-                this.value.contact_call_status = this.tempStatus
-            }
-            this.value.update_date = moment()
+        async handleSave() {
+            this.contact.update_date = moment()
+            await this.updateContact()
+            // TODO: give the user feedback that we are saving
 
-            this.$emit('reload')
+            let res = await this.$store.dispatch('contacts/update', this.contact)
+            if(res) {
+                this.$emit('reload')
+            }
         },
         async updateContact() {
-            let res = await this.dispatch('contacts/update', this.contact)
+            let res = await this.$store.commit('contacts/updateContact', this.contact)
             if(!res) {
                 // TODO: show some sort of alert here
             }

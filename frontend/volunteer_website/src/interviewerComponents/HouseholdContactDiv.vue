@@ -37,6 +37,7 @@
                 </tr>
                 <template v-for="contactID in householdContacts">
                     <ContactRow 
+                        :showDate="true"
                         :key="'house'+contactID"
                         :contactID="contactID" 
                         v-on:open="openDialog($event, true)"
@@ -73,6 +74,7 @@
                 </tr>
                 <template v-for="contactID in outsideContacts">
                     <ContactRow 
+                        :showDate="false"
                         :key="contactID"
                         :contactID="contactID" 
                         v-on:open="openDialog($event, false)"
@@ -126,8 +128,8 @@ export default {
         openDialog(id, house) {
             this.openID = id
             this.household = house
-            console.log(this.household)
-            this.$nextTick(()=>{this.formToggle.viewContact = true})
+            console.log(this.openID)
+            this.$nextTick(()=> {this.formToggle.viewContact = true})
         }
     }
 }

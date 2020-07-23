@@ -283,6 +283,10 @@ const contacts = {
     namespaced: true,
     state: getContactDefaultState(),
     getters: {
+        newContactId(state) {
+            if (state.contacts.length == 0) { return undefined }
+            return state.contacts[state.contacts.length-1].contact_id
+        },
         id: (state) => (id) => {
             state.touched
             return state.contacts.find(contact => contact.contact_id === id)
@@ -294,7 +298,10 @@ const contacts = {
         outsideContacts: (state) => {
             return state.contacts.filter(contact => contact.household === false)
         },
-        contacts: (state) => { return state.contacts },
+        contacts: (state) => { 
+            state.touched 
+            return state.contacts 
+        },
         fullName: (state) => (id) => {
             state.touched
             let contact = state.contacts.find(contact => contact.contact_id === id)
@@ -309,6 +316,7 @@ const contacts = {
                 value.contact_date = moment(value.contact_date)
             }
             state.contacts.push(value)
+            state.touched = !state.touched
         },
         setLinks(state, value) {
             state.links = value
@@ -451,7 +459,8 @@ const getRootDefaultState = () => {
         activeContactId: undefined,
         enums: {},
         userType: undefined,
-        openPID: undefined
+        openPID: undefined,
+        dialogClosed: true
     }
 }
 
@@ -461,6 +470,9 @@ export default new Vuex.Store({
         activePatientId: (state) => {return state.activePatientId}
     },
     mutations: {
+        closeDialog(state) {
+            state.dialogClosed = !state.dialogClosed
+        },
         logOut(state) {
             state.loggedIn = false
         },
@@ -508,14 +520,12 @@ export default new Vuex.Store({
                 // do this for the first patient but not the other ones
                 await dispatch('patients/load', patients)
                 if(state.patients.patients.length > 0) {
-                    let link = state.patients.links.self + state.patients.patients[0].patient_id
                     console.log(state)
                     let enums = await apiCalls.getEnums(state.patients.links.self + state.patients.patients[0].patient_id)
                     commit('setEnums', enums)
                 }
                 return true
             } else {
-                let link = response._links.get_contacts.href
                 await dispatch('contacts/loadVol')
                 return true
             }

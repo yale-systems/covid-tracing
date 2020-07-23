@@ -94,8 +94,8 @@ export default {
               if(patient.last_worked_date) {
                 patient.last_worked_date = moment(patient.last_worked_date)
               }
-              if(patient.dob) {
-                patient.dob = moment(patient.dob)
+              if(patient.date_of_birth) {
+                patient.date_of_birth = moment(patient.date_of_birth)
               }
               delete patient._links
               delete patient.enums

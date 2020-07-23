@@ -1,5 +1,5 @@
 <template>
-    <v-container  fluid class="ma-6" style="max-width:95%; align-items:center;">
+    <v-container fluid class="ma-6 centered-flexbox" style="max-width:95%">
         <!-- dialog to make a contact show up for the interview event -->
         <div class="center">
             <transition name="slide-fade" >

@@ -76,7 +76,7 @@ const gettersMap = {
     'race': (item) => getEnum(item, 'race'),
     'language': (item) => getEnum(item, 'language'),
     'home_address': (item) => item.home_address,
-    'dob': (item) => item.dob,
+    'dob': (item) => item.date_of_birth,
 
     // case/contact info
     'household': (item) => item.household,

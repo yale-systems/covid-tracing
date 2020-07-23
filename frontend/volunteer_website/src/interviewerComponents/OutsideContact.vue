@@ -48,7 +48,6 @@ export default {
     data () {
         return {
             contactTypes: ["Minimal", "Close"],
-            selectedID: undefined,
             
         }
     },
@@ -59,23 +58,27 @@ export default {
             required: true
         }
     },
-    // components: {
-    //     ContactCard
-    // },
     computed: {
-        stateChange() {
-            return this.$store.state.fuckThis;
+        selectedID: {
+            get() {
+                return this.value
+            },
+            set(newVal) {
+                this.$emit('input', newVal)
+            }
         },
+        //update this as well! 
+        stateChange() {
+            return this.$store.state.contacts.touched;
+        },
+        //and this too
         closed() {
             return this.$store.state.dialogClosed;
         },
         contactNames() {
-            this.$store.state.fuckThis
-            let contacts = this.$store.state.contacts.contacts
-            console.log("contacts is ", contacts)
+            let contacts = this.$store.getters['contacts/contacts']
             var names = []
             for (var contact of contacts) {
-                console.log(contact)
                 names.push({
                     id: contact.contact_id,
                     name: this.gettersHelper(contact, 'name')
@@ -108,8 +111,9 @@ export default {
             }
         },
         stateChange() {
+            console.log("oh look i was called")
             if (this.selectedID == -1) {
-                this.selectedID = this.$store.state.contactID - 1
+                this.selectedID = this.$store.getters['contacts/newContactId']
             }
         },
         selectedID() {
@@ -123,13 +127,11 @@ export default {
             this.$emit('splice-contact', this.value)
         },
         emitThing() {
-            console.log(this)
+            if (this.selectedID == undefined) {
+                this.selectedID = -1
+            }
             this.$emit('showDialog', this.selectedID)
         }
     }
 }
 </script>
-
-<style>
-    
-</style>
