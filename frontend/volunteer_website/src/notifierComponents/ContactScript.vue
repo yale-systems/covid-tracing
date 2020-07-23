@@ -250,7 +250,7 @@
                         v-for="item in notifiedStatuses"
                         :key="item.key"
                         :label="item.value"
-                        :value="item.key"
+                        :value="parseInt(item.key, 10)"
                         color="secondary"
                     ></v-radio>
                 </v-radio-group>
@@ -263,7 +263,7 @@
                         v-for="item in unNotifiedStatuses"
                         :key="item.key"
                         :label="item.value"
-                        :value="item.key"
+                        :value="parseInt(item.key, 10)"
                         color="secondary"
                     ></v-radio>
                 </v-radio-group>
@@ -403,19 +403,13 @@ export default {
     methods: {
         async handleSave() {
             this.contact.update_date = moment()
-            await this.updateContact()
-            // TODO: give the user feedback that we are saving
-
             let res = await this.$store.dispatch('contacts/update', this.contact)
             if(res) {
                 this.$emit('reload')
             }
         },
-        async updateContact() {
-            let res = await this.$store.commit('contacts/updateContact', this.contact)
-            if(!res) {
-                // TODO: show some sort of alert here
-            }
+        updateContact() {
+            this.$store.commit('contacts/updateContact', this.contact)
         }
     }
 }

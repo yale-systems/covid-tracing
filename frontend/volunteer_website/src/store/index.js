@@ -260,7 +260,6 @@ const patients = {
                 patient: patients[0],
                 links: links
             }
-            console.log(patients, firstPatient)
             dispatch('initializePatient', firstPatient)
             patients.splice(0, 1)
             for(let patient of patients) {
@@ -527,6 +526,11 @@ export default new Vuex.Store({
                 return true
             } else {
                 await dispatch('contacts/loadVol')
+                if(state.contacts.contacts.length > 0) {
+                    console.log(state)
+                    let enums = await apiCalls.getEnums(state.contacts.links.self + state.contacts.contacts[0].contact_id)
+                    commit('setEnums', enums)
+                }
                 return true
             }
         },

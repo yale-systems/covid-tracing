@@ -275,12 +275,14 @@ export default {
         //get enums
         await axios.get(patientURL).then(async (res) => {
             enums = Object.assign(enums, res.data.enums)
-            await axios.get(res.data._links.get_contacts.href).then(res => {
-                if (res.length == 0) {return} 
-                enums = Object.assign(enums, res.data[0].enums)
-            }).catch(e => {
-                console.log(e)
-            })
+            if (res.data._links.get_contacts) {
+                await axios.get(res.data._links.get_contacts.href).then(res => {
+                    if (res.length == 0) {return} 
+                    enums = Object.assign(enums, res.data[0].enums)
+                }).catch(e => {
+                    console.log(e)
+                })
+            }
         }).catch(e => {
             console.log(e)
         })

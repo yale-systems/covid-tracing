@@ -85,7 +85,7 @@
                                         </v-row>
                                         <v-row>
                                             <v-select class="mt-0 pt-0"
-                                            v-model="patient.callStatus"
+                                            v-model="case_call_status"
                                             :items="callStatuses"
                                             item-value="key"
                                             item-text="status">
@@ -95,7 +95,7 @@
                                             <p> Notes: </p>
                                         </v-row>
                                         <v-row>
-                                            <v-textarea rows="2" auto-grow class="mt-0 pt-0"></v-textarea>
+                                            <v-textarea rows="2" auto-grow class="mt-0 pt-0" v-model="notes"></v-textarea>
                                         </v-row>
                                         <v-row>
                                             <v-spacer></v-spacer>
@@ -125,10 +125,7 @@
                 </v-container> 
             </v-col>
         </v-row>
-        <v-row>
-            <v-spacer></v-spacer>
-            <v-btn @click="handleNext"> {{(selectedIndex  == 2) ? 'submit' : 'next'}} </v-btn>
-        </v-row>
+        <v-btn v-if="selectedIndex < 2" class="next" @click="handleNext"> next </v-btn>
     </div>
 </template>
 
@@ -161,6 +158,24 @@ export default {
         },
         patient() {
             return this.$store.getters['patients/id'](this.patientID)
+        },
+        case_call_status: {
+            get() {
+                return this.patient.case_call_status
+            },
+            set(newVal) {
+                this.patient.case_call_status = newVal
+                this.$store.commit('patients/updatePatient', this.patient)
+            }
+        },
+        notes: {
+            get() {
+                return this.patient.notes
+            },
+            set(newVal) {
+                this.patient.notes = newVal
+                this.$store.commit('patients/updatePatient', this.patient)
+            }
         },
         formComponent() {
             if(this.selectedIndex == undefined) {
@@ -211,7 +226,7 @@ export default {
             }
         },
         async submit() {
-            let res1 = await this.$store.dispatch('events/load')
+            let res1 = await this.$store.dispatch('events/submit')
             let res2 = await this.$store.dispatch('patients/update', this.patient)
             return (res1 && res2)
         },
@@ -274,5 +289,11 @@ export default {
 
 .shadow {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, .5);
+}
+
+.next {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
 }
 </style>

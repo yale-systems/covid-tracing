@@ -65,8 +65,6 @@
         </v-col>
         <!-- for the card itself -->
         <v-col class="pl-8 pr-8 pb-8 overflow-y-auto full">
-          <!-- todo: set max height for the entire thing just equal to the page on load for contact tracers -- they should be scrolling
-          within divs, I think. Get rid of the lil scroll bars, (at least when no scrolling is happening) -->
           <ContactScript
             v-if="selectedIndex != undefined && items[selectedIndex] != undefined" 
             v-model="items[selectedIndex]"
@@ -80,7 +78,6 @@
 <script>
 import ContactScript from '@/notifierComponents/ContactScript.vue'
 import Hamburger from "@/sharedComponents/Hamburger.vue"
-import apiCalls from "@/apiCalls";
 import getters from "@/methods.js";
 import constants from '@/constants'
 import cloner from 'lodash'
@@ -164,7 +161,7 @@ export default {
       var tempShow = []
       for(var contact in this.showItems) {
         for(var i in this.items) {
-          if(this.showItems[contact].contactID == this.items[i].contactID) {
+          if(this.showItems[contact].contact_id == this.items[i].contact_id) {
             tempShow.push(cloner.cloneDeep(this.items[i]))
             break;
           }

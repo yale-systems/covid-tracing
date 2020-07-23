@@ -20,12 +20,23 @@ function getPhone(item) {
 }
 
 function getProgress(item) {
-    if (item.case_call_status == 0) {
-        return 0
-    } else if (item.case_call_status < 4 || item.case_call_status == 6) {
-        return 50
-    } else {
-        return 100
+    if(item.contact_id) {
+        if (item.contact_call_status == 0) {
+            return 0
+        } else if (item.contact_call_status < 3) {
+            return 50
+        } else {
+            return 100
+        }
+    }
+    else {
+        if (item.case_call_status == 0) {
+            return 0
+        } else if (item.case_call_status < 4 || item.case_call_status == 6) {
+            return 50
+        } else {
+            return 100
+        }
     }
 }
 
