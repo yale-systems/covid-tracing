@@ -32,10 +32,11 @@ const language = makeEnum([
 
 
 const symptomatic = makeEnum([
-        "Tested positive for COVID-19",
+        "Symptomatic and tested positive for COVID-19",
         "Symptomatic but hasn't been tested yet",
-        "No symptoms",
-        "Don't know"
+        "No symptoms and tested positive for COVID-19",
+        "No symptoms and tested negative for COVID-19",
+        "Other"
     ]);
 
 const symptoms = makeEnum([

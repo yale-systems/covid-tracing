@@ -98,30 +98,31 @@
                 to a person diagnosed with COVID-19, also called coronavirus.  This exposure occurred 
                 {{exposedAgo}} at [nature of exposure].
             </p>
-            <p> Have you been experiencing any symptoms such as a fever, cough, or shortness of breath?
-            </p>
+        </v-row>
+        <v-row> 
+            <v-col>
+                Have you been tested for COVID-19?
+            </v-col>
+            <v-col>
+                <ThreeToggle v-model="tested" :buttons="{first: 'yes', second: 'no', third: 'haven\'t been tested yet'}"/>
+            </v-col>
         </v-row>
         <v-row style="align-items:center;" class="my-0 py-0 d-flex justify-left">
             <v-col class="pt-0">
-                <p> Are you showing symptoms? </p>
+                <p> Have you been experiencing any symptoms such as a fever, cough, or shortness of breath?
+                </p>
             </v-col>
             <v-col cols="auto" class="pt-0 input-size">
-                <v-select
-                    v-model="value.symptomatic"
-                    :items="symptomaticStatuses.asArray"
-                    item-value="key"
-                    item-text="status"
-                    class="my-0 py-0">
-                </v-select>
+                <TFToggle v-model="hasSymptoms"/>
             </v-col>
         </v-row>
-        <v-row v-if="gettersHelper(value, 'symptomatic') < 2" style="align-items:center;" class="my-0 py-0">
+        <v-row v-if="hasSymptoms" style="align-items:center;" class="my-0 py-0">
             <v-col class="pt-0">
                 <p> What symptoms do you have? </p>
             </v-col>
             <v-col class="pt-0 ml-3">
                 <v-select
-                    v-model="value.symptoms"
+                    v-model="symptoms"
                     :items="symptomList"
                     multiple
                     chips
@@ -155,7 +156,7 @@
             </v-col>
             <v-col cols="auto" class="py-0 my-0 input-larger">
                 <v-select
-                    v-model="value.selfIsolate"
+                    v-model="self_isolate"
                     :items="selfIsoStatuses"
                     item-value="key"
                     item-text="status"
@@ -164,13 +165,13 @@
                 </v-select>
             </v-col>
         </v-row>
-        <v-row v-if="value.selfIsolate == 1" style="align-items:center;" class="my-0 py-0">
+        <v-row v-if="value.self_isolate == 1" style="align-items:center;" class="my-0 py-0">
             <v-col class="pt-0">
                 <p> What kind of assistance do you need? </p>
             </v-col>
             <v-col class="pt-0 ml-3">
                 <v-select
-                    v-model="value.assistance"
+                    v-model="assistance"
                     :items="assistanceStatuses"
                     multiple
                     chips
@@ -243,7 +244,7 @@
             </v-col>
             <v-col v-if="notified">
                 <v-radio-group 
-                    v-model="tempStatus" 
+                    v-model="contact_call_status" 
                     >
                     <v-radio
                         v-for="item in notifiedStatuses"
@@ -256,7 +257,7 @@
             </v-col>
             <v-col v-if="!notified">
                 <v-radio-group 
-                    v-model="tempStatus"
+                    v-model="contact_call_status"
                 >
                     <v-radio
                         v-for="item in unNotifiedStatuses"
@@ -283,9 +284,14 @@ import cloner from 'lodash'
 import constants from '@/constants.js'
 import moment from 'moment'
 import enums from '@/constants/enums.js'
+import TFToggle from '@/sharedComponents/TFToggle.vue'
+import ThreeToggle from '@/sharedComponents/ThreeToggle.vue'
 
 export default {
     name: "ContactScript",
+    components: {
+        TFToggle, ThreeToggle
+    },
     props: {
         value: {
             Object,
@@ -298,6 +304,8 @@ export default {
             notified: true,
             tempStatus: null,
             rules: [v => v.length <= 400 || 'Max 400 characters'],
+            tested: undefined,
+            hasSymptoms: undefined
         }
     },
     computed: {
@@ -318,25 +326,61 @@ export default {
             }
         },
         symptomList() {
-            return constants.symptoms
+            return enums.symptoms
         },
         selfIsoStatuses() {
-            return constants.selfIsos
+            return enums.self_isolate
         },
         unNotifiedStatuses() {
-            return constants.contactStatuses.slice(0, 5)
+            return enums.contact_call_status.asArray.slice(0, 5)
         },
         notifiedStatuses() {
-            return constants.contactStatuses.slice(5, 8)
+            return enums.contact_call_status.asArray.slice(5, 8)
         },
         assistanceStatuses() {
-            return constants.assistances
+            return enums.assistance
         }, 
         symptomaticStatuses() {
             return enums.symptomatic
         },
         user() {
             return this.$store.getters['volunteers/active']
+        },
+        contact() {
+            return this.$store.getters['contacts/id'](this.value.contact_id)
+        },
+        // vuex model computed properties
+        symptomatic: {
+            get() {
+                return this.value.symptomatic == 0 ? true : false
+            }
+        },
+        symptoms: {
+            get() {
+                return this.value.symptoms 
+            },
+            set(newVal) {
+                this.contact.symptoms = newVal
+                this.updateContact()
+            }
+        },
+        self_isolate: {
+            get() {
+                return this.value.self_isolate 
+            },
+            set(newVal) {
+                this.contact.self_isolate = newVal
+                this.updateContact()
+            }
+        },
+        assistance: {
+            get() {
+                return this.value.assistance 
+            },
+            set(newVal) {
+                this.contact.assitance = newVal
+                this.updateContact()
+            }
         }
     },
     watch: {
@@ -353,6 +397,12 @@ export default {
             this.value.update_date = moment()
 
             this.$emit('reload')
+        },
+        async updateContact() {
+            let res = await this.dispatch('contacts/update', this.contact)
+            if(!res) {
+                // TODO: show some sort of alert here
+            }
         }
     }
 }
