@@ -289,6 +289,7 @@ export default {
 
     watch: {
         openClicked() { 
+            console.log("trying to wipe data")
             this.open()
         },
 
@@ -297,22 +298,25 @@ export default {
             if (this.$v.data.$anyError) {
                 return
             } else {
-                this.$emit('contact-success', this.data)
+                this.$emit('contact-success', Object.assign({}, this.data))
                 return
             }
         }
     },
     mounted() {
         this.data.household = this.household 
-        this.data.contactID = this.id
+        this.data.contact_id = this.id
         this.open()
     },
     methods: {
         open() {
-            this.data.contactID = this.id
             if(this.id == -1) {
                 this.$v.$reset()
                 this.$refs.form.reset()
+                Object.keys(this.data).map((key) => {
+                    this.data[key] = undefined
+                })
+                this.setPersonText()
             } else {
                 if (this.id == undefined ) { return }
                 let contact = this.$store.getters['contacts/id'](this.id)
@@ -320,11 +324,13 @@ export default {
                 this.data = Object.assign({}, contact)
                 this.personName = `${contact.first_name} ${contact.last_name}`
             }
+            this.data.contact_id = this.id
+            this.data.household = this.household
         },
         setPersonText() {
             this.$v.data.first_name.$touch
             this.$nextTick(() => {
-                if (this.data.first_name === '') {
+                if (this.data.first_name === '' || this.data.first_name == undefined) {
                     this.personName = "this person"
                 } else {
                     this.personName = this.data.first_name

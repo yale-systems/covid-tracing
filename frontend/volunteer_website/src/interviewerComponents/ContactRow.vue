@@ -3,7 +3,7 @@
         <td> {{ contactInfo.name }} </td>
 
     
-        <td v-if="contactInfo.date != undefined"> {{ contactInfo.date }} </td>
+        <td v-if="showDate == true"> {{ contactInfo.date }} </td>
         <td> {{ contactInfo.phone }} </td>
         <td> {{ contactInfo.email }} </td>      
     
@@ -36,6 +36,10 @@ export default {
         contactID: {
             Number,
             required: true
+        },
+        showDate: {
+            Boolean,
+            default: true
         }
     },
     data: () => {
@@ -51,9 +55,9 @@ export default {
             let contact = this.$store.getters['contacts/id'](this.contactID)
             return { 
                 name: this.gettersHelper(contact, 'name'),
-                phone: contact.phone_number === undefined ? "missing phone number" : contact.phone_number,
-                date: contact.date,
-                email: contact.email === undefined ? "missing email" : contact.email
+                phone: (contact.phone_number == undefined || contact.phone_number == null || contact.phone_number == '') ? "missing phone number" : contact.phone_number,
+                date: (contact.contact_date == undefined || contact.contact_date == null || contact.contact_date == '') ? "missing date" : contact.contact_date.format('MMMM Do, YYYY'),
+                email: (contact.email == undefined || contact.email == null || contact.email == '') ? "missing email" : contact.email
             }
         },
     },
@@ -76,9 +80,8 @@ td {
 }
 
 tr:hover {
-    background-color: pink;
+    background-color: #e8f5ff;
     opacity: 0.80;
 }
-
 
 </style>

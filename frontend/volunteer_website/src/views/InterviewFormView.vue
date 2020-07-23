@@ -69,7 +69,7 @@
                 <v-container fluid class="my-0 py-0">
                     <v-textarea filled class ="ml-1 mb-5" auto-grow hide-details rows="20" row-height="14" placeholder="Scratchpad - use this space to take notes during the interview.">
                     </v-textarea>
-                    <v-btn block class="ml-1 mt-0 mr-5 mb-0" outlined color='primary'> Save </v-btn>
+                    <v-btn block class="ml-1 mt-0 mr-5 mb-0" outlined color='primary' @click="submit"> Save </v-btn>
                     <v-dialog v-model="dialog" width="500">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn block class="ml-1 mr-5 mt-3" color='primary' v-bind="attrs" v-on="on"> Save and Exit </v-btn>
@@ -99,7 +99,7 @@
                                         </v-row>
                                         <v-row>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="primary" @click="handleBack">
+                                            <v-btn color="primary" @click="saveAndExit">
                                                 save and exit
                                             </v-btn>
                                         </v-row>
@@ -124,6 +124,10 @@
                     <component :is="formComponent" v-bind="formComponentProps"></component>
                 </v-container> 
             </v-col>
+        </v-row>
+        <v-row>
+            <v-spacer></v-spacer>
+            <v-btn @click="handleNext"> {{(selectedIndex  == 2) ? 'submit' : 'next'}} </v-btn>
         </v-row>
     </div>
 </template>
@@ -172,7 +176,7 @@ export default {
         },
         formComponentProps() {  
             return {
-                patient: this.patient
+                patient_id: this.patientID
             }
         },
         callStatuses() {
@@ -198,6 +202,30 @@ export default {
             this.$store.commit('setOpenPID', pid)
             this.$store.dispatch('clearFormData')
             this.$router.push({name: 'PDash'})
+        },
+        handleNext() {
+            if(this.selectedIndex < 2) {
+                this.selectedIndex++
+            } else {
+                this.submit()
+            }
+        },
+        async submit() {
+            let res1 = await this.$store.dispatch('events/load')
+            let res2 = await this.$store.dispatch('patients/update', this.patient)
+            return (res1 && res2)
+        },
+        async saveAndExit() {
+            let curr = this
+            await this.submit()
+                .then(response => {
+                    if(response) {
+                        curr.handleBack()
+                    } else {
+                        console.log('there was an error')
+                    }
+                })
+                .catch(error => console.error(error))
         }
     }
 }

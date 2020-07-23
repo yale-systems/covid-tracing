@@ -18,19 +18,16 @@
             </p>
             <p><i style="color:#616161; font-size:small;"> If not English, please indicate in the "Call Outcome Survey"
             </i></p>
-            <p class="font-weight-medium"> First, to ensure I am talking to the right person, can you please verify your date of birth?
+            <p class="font-weight-medium"> To ensure I am talking to the right person, can you please verify your date of birth?
             </p>
-            <p class="font-weight-medium header"><i style="font-size:small;"> DOB: {{ gettersHelper(patient, 'dob')}}
+            <p class="font-weight-medium header"><i style="font-size:small;"> DOB: {{ gettersHelper(patient, 'dob').format('MMMM Do, YYYY')}}
             </i></p>
-            <p><i style="color:#616161; font-size:small;"> Confirm if DOB matches; if not, ensure that you are talking to the correct person or need to speak to an adult/guardian proxy for a child, someone incapacitated, or still in the hospital.
+            <p><i style="color:#616161; font-size:small;"> Confirm if DOB matches; if not, ensure that you are talking to the correct person or need to speak to an adult/guardian proxy for a child, someone incapacitated, or still in the hospital. If the case has passed away, please note this in the "Call Outcome Survey".
             </i></p>
-            <p class="font-weight-medium"> Great, I understand that you were recently tested for COVID-19. I am calling from the New Haven Health Department to follow-up and to better understand your situation. What have you heard about your COVID-19 test result? (Please select appropriate selection box below to continue script/interview). 
-                <!-- Hello, this is _____ calling in cooperation with Yale Health, may I speak with {{ name }}? 
-                I'm working with Yale Health as a contact tracer in response to coronavirus.
-                Thank you for helping us with the contact tracing project. -->
+            <p class="font-weight-medium"> I understand that you were recently diagnosed with COVID-19. I am calling from the New Haven Health Department to follow-up and to better understand your situation. (Please select appropriate selection box below to continue script/interview). 
             </p>
-            <h1>Add radio buttons here</h1>
-            <p> How are you feeling right now? Are you experiencing or have you experienced symptoms related to your COVID illness?</p>
+            <v-divider></v-divider>
+            <h4 class="header mt-6"> Questionnaire </h4><br>
             <v-row style="align-items:center">
                 <v-col cols="7">
                     <p class="font-weight-medium"> How are you feeling right now? Are you experiencing or have you experienced symptoms related to your COVID illness? <br/>
@@ -50,14 +47,14 @@
                     </p>
                 </v-col>
                 <v-col>
-                    <v-select v-model="symptomaticResult" placeholder="Click to choose an option" :items="symptoms"> </v-select>
+                    <v-select placeholder="Click to choose an option" :items="symptomaticItems" item-value="key" item-text="value" v-model="symptomatic"> </v-select>
                 </v-col>
             </v-row>
             <v-row class="mt-0" style="align-items:center">
-                <v-col v-if="symptomaticResult != ''" cols="6">
+                <v-col v-if="symptomatic != null && symptomatic != undefined" cols="6">
                     <p class="font-weight-medium"> {{ dateMessage}} </p>
                 </v-col>
-                <v-col v-if="symptomaticResult != ''">
+                <v-col v-if="symptomatic != null && symptomatic != undefined">
                     <v-menu
                         ref="menu"
                         v-model="menu"
@@ -70,7 +67,7 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                                 class="mr-4 pb-2"
-                                v-model="date"
+                                v-model="critical_date"
                                 placeholder="Click to choose a date"
                                 prepend-inner-icon="mdi-calendar"
                                 readonly
@@ -78,7 +75,7 @@
                             ></v-text-field>
                         </template>
                         <v-date-picker 
-                            v-model="date" 
+                            v-model="critical_date" 
                             :max="todayDate"
                             no-title 
                             scrollable
@@ -87,27 +84,39 @@
                     </v-menu>                        
                 </v-col>
             </v-row>
-            <h1>Add Are you able to self isolate and then add assitance below</h1>
+            <v-row style="align-items:center;">
+                <v-col>
+                    <p class="font-weight-medium"> Are you able to self-isolate?</p>
+                </v-col>
+                <v-col>
+                    <v-select :items="selfIsoItems" item-text="value" item-value="key" placeholder="Click to choose an option" v-model="self_isolate">
+                    </v-select>
+                </v-col>
+            </v-row>
+            <v-row v-if="self_isolate == 1">
+                <v-col>
+                    <p class="font-weight-medium"> What kind of assistance do you need? </p>
+                </v-col>
+                <v-col>
+                    <v-select 
+                        :items="assistanceItems" 
+                        item-text="value" 
+                        item-value="key"
+                        placeholder="choose all that apply"
+                        multiple
+                        chips
+                        clearable
+                        v-model="assistance">
+                    </v-select>
+                </v-col>
+            </v-row>
             <v-row style="align-items:center">
                 <v-col>
                     <p class="font-weight-medium"> Have you traveled outside CT in the last 14 days before your illness started (onset)?
                     </p>
                 </v-col>
                 <v-col cols="3">
-                    <v-btn  
-                        outlined
-                        color="primary" 
-                        class="mr-4 mb-4"
-                        >
-                        yes
-                    </v-btn>
-                    <v-btn 
-                        outlined
-                        color="primary"
-                        class="mb-4"
-                        >
-                        no
-                    </v-btn>
+                    <TFToggle v-model="travelled"/>
                 </v-col>
             </v-row>
             <v-row style="align-items:center">
@@ -116,27 +125,7 @@
                     </p>
                 </v-col>
                 <v-col cols="5">
-                    <v-btn  
-                        outlined
-                        color="primary" 
-                        class="mr-4 mb-4"
-                        >
-                        yes
-                    </v-btn>
-                    <v-btn 
-                        outlined
-                        color="primary"
-                        class="mr-4 mb-4"
-                        >
-                        no
-                    </v-btn>
-                    <v-btn 
-                        outlined
-                        color="primary"
-                        class="mb-4"
-                        >
-                        Don't have one
-                    </v-btn>
+                    <ThreeToggle v-model="saw_doctor" />
                 </v-col>
             </v-row>
             <v-row style="align-items:center">
@@ -145,20 +134,7 @@
                     </p>
                 </v-col>
                 <v-col cols="3">
-                    <v-btn  
-                        outlined
-                        color="primary" 
-                        class="mr-4 mb-4"
-                        >
-                        yes
-                    </v-btn>
-                    <v-btn 
-                        outlined
-                        color="primary"
-                        class="mb-4"
-                        >
-                        no
-                    </v-btn>
+                    <TFToggle v-model="knows_status" />
                 </v-col>
             </v-row>
             <v-row style="align-items:center">
@@ -167,7 +143,7 @@
                     </p>
                 </v-col>
                 <v-col cols="6">
-                    <v-select placeholder="Click to choose an option"> </v-select>
+                    <v-select placeholder="Click to choose an option" :items="healthcareItems" item-text="value" item-value="key" v-model="insurance"> </v-select>
                 </v-col>
             </v-row>
         </div>
@@ -177,43 +153,171 @@
 <script>
 import moment from 'moment'
 import getters from '@/methods.js'
+import TFToggle from '@/sharedComponents/TFToggle.vue'
+import ThreeToggle from '@/sharedComponents/ThreeToggle.vue'
+import enums from '@/constants/enums.js'
 
 export default {
     name: "PreliminaryDiv",
     props: {
-        patient: {
-            type: Object,
+        patient_id: {
+            type: Number,
             required: true
         }
     },
     mixins: [ getters ],
+    components: {
+        TFToggle, ThreeToggle
+    },
     data: () => {
         return {
-            symptoms: ["Patient is symptomatic", "Patient is not symptomatic"],
+            symptomaticItems: [
+                { 
+                    key: true,
+                    value: "Patient is symptomatic" 
+                },
+                {
+                    key: false,
+                    value: "Patient is not symptomatic"
+                }
+            ],
             symptomaticResult: "",
             menu: false,
-            date: "",
         }
     },
     computed: {
         todayDate() {
-            return moment()
+            return moment().format('YYYY-MM-DD')
         },
         dateMessage() {
-            if (this.symptomaticResult == "Patient is symptomatic") {
+            if (this.patient.symptomatic == 0) {
                 return "When did you first begin experiencing symptoms?"
-            } else if (this.symptomaticResult == "Patient is not symptomatic") {
+            } else {
                 return "When were you diagnosed?"
             }
         },
         volunteer() {
             return this.$store.getters['volunteers/active']
-        }
+        },
+        patient() {
+            return this.$store.getters['patients/id'](this.patient_id)
+        },
+        healthcareItems() {
+            return enums.insurance.asDict
+        },
+        assistanceItems() {
+            return enums.assistance.asDict
+        },
+        selfIsoItems() {
+            return enums.self_isolate.asDict
+        },
+        // v-modeling in vuex store babyyyy
+        symptomatic: {
+            get() {
+                return this.patient.symptomatic == 0 ? true : false
+            },
+            set(newVal) {
+                let value = newVal ? 0 : 2
+                this.patient.symptomatic = value
+                this.updatePatient()
+            }
+        },
+        critical_date: {
+            get() {
+                if (this.symptomatic) {
+                    return this.patient.onset_date ? this.patient.onset_date.format('YYYY-MM-DD') : ''
+                } else if (this.symptomatic == false) {
+                    return this.patient.diagnosis_date ? this.patient.diagnosis_date.format('YYYY-MM-DD') : ''
+                } else {
+                    return ''
+                }
+            },
+            set(newVal) {
+                let date = moment(newVal)
+                if (this.symptomatic) {
+                    this.patient.onset_date = date
+                } else if (this.symptomatic == false) {
+                    this.patient.diagnosis_date = date
+                }
+                this.updatePatient()
+            }
+        },
+        self_isolate: {
+            get() {
+                return this.patient.self_isolate
+            },
+            set(newVal) {
+                this.patient.self_isolate = newVal
+                this.updatePatient()
+            }
+        },
+        travelled: {
+            get() {
+                return this.patient.travelled
+            },
+            set(newVal) {
+                this.patient.travelled = newVal
+                this.updatePatient()
+            }
+        },
+        knows_status: {
+            get() {
+                return this.patient.knows_status
+            },
+            set(newVal) {
+                this.patient.knows_status = newVal
+                this.updatePatient()
+            }
+        },
+        assistance: {
+            get() {
+                return this.patient.assistance
+            },
+            set(newVal) {
+                this.patient.assistance = newVal
+                this.updatePatient()
+            }
+        },
+        saw_doctor: {
+            get() {
+                return this.patient.saw_doctor
+            },
+            set(newVal) {
+                this.patient.saw_doctor = newVal
+                this.updatePatient()
+            }
+        },
+        insurance: {
+            get() {
+                return this.patient.insurance
+            },
+            set(newVal) {
+                this.patient.insurance = newVal
+                this.updatePatient()
+            }
+        },
     },
     watch: {
         date: function() {
             this.$store.commit('setDate', moment(this.date, 'YYYY-MM-DD'))
         },
+    },
+    methods: {
+        updatePatient() {
+            this.$store.commit('patients/updatePatient', this.patient)
+        },
+        makeVuexModel(fieldName) {
+            return {
+                get: function() {
+                    return this.patient[fieldName]
+                },
+                set: function(newVal) {
+                    this.patient[fieldName] = newVal
+                    console.log("i have been called")
+                    this.updatePatient()
+                }
+            }
+        }
     }
 }
 
