@@ -1,12 +1,12 @@
 <template>     
     <v-item-group v-model="patientNum" class="mt-2">
-        <v-row class="pb-0" v-for="(name, i) in patientNames"
+        <v-row class="mt-2 ml-3 pb-0" v-for="(name, i) in patientNames"
             :key="i">
             <v-item v-slot:default="{ active, toggle }"> 
                 <v-sheet @click="toggle()"
                     class="customStepper my-0"
                     :elevation="active ? 4 : 1"
-                    :color="active ? '#e8f5ff' : 'white'">  
+                    :color="active ? '#f0ebf7' : 'white'">  
                         <div class="customStepperText"> {{name}} </div>
                 </v-sheet>
             </v-item>
@@ -60,6 +60,7 @@ export default {
     color: #520078;
     font-weight: 500;
     font-size: large;
+    margin-left: 5px;
 }
 
 .customStepper{

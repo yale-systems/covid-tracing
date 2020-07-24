@@ -61,7 +61,7 @@ const data = {
 			return state.addPatients.map((patient) => {
 				if ((patient.first_name == undefined || patient.first_name == '')
 					 && (patient.last_name == undefined || patient.last_name == '')) {
-					return "new case"
+					return "New Case"
 				}
 				let first = patient.first_name == undefined ? '' : patient.first_name
 				let last = patient.last_name == undefined ? '' : patient.last_name

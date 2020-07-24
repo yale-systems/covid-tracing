@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-row class="mt-2 pl-10">
-            <p class="mt-2 mr-4" style="width:300px;"> {{label}} </p>
+            <p class="mt-2 mr-4" style="width:400px;"> {{label}} </p>
             <v-btn class="mr-2" color="primary" :depressed="val" :outlined="val != true" @click="toggle(true)"> Yes </v-btn>
             <v-btn color="primary" :depressed="val == false" :outlined="val != false" @click="toggle(false)"> No </v-btn>
         </v-row>
