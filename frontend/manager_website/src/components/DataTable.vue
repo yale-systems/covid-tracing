@@ -17,7 +17,7 @@
                     <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
                         add fields 
                     </v-btn>
-                    <v-btn color="primary" to='add' class="mx-2">
+                    <v-btn outlined color="primary" to='add' class="mx-2">
                         Add Cases
                     </v-btn>
                     <v-btn color="primary" to='reassign'>

@@ -113,17 +113,20 @@
 						</v-alert>
 					</v-container>
 					<v-container v-else>
-						<v-alert>
-							Patients successfully assigned.
-						</v-alert>
-						<p v-if="priorityPatients.length > 0">
-							Redirecting you to more patients...
-						</p>
+						<h3 v-if="priorityPatients.length > 0">
+							Patients successfully assigned. Redirecting you to more patients...
+						</h3>
 						<div v-else>
-							<p> There are no other priority patients to assign. </p>
-							<v-btn outlined color="primary" @click="seeAllPatients">
-								Go to all other patients 
-							</v-btn> 
+							<v-row>
+								<v-col cols="7">
+									<h3> Patients successfully assigned. There are no other priority patients to assign. </h3>
+								</v-col><v-spacer></v-spacer>
+								<v-col-auto>
+									<v-btn color="primary" @click="seeAllPatients">
+										Go to all other patients 
+									</v-btn>
+								</v-col-auto>
+							</v-row>
 						</div>
 					</v-container>
 				</v-stepper-content>
