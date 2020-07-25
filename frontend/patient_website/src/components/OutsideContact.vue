@@ -15,7 +15,11 @@
                 <v-select
                     label="Type of Contact"
                     :items="contactTypes"
-                    class="py-0">
+                    item-value="key"
+                    item-text="text"
+                    class="py-0"
+                    v-model="contact_type"
+                    >
                 </v-select>
             </v-col>
             <v-col cols="3" class="pt-6 mr-1">
@@ -50,7 +54,7 @@ export default {
     name: "OutsideContact",
     data () {
         return {
-            contactTypes: ["Minimal", "Close"],
+            contactTypes: [{key: 0, text: "Minimal"}, {key: 1, text: "Close"}],
             dialogForceOpen: {
                 showDialog: false
             }
@@ -78,8 +82,8 @@ export default {
             })
             for (let contact of contacts) {
                 names.push({
-                    id: parseInt(contact.contact_id, 10),
-                    name: `${contact.first_name} ${contact.last_name}`
+                    id: contact.contact_id,
+                    name: this.$store.getters['contacts/fullName'](contact.contact_id)
                 })
             }
             return names
@@ -97,6 +101,23 @@ export default {
             },
             set(newVal) {
                 this.$emit('input', newVal)
+            }
+        },
+        contact_type: {
+            get() {
+                if(this.selectedID && this.selectedID >= 0) {
+                    return this.$store.getters['contacts/id'](this.selectedID).contact_type
+                } else {
+                    return undefined
+                }
+            },
+            set(newVal) {
+                if(this.selectedID) {
+                    let contact = this.$store.getters['contacts/id'](this.selectedID)
+                    contact.contact_type = newVal
+                    this.$store.dispatch('contacts/update', contact)
+                }
+
             }
         }
     },

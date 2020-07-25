@@ -97,7 +97,7 @@ export default {
         deleteContact() {
             let contact = this.$store.getters['contacts/id'](this.contactID)
             contact.household = false
-            this.$store.commit('updateContact', contact)
+            this.$store.dispatch('contacts/update', contact)
         },
     },
 

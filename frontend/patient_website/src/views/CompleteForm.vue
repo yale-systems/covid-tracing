@@ -116,11 +116,7 @@ export default {
             }
         },
     },
-    mounted() {
-        if(this.$store.state.loggedIn && this.date) {
-            this.currentStep = 3
-        }
-    }
+   
 }
 </script>
 

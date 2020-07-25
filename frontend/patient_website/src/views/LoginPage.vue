@@ -83,8 +83,8 @@ export default Vue.extend({
     data () {
         return {
             valid : true,
-            username : 'username1',
-            password : 'password',
+            username : '',
+            password : '',
             usernameRules : [
                 (v) => !/\s/.test(v) || 'Username cannot include spaces',
                 (v) => !!v || 'Username is required'
