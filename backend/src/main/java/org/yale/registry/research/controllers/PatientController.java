@@ -52,12 +52,12 @@ public class PatientController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientDTO> insert(@RequestBody PatientDTO patientDTO){
         PatientDTO insertedPatientDTO = patientService.insert(patientDTO);
-//        patientService.sendCreationEmail(
-//                patientDTO.getName(),
-//                patientDTO.getEmail(),
-//                patientDTO.getUsername(),
-//                patientDTO.getPassword()
-//        );
+        patientService.sendCreationEmail(
+                patientDTO.getFirst_name(),
+                patientDTO.getEmail(),
+                patientDTO.getUsername(),
+                patientDTO.getPassword()
+        );
         return ResponseEntity.ok(insertedPatientDTO);
     }
 

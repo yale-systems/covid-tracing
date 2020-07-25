@@ -62,7 +62,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private Long phone_number;
 
-    private Symptomatic symptomatic;
+    private Boolean symptomatic;
 
     private List<Symptom> symptoms;
 
@@ -117,7 +117,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
                       Date diagnosis_date, Date onset_date, Date last_worked_date,
                       CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
                       Boolean knows_status, Insurance insurance, Long times_called,
-                      Long phone_number, Symptomatic symptomatic, List<Symptom> symptoms,
+                      Long phone_number, Boolean symptomatic, List<Symptom> symptoms,
                       Gender gender, Race race, SelfIsolate self_isolate,
                       List<PreexistingCondition> preexisting_conditions, Employment employment,
                       List<SuspectedExposure> suspected_exposures, Point home_location, Boolean housing_insecure,
@@ -171,7 +171,7 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
                       Language language, Date diagnosis_date, Date onset_date, Date last_worked_date,
                       CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
                       Boolean knows_status, Insurance insurance, Long times_called, Long phone_number,
-                      Symptomatic symptomatic, List<Symptom> symptoms, Gender gender, Race race,
+                      Boolean symptomatic, List<Symptom> symptoms, Gender gender, Race race,
                       SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions,
                       Employment employment, List<SuspectedExposure> suspected_exposures,
                       Point home_location, Boolean housing_insecure, String shelter_name,
@@ -392,11 +392,11 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
         this.phone_number = phone_number;
     }
 
-    public Symptomatic getSymptomatic() {
+    public Boolean getSymptomatic() {
         return symptomatic;
     }
 
-    public void setSymptomatic(Symptomatic symptomatic) {
+    public void setSymptomatic(Boolean symptomatic) {
         this.symptomatic = symptomatic;
     }
 
