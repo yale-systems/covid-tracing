@@ -1,7 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import apiCalls from '@/apiCalls.js'
-import moment from 'moment'
+import apiCalls from '@/apiCalls.js';
+import moment from 'moment';
+import createPersistedState from "vuex-persistedstate";
+import CryptoJS from 'crypto-js';
+import SecureStorage from 'secure-web-storage';
 
 Vue.use(Vuex);
 
@@ -190,8 +193,10 @@ const patients = {
         id: (state) => (patientId) => {
             return state.patients.find(patient => patient.patient_id === patientId)
         },
-        criticalDate: (state, getters, rootState) => {
+        criticalDate(state, getters, rootState) {
+            state.touched
             let patient = state.patients.find(patient => patient.patient_id === rootState.activePatientId)
+            console.log(patient.symptomatic)
             if(patient && patient.symptomatic) {
                 return patient.onset_date
             } else {
@@ -202,11 +207,21 @@ const patients = {
             let startDate = getters.criticalDate.clone()
             return startDate.subtract(2, 'days').format('MMMM Do, YYYY')
         },
+        startDate: (state, getters) => {
+            let startDate = getters.criticalDate.clone()
+            return startDate.subtract(2, 'days').format('YYYY-MM-DD')
+        },
         readableEndDate: (state, getters) => {
             let endDate = getters.criticalDate.clone()
             let today = moment()
             endDate.add(10,'days')
             return (endDate.isAfter(today) ? today.format('MMMM Do, YYYY') : endDate.format('MMMM Do, YYYY'))
+        },
+        endDate: (state, getters) => {
+            let endDate = getters.criticalDate.clone()
+            let today = moment()
+            endDate.add(10,'days')
+            return (endDate.isAfter(today) ? today.format('YYYY-MM-DD') : endDate.format('YYYY-MM-DD'))
         },
         getAllPatients: (state) => {
             return state.patients
@@ -233,6 +248,7 @@ const patients = {
             if (pid >= 0) {
                 state.patients[pid] = data
             }
+            state.touched = !state.touched
         },
         resetState(state) { Object.assign(state, getPatientDefaultState())}
     },
@@ -420,9 +436,9 @@ const volunteers = {
             state.links = value
         },
         updateVolunteer(state, value) {
-            let volId = state.volunteers.findIndex(volunteer => volunteer.contact_id === value.contact_id)
+            let volId = state.volunteers.findIndex(volunteer => volunteer.volunteer_id === value.volunteer_id)
             if(volId >= 0) {
-                state.contacts[volId] = value
+                state.volunteers[volId] = value
             }
             state.touched = !state.touched
         },
@@ -442,7 +458,17 @@ const volunteers = {
         
         // we should def be calling this... but when ????  
         async update({commit, state}, volunteer) {
-            
+            let res = false
+            let link = state.links.update
+            await apiCalls.updateVolunteer(link, volunteer)
+                .then(function(response) {
+                    if(response != {}) {
+                        commit('updateVolunteer', response)
+                        res = true
+                    }
+                })
+                .catch(function(error) { console.error(error) })
+            return res
         },
         resetState({commit}) { commit('resetState') }
     }
@@ -463,8 +489,77 @@ const getRootDefaultState = () => {
     }
 }
 
+const SECRET_KEY = 'cats'
+
+let secureStorage = new SecureStorage(sessionStorage, {
+    hash: function hash(key) {
+        key = CryptoJS.SHA256(key, SECRET_KEY);
+
+        return key.toString();
+    },
+    encrypt: function encrypt(data) {
+        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+
+        data = data.toString();
+
+        return data;
+    },
+    decrypt: function decrypt(data) {
+        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+
+        data = data.toString(CryptoJS.enc.Utf8);
+
+        return data;
+    }
+});
+
 export default new Vuex.Store({
     state: getRootDefaultState(),
+    plugins: [createPersistedState({
+        storage: secureStorage,
+        setState: function(key, state, storage) {
+            return storage.setItem(key, state)
+        },
+        getState: function(key, storage) {
+            let value;
+            try {
+              (value = storage.getItem(key))
+              if(value == undefined) {
+                  return undefined
+              } else {
+                
+                if (value.contacts.contacts) {
+                    value.contacts.contacts = value.contacts.contacts.map((contact) => {
+                        contact.contact_date = moment(contact.contact_date)
+                        contact.update_date = moment(contact.update_date)
+                        return contact
+                    })
+                }
+                if (value.patients.patients) {
+                    value.patients.patients = value.patients.patients.map((patient) => {
+                        patient.diagnosis_date = moment(patient.diagnosis_date)
+                        patient.onset_date = moment(patient.onset_date)
+                        patient.last_worked_date = moment(patient.last_worked_date)
+                        patient.date_of_birth = moment(patient.date_of_birth)
+                        return patient
+                    })
+                }
+                if (value.events.events) {
+                    value.events.events = value.events.events.map((event) => {
+                        event.start_time = moment(event.start_time)
+                        return event
+                    })
+                }
+                console.log(value)
+                return value
+              }
+            } catch (err) {
+                console.log(err)
+            }
+            
+            return undefined;
+          }
+    })],
     getters: {
         activePatientId: (state) => {return state.activePatientId}
     },
@@ -491,7 +586,7 @@ export default new Vuex.Store({
             state.activeVolunteerId = value
         },
         setEnums(state, enums) {
-            state.enums = enums
+            state.enums = Object.assign({}, enums)
         },
         resetState(state) { Object.assign(state, getRootDefaultState()) },
         setOpenPID(state, value) {
@@ -500,6 +595,7 @@ export default new Vuex.Store({
     },
     actions: {
         async volunteerLogin({state, dispatch, commit}, data) {
+            await dispatch('logOut')
             let response = await apiCalls.volunteerCheckLogin(data.credentials)
             if (response == null) { return false }
             commit('logIn')
@@ -527,17 +623,18 @@ export default new Vuex.Store({
             } else {
                 await dispatch('contacts/loadVol')
                 if(state.contacts.contacts.length > 0) {
-                    console.log(state)
                     let enums = await apiCalls.getEnums(state.contacts.links.self + state.contacts.contacts[0].contact_id)
                     commit('setEnums', enums)
                 }
                 return true
             }
         },
-        logOut({commit, dispatch}) {
+        async logOut({commit, dispatch}) {
+            secureStorage.clear()
             dispatch('patients/resetState')
             dispatch('contacts/resetState')
             dispatch('events/resetState')
+            dispatch('volunteers/resetState')
             commit('resetState')
             commit('logOut')
         },

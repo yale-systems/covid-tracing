@@ -50,9 +50,9 @@ export default {
             patient.onset_date = moment(patient.onset_date)
             patient.last_worked_date = moment(patient.last_worked_date)
             if(patient.symptomatic == 0) {
-                patient.symptomatic = 1
+                patient.symptomatic = true
             } else if (patient.symptomatic == 2) {
-                patient.symptomatic = 0
+                patient.symptomatic = false
             }
             // return patient, links
             return {
@@ -85,21 +85,18 @@ export default {
         .then((response) => {
           if(response.data) {
             for(let patient of response.data) {
-              if(patient.diagnosis_date) {
                 patient.diagnosis_date = moment(patient.diagnosis_date)
-              }
-              if(patient.onset_date) {
                 patient.onset_date = moment(patient.onset_date)
-              }
-              if(patient.last_worked_date) {
                 patient.last_worked_date = moment(patient.last_worked_date)
-              }
-              if(patient.date_of_birth) {
                 patient.date_of_birth = moment(patient.date_of_birth)
-              }
-              delete patient._links
-              delete patient.enums
-              res.push(patient)
+                if(patient.symptomatic == 0) {
+                    patient.symptomatic = 1
+                } else if (patient.symptomatic == 2) {
+                    patient.symptomatic = 0
+                }
+                delete patient._links
+                delete patient.enums
+                res.push(patient)
             }
           }
         })
@@ -308,6 +305,20 @@ export default {
         })
         .catch(error => console.error(error))
       return res
+    },
+
+    async updateVolunteer(link, volunteer) {
+        let res = {}
+        await axios.put(link, volunteer)
+            .then(response => {
+                if(response.data) {
+                    res = response.data
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            })
+        return res
     }
 
 };

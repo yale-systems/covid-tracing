@@ -30,7 +30,7 @@
             <v-list two-line class="pt-0 pb-0 mb-0 full-height">
               <v-list-item-group v-model="selectedIndex" class="full">
                 <template class="full" v-for="(item, index) in showItems">
-                  <v-list-item class="size-medium" :key="item.contactID">
+                  <v-list-item class="size-medium" :key="item.contact_id">
                     <!-- name and subtitle -->
                       <v-list-item-content>
                         <v-list-item-title v-text="gettersHelper(item, 'name')"></v-list-item-title>
@@ -79,7 +79,6 @@
 import ContactScript from '@/notifierComponents/ContactScript.vue'
 import Hamburger from "@/sharedComponents/Hamburger.vue"
 import getters from "@/methods.js";
-import constants from '@/constants'
 import cloner from 'lodash'
 
 export default {
@@ -97,7 +96,6 @@ export default {
       searchText: undefined,
       showSearch: false,
       filter: 0, //0 = filter off, 1 = sort ascending, 2 = sort descending
-      callStatuses: constants.callStatuses
     };
   },
   computed: {
@@ -177,8 +175,8 @@ export default {
       return text.search(lowerSearch) > -1
     },
     compareDates(item1, item2) {
-      let date1 = item1.contactDate
-      let date2 = item2.contactDate
+      let date1 = item1.contact_date
+      let date2 = item2.contact_date
       if(this.filter == 0) {
         if(date1.isAfter(date2)) {
           return 1

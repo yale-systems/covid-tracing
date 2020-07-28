@@ -75,7 +75,7 @@
                             <v-btn block class="ml-1 mr-5 mt-3" color='primary' v-bind="attrs" v-on="on"> Save and Exit </v-btn>
                         </template>
                         <v-card>
-                            <v-container fluid>
+                            <v-container fluid v-if="!showError">
                                 <v-card-title primary-title>
                                     Were you able to reach {{gettersHelper(patient, 'name')}}?
                                 </v-card-title>
@@ -100,7 +100,7 @@
                                         <v-row>
                                             <v-spacer></v-spacer>
                                             <v-btn color="primary" @click="saveAndExit">
-                                                save and exit
+                                               {{ showProgress ? 'saving...' : 'save and exit' }}
                                             </v-btn>
                                         </v-row>
                                     </v-container>             
@@ -114,6 +114,10 @@
                                     I accept
                                     </v-btn>
                                 </v-card-actions> -->
+                            </v-container>
+                            <v-container v-else fluid>
+                                <v-icon color="warning"> mdi-warning </v-icon>
+                                <h2> Sorry, we were unable to submit your data. Please try again. </h2>
                             </v-container>
                         </v-card>
                     </v-dialog>
@@ -135,7 +139,6 @@ import PreliminaryDiv from "@/interviewerComponents/PreliminaryDiv.vue"
 import HouseholdContactDiv from "@/interviewerComponents/HouseholdContactDiv.vue"
 import EventsDiv from "@/interviewerComponents/EventsDiv.vue"
 import getters from "@/methods.js"
-import constants from '@/constants.js'
 
 export default {
     name: "InterviewFormView",
@@ -144,6 +147,8 @@ export default {
         return {
             selectedIndex: 0,
             dialog: false,
+            showProgress: false,
+            showError: false
         }
     },
     components: {
@@ -153,6 +158,9 @@ export default {
         EventsDiv
     },
     computed: {
+        callStatuses() {
+            return this.$store.state.enums.CaseCallStatus
+        },
         patientID() {
             return parseInt(this.$route.params.id)
         },
@@ -194,9 +202,6 @@ export default {
                 patient_id: this.patientID
             }
         },
-        callStatuses() {
-            return constants.callStatuses;
-        }
     },
     watch: {
         selectedIndex(newVal, oldVal) {
@@ -206,6 +211,10 @@ export default {
                 })
             }
         },
+        showError() {
+            let curr = this
+            setTimeout(() => curr.showError = false, 1500)
+        }
     },
     mounted() {
         // when the form is loaded, we need to load in the events and contacts associated with that patient
@@ -231,16 +240,22 @@ export default {
             return (res1 && res2)
         },
         async saveAndExit() {
+            this.showProgress = true
             let curr = this
             this.submit()
                 .then(response => {
                     if(response) {
                         curr.handleBack()
                     } else {
-                        console.log('there was an error')
+                        curr.showProgress = false
+                        curr.showError = true
                     }
                 })
-                .catch(error => console.error(error))
+                .catch(error => {
+                    console.error(error)
+                    curr.showProgress = false
+                    curr.showError = true
+                })
         }
     }
 }

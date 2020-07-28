@@ -11,14 +11,9 @@
         </v-app-bar>
         <v-container>
         <v-row class="mt-5">
-            <h1> Patients to Contact</h1>
+            <h1> Cases to Interview</h1>
         </v-row>
-        <v-row class="mb-5">
-            <v-spacer></v-spacer>
-            <v-btn color="primary" outlined>
-                get more patients
-            </v-btn>
-        </v-row>
+        
         <v-row>
             <PatientTable />
         </v-row>

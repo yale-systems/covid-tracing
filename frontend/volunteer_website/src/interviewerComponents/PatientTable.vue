@@ -34,7 +34,7 @@
             <v-divider></v-divider>
         </v-container>
 
-        <PatientRow v-for="patient in patients"
+        <PatientRow v-for="patient in showPatients"
             :key="gettersHelper(patient, 'patient_id')"
             :patient="patient"></PatientRow>
     </v-card>
@@ -42,7 +42,6 @@
 
 <script>
 import PatientRow from '@/interviewerComponents/PatientRow'
-import apiCalls from '@/apiCalls.js'
 import getters from '@/methods.js'
 
 export default {
@@ -60,15 +59,23 @@ export default {
             phoneToggle: false,
         }
     },
+    mounted() {
+        this.showPatients = this.$store.getters['patients/getAllPatients']
+    },
     computed: {
         patients() {
-            console.log(this.$store.getters['patients/getAllPatients'])
             return this.$store.getters['patients/getAllPatients']
+        }
+    },
+    watch: {
+        patients(newVal) {
+            this.showPatients = newVal
         }
     },
     methods: {
         filter(type) {
             if (type == 'name') {
+                console.log("called!")
                 this.showPatients = this.showPatients.sort(this.compareNames)
             } else if (type == 'date') {
                 this.showPatients = this.showPatients.sort(this.compareDates)

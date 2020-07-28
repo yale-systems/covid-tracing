@@ -22,18 +22,6 @@
             so just do your best to select the date you think is accurate. For each event, you may supply a location, contacts information,
             or both if you feel comfortable sharing that information. 
         </p>
-        <p>
-            If you would like to speak to a volunteer to assist you in filling out the form, you can request an interview by clicking
-            <v-dialog
-                    v-model="dialog"
-                    width="700px"
-                >
-                    <template v-slot:activator="{ on }">
-                        <a v-on="on" class="align-center" style="text-decoration: underline;"> here</a>
-                    </template>
-                    <InterviewRequestCard v-on:exitDialog="dialog=false"> </InterviewRequestCard>
-            </v-dialog>. 
-        </p>
         <InterviewEvent 
             v-for="(event, i) in events"
             :key="event.event_id"
@@ -66,20 +54,7 @@
                     </p>
                 </v-col>
                 <v-col cols="3">
-                    <v-btn  
-                        outlined
-                        color="primary" 
-                        class="mr-4 mb-4"
-                        >
-                        yes
-                    </v-btn>
-                    <v-btn 
-                        outlined
-                        color="primary"
-                        class="mb-4"
-                        >
-                        no
-                    </v-btn>
+                    <TFToggle v-model="referral" />
                 </v-col>
             </v-row>
         <p class="font-weight-medium">
@@ -103,15 +78,15 @@
 
 <script>
 import InterviewEvent from '@/interviewerComponents/InterviewEvent.vue'
-import InterviewRequestCard from '@/interviewerComponents/InterviewRequestCard.vue'
 import ContactCard from '@/interviewerComponents/ContactCard.vue'
 import VueScrollTo from 'vue-scrollto'
+import TFToggle from '@/sharedComponents/TFToggle.vue'
 
 export default {
     name: "EventsDiv",
     components: {
         InterviewEvent,
-        InterviewRequestCard,
+        TFToggle,
         ContactCard
     },
     data () {
@@ -135,6 +110,16 @@ export default {
         },
         events() {
             return this.$store.getters['events/current']
+        },
+        referral: {
+            get() {
+                return this.$store.getters['patients/activePatient'].referral
+            },
+            set(newVal) {
+                let obj = this.$store.getters['patients/activePatient']
+                obj.referral = newVal
+                this.$store.commit('patients/updatePatient', obj)
+            }
         }
     },
     methods: {

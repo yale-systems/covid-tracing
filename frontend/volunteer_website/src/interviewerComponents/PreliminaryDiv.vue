@@ -31,19 +31,6 @@
             <v-row style="align-items:center">
                 <v-col cols="7">
                     <p class="font-weight-medium"> How are you feeling right now? Are you experiencing or have you experienced symptoms related to your COVID illness? <br/>
-                        <v-tooltip 
-                            bottom
-                            max-width="240px"
-                            transition="fade-transition">
-                            <template v-slot:activator="{ on }">
-                            <small 
-                                v-on="on"> 
-                                <a> I don't know what this means </a> 
-                                <v-icon small class="pb-1 pointerOnHover">mdi-help-circle-outline</v-icon>
-                            </small> 
-                            </template>
-                            <span>Select "Patient is symptomatic" if they had any COVID-19 symptoms (e.g shortness of breath, cough, or fever). If they feel healthy but tested positive for COVID-19, select "Patient is not symptomatic"</span>
-                        </v-tooltip>
                     </p>
                 </v-col>
                 <v-col>
@@ -155,7 +142,6 @@ import moment from 'moment'
 import getters from '@/methods.js'
 import TFToggle from '@/sharedComponents/TFToggle.vue'
 import ThreeToggle from '@/sharedComponents/ThreeToggle.vue'
-import enums from '@/constants/enums.js'
 
 export default {
     name: "PreliminaryDiv",
@@ -173,11 +159,11 @@ export default {
         return {
             symptomaticItems: [
                 { 
-                    key: true,
+                    key: 1,
                     value: "Patient is symptomatic" 
                 },
                 {
-                    key: false,
+                    key: 0,
                     value: "Patient is not symptomatic"
                 }
             ],
@@ -190,7 +176,7 @@ export default {
             return moment().format('YYYY-MM-DD')
         },
         dateMessage() {
-            if (this.patient.symptomatic == 0) {
+            if (this.patient.symptomatic == 1) {
                 return "When did you first begin experiencing symptoms?"
             } else {
                 return "When were you diagnosed?"
@@ -203,22 +189,21 @@ export default {
             return this.$store.getters['patients/id'](this.patient_id)
         },
         healthcareItems() {
-            return enums.insurance.asDict
+            return this.$store.state.enums.Insurance
         },
         assistanceItems() {
-            return enums.assistance.asDict
+            return this.$store.state.enums.Assistance
         },
         selfIsoItems() {
-            return enums.self_isolate.asDict
+            return this.$store.state.enums.SelfIsolate
         },
         // v-modeling in vuex store babyyyy
         symptomatic: {
             get() {
-                return this.patient.symptomatic == 0 ? true : false
+                return this.patient.symptomatic
             },
             set(newVal) {
-                let value = newVal ? 0 : 2
-                this.patient.symptomatic = value
+                this.patient.symptomatic = newVal
                 this.updatePatient()
             }
         },

@@ -80,10 +80,10 @@
             <h4> Voicemail </h4>
         </v-row>
         <v-row>
-            <p> Hello. This is {{gettersHelper(user, 'name')}} working in cooperation with {{user.department}}.
+            <p> Hello. This is {{gettersHelper(user, 'name')}} working in cooperation with Yale Health.
                 I am trying to reach {{gettersHelper(value, 'first_name')}}. There is an important health matter 
                 that I need to discuss with you and would appreciate if you can return this call 
-                at your earliest convenience.  I may be reached at [your phone number].
+                at your earliest convenience.  I may be reached at ______________.
             </p>
         </v-row>
         <v-row class="mb-4 mt-5">
@@ -91,15 +91,14 @@
         </v-row>
         <v-row>
             <p> Hello.  My name is {{gettersHelper(user, 'name')}}.  I am calling from Yale School of Public Health.
-            We are working with {{user.department}} on coronavirus response activities.
             May I speak with {{gettersHelper(value, 'first_name')}}?
             </p>
             <p> I am calling to let you know that you have been identified as someone who was exposed 
                 to a person diagnosed with COVID-19, also called coronavirus.  This exposure occurred 
-                {{exposedAgo}} at [nature of exposure].
+                {{exposedAgo}}.
             </p>
         </v-row>
-        <v-row> 
+        <!-- <v-row> 
             <v-col>
                 Have you been tested for COVID-19?
             </v-col>
@@ -114,6 +113,20 @@
             </v-col>
             <v-col cols="4" class="pt-0 input-size">
                 <TFToggle v-model="hasSymptoms"/>
+            </v-col>
+        </v-row> -->
+        <v-row>
+            <v-col>
+                How are you feeling? Are you experiencing any symptoms such as a fever, cough, or shortness of breath? Have you been tested?
+            </v-col>
+            <v-col>
+                <v-select
+                    v-model="symptomatic"
+                    :items="symptomaticStatuses"
+                    item-value="key"
+                    item-text="value"
+                >
+                </v-select>
             </v-col>
         </v-row>
         <v-row v-if="hasSymptoms" style="align-items:center;" class="my-0 py-0">
@@ -133,7 +146,7 @@
                 </v-select>
             </v-col>
         </v-row>
-        <v-row v-if="gettersHelper(value, 'symptomatic')">
+        <v-row v-if="hasSymptoms">
             <p> Please remain at home for at least the next 14 days. Please avoid contact with 
                 others in your home, and if anyone is taking care of you, they should also remain 
                 home for 14 days after you recover. This means that you should not go to work, school, 
@@ -144,8 +157,8 @@
                 going there.
             </p>
         </v-row>
-        <v-row v-if="!gettersHelper(value, 'symptomatic')">
-            <p> Due to your exposure, you should stay at home until 14 days after your last exposure [end date].
+        <v-row v-if="!hasSymptoms">
+            <p> Due to your exposure, you should stay at home until 14 days after your last exposure on {{value.contact_date.format('MMMM Do YYYY')}}.
                 This means that you should not go to work, school, or any other public or private settings in order 
                 to help protect those around you.
             </p>
@@ -182,12 +195,12 @@
                 </v-select>
             </v-col>
         </v-row>
-        <v-row v-if="!gettersHelper(value, 'symptomatic') && gettersHelper(value, 'healthcare_worker')">
+        <v-row v-if="hasSymptoms && gettersHelper(value, 'healthcare_worker')">
             <p> Please call your employer for additional guidance; they may have special instructions or recommendations 
                 for you that you should follow. You can let them know about this phone call and then follow their guidance.
             </p>
         </v-row>
-        <v-row v-if="!gettersHelper(value, 'symptomatic')">
+        <v-row v-if="!hasSymptoms">
             <p> Please monitor yourself for symptoms and take your temperature twice a day.  If you develop fever, cough, 
                 or shortness of breath, these may be signs of COVID-19. 
                 If you do become sick with these symptoms, please stay home for at least the next 14 days.  
@@ -209,7 +222,7 @@
             <p> <i>If you feel comfortable answering questions based on the FAQ please do so.  If not, please take down 
                 the contacts name, number, and questions and send this information to YSPH.covid-contact@yale.edu for response. 
                 In the meantime, you can tell the contact:</i></p>
-            <p> I do not have the answer to your question right now. For now, we are asking you stay home for {{endDate}}. 
+            <p> I do not have the answer to your question right now. {{endDate ? `For now, we are asking you to stay home ${endDate}.` : 'Since your last date of contact was more than 14 days ago, you do not need to self-isolate, but please continue to take safety precautions.'}} 
                 I will find the answer to your question(s) and call you back.
             </p>
         </v-row>
@@ -217,7 +230,7 @@
             <h4> Notes </h4>
         </v-row>
         <v-row>
-            <v-textarea filled rows="2" counter :rules="rules" v-model="value.notes"></v-textarea>
+            <v-textarea filled rows="2" counter :rules="rules" v-model="notes"></v-textarea>
         </v-row>
         <v-row style="align-row">
             <v-col>
@@ -271,6 +284,7 @@
         </v-row>
         <v-row class="mt-2">
             <v-spacer> </v-spacer>
+            <p class="mr-4 pt-2"> Last saved {{value.update_date.format('MMMM Do YYYY, h:mm:ss a')}} </p>
             <v-btn @click="handleSave" color="secondary">
                 Save Contact Information
             </v-btn>
@@ -280,18 +294,15 @@
 
 <script>
 import getters from '@/methods.js'
-import cloner from 'lodash'
-import constants from '@/constants.js'
 import moment from 'moment'
-import enums from '@/constants/enums.js'
-import TFToggle from '@/sharedComponents/TFToggle.vue'
-import ThreeToggle from '@/sharedComponents/ThreeToggle.vue'
+// import TFToggle from '@/sharedComponents/TFToggle.vue'
+// import ThreeToggle from '@/sharedComponents/ThreeToggle.vue'
 
 export default {
     name: "ContactScript",
-    components: {
-        TFToggle, ThreeToggle
-    },
+    // components: {
+    //     TFToggle, ThreeToggle
+    // },
     props: {
         value: {
             Object,
@@ -305,45 +316,60 @@ export default {
             tempStatus: null,
             rules: [v => v.length <= 400 || 'Max 400 characters'],
             tested: undefined,
-            hasSymptoms: undefined
         }
     },
     computed: {
         updateAgo () {
-            return this.value.update_date.fromNow()
+            let date = null
+            if(typeof this.value.update_date === 'string' || this.value.update_date instanceof String) {
+                date = moment(this.value.update_date)
+            } else {
+                date = this.value.update_date.clone()
+            }
+            return date.fromNow()
         },
         exposedAgo() {
-            return this.value.contact_date.fromNow()
+            let date = null
+            if(typeof this.value.contact_date === 'string' || this.value.contact_date instanceof String) {
+                date = moment(this.value.contact_date)
+            } else {
+                date = this.value.contact_date.clone()
+            }
+            return date.fromNow()
         },
         //this doesn't do the right thing at ALL lol 
         endDate() {
-            var endDate = cloner.cloneDeep(this.value.contact_date)
+            let endDate = null
+            if(typeof this.value.contact_date === 'string' || this.value.contact_date instanceof String) {
+                endDate = moment(this.value.contact_date)
+            } else {
+                endDate = this.value.contact_date.clone()
+            }
             endDate = endDate.add(14, 'days')
+            console.log(endDate, moment())
             if (endDate.isAfter(moment())) {
-                return "for " + endDate.toNow(true)
+                return "for" + endDate.toNow(true)
             } else {
                 return ""
             }
         },
         symptomList() {
-            return enums.symptoms.asDict
+            return this.$store.state.enums.Symptoms
         },
         selfIsoStatuses() {
-            return enums.self_isolate.asDict
+            return this.$store.state.enums.SelfIsolate
         },
         unNotifiedStatuses() {
-            let thing = enums.contact_call_status.asDict.slice(0, 5)
-            console.log(thing)
-            return thing
+            return this.$store.state.enums.ContactCallStatus.filter((el) => el.key >= 0 && el.key < 5)
         },
         notifiedStatuses() {
-            return enums.contact_call_status.asDict.slice(5, 8)
+            return this.$store.state.enums.ContactCallStatus.filter((el) => el.key >= 5)
         },
         assistanceStatuses() {
-            return enums.assistance.asDict
+            return this.$store.state.enums.Assistance
         }, 
         symptomaticStatuses() {
-            return enums.symptomatic
+            return this.$store.state.enums.Symptomatic
         },
         user() {
             return this.$store.getters['volunteers/active']
@@ -354,12 +380,23 @@ export default {
         // vuex model computed properties
         symptomatic: {
             get() {
-                return this.value.symptomatic == 0 ? true : false
+                return this.contact.symptomatic
+            },
+            set(newVal) {
+                this.contact.symptomatic = newVal
+                this.updateContact()
+            }
+        },
+        hasSymptoms() {
+            if (this.symptomatic == 0 || this.symptomatic == 1) {
+                return true
+            } else {
+                return false
             }
         },
         symptoms: {
             get() {
-                return this.value.symptoms 
+                return this.contact.symptoms 
             },
             set(newVal) {
                 this.contact.symptoms = newVal
@@ -368,7 +405,7 @@ export default {
         },
         self_isolate: {
             get() {
-                return this.value.self_isolate 
+                return this.contact.self_isolate 
             },
             set(newVal) {
                 this.contact.self_isolate = newVal
@@ -377,19 +414,28 @@ export default {
         },
         assistance: {
             get() {
-                return this.value.assistance 
+                return this.contact.assistance 
             },
             set(newVal) {
-                this.contact.assitance = newVal
+                this.contact.assistance = newVal
                 this.updateContact()
             }
         },
         contact_call_status: {
             get() {
-                return this.value.contact_call_status 
+                return this.contact.contact_call_status 
             },
             set(newVal) {
                 this.contact.contact_call_status = newVal
+                this.updateContact()
+            }
+        },
+        notes: {
+            get() {
+                return this.contact.notes 
+            },
+            set(newVal) {
+                this.contact.notes = newVal
                 this.updateContact()
             }
         },
@@ -397,7 +443,6 @@ export default {
     watch: {
         value() {
             this.tempStatus = null
-
         }
     },
     methods: {

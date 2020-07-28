@@ -216,20 +216,10 @@ export default {
             }
         },
         endDate() {
-            let date = this.$store.getters['patients/criticalDate']
-            if(date == null || date == undefined) {
-                return undefined
-            } else {
-                return date.clone().add(10, 'days').format('YYYY-MM-DD')
-            }
+            return this.$store.getters['patients/endDate']
         },
         startDate() {
-            let date = this.$store.getters['patients/criticalDate']
-            if(date == null || date == undefined) {
-                return undefined
-            } else {
-                return date.clone().subtract(2, 'days').format('YYYY-MM-DD')
-            }
+            return this.$store.getters['patients/startDate']
         },
         title() {
             if (this.household && this.id == -1) {

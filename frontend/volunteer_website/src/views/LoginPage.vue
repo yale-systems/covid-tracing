@@ -51,7 +51,9 @@
                                 label="Password"
                                 :rules="passwordRules"
                                 required
-                                password
+                                :type="showPassword ? 'text' : 'password'"
+                                :append-icon="showPassword ? 'mdi-eye': 'mdi-eye-off'"
+                                @click:append="showPassword = !showPassword"
                             ></v-text-field>
 
                             <v-alert
@@ -73,7 +75,7 @@
                             Back
                             </v-btn>
                             <v-btn
-                                :disabled="!valid"
+                                :disabled="!valid || loggingIn"
                                 color="primary"
                                 @click="handleSubmit"
                             >
@@ -81,11 +83,13 @@
                             </v-btn>
                             <v-btn
                                 @click="handleDemo"
+                                :disabled="loggingIn"
                                 
                                 >
                                 demo login
                             </v-btn>
-                        </v-card-actions>         
+                        </v-card-actions> 
+                        <v-progress-linear v-if="loggingIn" indeterminate color="primary"/>       
                 </v-stepper-content>
     </v-stepper-items>
     </v-stepper> 
@@ -112,7 +116,8 @@ export default {
             showPassword: false,
             showAlert: false,
             cardProgress: 1,
-            userType: ''
+            userType: '',
+            loggingIn: false
         }
     },
     methods: {
@@ -120,6 +125,7 @@ export default {
             // if the input is valid
             let validate = this.$refs.form.validate()
             if (validate) {
+                this.loggingIn = true
                 // make call to API , and if that checks out, send to other page
                 let credentials = {
                     username: this.username,

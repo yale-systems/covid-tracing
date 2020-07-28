@@ -21,7 +21,7 @@
                             </v-row>
                         </v-col>
                         <v-col cols="2">
-                            {{gettersHelper(patient, 'onset_date')}}
+                            {{gettersHelper(patient, 'diagnosis_date').format('MMMM Do, YYYY')}}
                         </v-col>
                         <v-col cols="3">
                             {{gettersHelper(patient, 'case_call_status')}}
@@ -41,16 +41,35 @@
                 </v-expansion-panel-header>
                 <v-expansion-panel-content >
                     <v-row>
-                        <p class="pa-0 ma-0"> Notes: </p>
-                    </v-row>
-                    <v-row>
-                        <v-textarea rows="2" auto-grow class="mt-0 pt-0"></v-textarea>
-                    </v-row>
-                    <v-row>
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="handleSave">
-                            save
-                        </v-btn>
+                    <v-col>
+                        <v-row>
+                            <v-icon>mdi-account-outline</v-icon>{{ gettersHelper(patient, 'age') }} {{ gettersHelper(patient, 'gender') }}
+                        </v-row>
+                        <v-row>
+                            <v-icon>mdi-phone-outline</v-icon>speaks {{ gettersHelper(patient, 'language') }}
+                        </v-row>
+                        <v-row>
+                            <v-icon>mdi-virus-outline</v-icon> {{ gettersHelper(patient, 'symptomatic') }}
+                        </v-row>
+                    </v-col>
+                    <v-col>
+                        <v-row>
+                            <p> Status </p>
+                            <v-select :items="statuses" item-text="value" item-value="key"> </v-select>
+                        </v-row>
+                        <v-row>
+                            <p class="pa-0 ma-0"> Notes: </p>
+                        </v-row>
+                        <v-row>
+                            <v-textarea rows="2" auto-grow class="mt-0 pt-0" v-model="notes"></v-textarea>
+                        </v-row>
+                        <v-row>
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="handleSave">
+                                {{ saveMessage }}
+                            </v-btn>
+                        </v-row>
+                    </v-col>
                     </v-row>
                 </v-expansion-panel-content>
             </v-expansion-panel>
@@ -61,7 +80,6 @@
 
 <script>
 import getter from '@/methods.js'
-import constants from '@/constants.js'
 
 export default {
     name: 'PatientRow',
@@ -77,11 +95,32 @@ export default {
             panel: undefined,
             readonly: true,
             panelMsg: 'show details',
+            saveMessage: 'save'
         }
     },
     computed: {
-        callStatuses() {
-            return constants.callStatuses;
+        statuses() {
+            return this.$store.state.enums.CaseCallStatus
+        },
+        notes: {
+            get() {
+                return this.patient.notes
+            },
+            set(newVal) {
+                let newPat = this.patient
+                newPat.notes = newVal
+                this.$store.commit('patients/updatePatient', newPat)
+            }
+        },
+        case_call_status: {
+            get() {
+                return this.patient.case_call_status
+            },
+            set(newVal) {
+                let newPat = this.patient
+                newPat.case_call_status = newVal
+                this.$store.commit('patients/updatePatient', newPat)
+            }
         }
     },
     methods: {
@@ -106,8 +145,14 @@ export default {
             let pid = this.gettersHelper(this.patient, 'patient_id')
             this.$router.push({path: `/form/${pid}`})
         },
-        handleSave() {
+        async handleSave() {
             // todo: update vuex, push changes to backend
+            this.saveMessage = 'saving...'
+            let curr = this
+            await this.$store.dispatch('patients/update', this.patient)
+                .then(() => {
+                    curr.saveMessage = 'save'
+                })
         }
     },
     mounted() {
