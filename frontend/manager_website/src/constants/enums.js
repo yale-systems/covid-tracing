@@ -14,13 +14,13 @@ const contact_call_status = makeEnum([
 ])
 
 const relationship = makeEnum([
-        "parent",
-        "grandparent",
-        "child",
-        "friend",
-        "work colleague",
-        "other",
-        "don't want to say"
+        "Parent",
+        "Grandparent",
+        "Child",
+        "Friend",
+        "Work Colleague",
+        "Other",
+        "Don't want to say"
     ]);
 
 const language = makeEnum([
@@ -32,24 +32,24 @@ const language = makeEnum([
 
 
 const symptomatic = makeEnum([
-        "tested positive for COVID-19",
-        "symptomatic but hasn't been tested yet",
-        "no symptoms",
-        "don't know"
+        "Tested positive for COVID-19",
+        "Symptomatic but hasn't been tested yet",
+        "No symptoms",
+        "Don't know"
     ]);
 
 const symptoms = makeEnum([
-        "mild fatigue",
-        "low-grade fever",
-        "cough", 
-        "chills", 
-        "runny nose", 
-        "nasal congestion", 
-        "loss of taste and/or smell", 
-        "headache", 
-        "muscle and joint pain", 
-        "tight feeling in chest", 
-        "trouble breathing"
+        "Mild fatigue",
+        "Low-grade fever",
+        "Cough", 
+        "Chills", 
+        "Runny nose", 
+        "Nasal congestion", 
+        "Loss of taste and/or smell", 
+        "Headache", 
+        "Muscle and joint pain", 
+        "Tight feeling in chest", 
+        "Trouble breathing"
     ]);
 
 const self_isolate = makeEnum([
@@ -98,10 +98,10 @@ const preexisting_conditions = makeEnum([
     ]);
 
 const gender = makeEnum([
-        "female",
-        "male", 
-        "other", 
-        "prefer not to disclose"
+        "Female",
+        "Male", 
+        "Other", 
+        "Prefer not to disclose"
     ]);
 
 const race = makeEnum([

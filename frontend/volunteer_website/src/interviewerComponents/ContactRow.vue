@@ -3,7 +3,7 @@
         <td> {{ contactInfo.name }} </td>
 
     
-        <td v-if="contactInfo.date != undefined"> {{ contactInfo.date }} </td>
+        <td v-if="showDate == true"> {{ contactInfo.date }} </td>
         <td> {{ contactInfo.phone }} </td>
         <td> {{ contactInfo.email }} </td>      
     
@@ -27,13 +27,19 @@
 </template>
 
 <script>
+import getters from '@/methods.js'
+
 export default {
     name: "ContactRow",
-    
+    mixins: [getters],
     props: {
         contactID: {
             Number,
             required: true
+        },
+        showDate: {
+            Boolean,
+            default: true
         }
     },
     data: () => {
@@ -46,13 +52,12 @@ export default {
     },
     computed: {
         contactInfo() {
-            this.$store.state.fuckThis;
-            let contact = this.$store.state.contacts[this.contactID]
+            let contact = this.$store.getters['contacts/id'](this.contactID)
             return { 
-                name: this.$store.getters.fullName(this.contactID),
-                phone: contact.phone === undefined ? "missing phone number" : contact.phone,
-                date: contact.date,
-                email: contact.email === undefined ? "missing email" : contact.email
+                name: this.gettersHelper(contact, 'name'),
+                phone: (contact.phone_number == undefined || contact.phone_number == null || contact.phone_number == '') ? "missing phone number" : contact.phone_number,
+                date: (contact.contact_date == undefined || contact.contact_date == null || contact.contact_date == '') ? "missing date" : contact.contact_date.format('MMMM Do, YYYY'),
+                email: (contact.email == undefined || contact.email == null || contact.email == '') ? "missing email" : contact.email
             }
         },
     },
@@ -75,9 +80,8 @@ td {
 }
 
 tr:hover {
-    background-color: pink;
+    background-color: #e8f5ff;
     opacity: 0.80;
 }
-
 
 </style>

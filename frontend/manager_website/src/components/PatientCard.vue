@@ -110,7 +110,6 @@
                         </v-row>
                 </v-col>
             </v-row>
-            
         </v-container>
     </v-sheet>
 </template>
@@ -136,7 +135,7 @@ export default {
             if(vol_id == null) {
                 return ''
             } else {
-                let vol = this.$store.state.data.volunteers[vol_id]
+                let vol = this.$store.getters['volunteers/id'](vol_id)
                 return this.gettersHelper(vol, 'name')
             }
         }

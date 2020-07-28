@@ -34,22 +34,22 @@
             <v-divider></v-divider>
         </v-container>
 
-        <PatientRow v-for="patient in patients"
-            :key="getPatientID(patient)"
+        <PatientRow v-for="patient in showPatients"
+            :key="gettersHelper(patient, 'patient_id')"
             :patient="patient"></PatientRow>
     </v-card>
 </template>
 
 <script>
 import PatientRow from '@/interviewerComponents/PatientRow'
-import apiCalls from '@/apiCalls.js'
-import patientGetters from '@/patientGetters.js'
+import getters from '@/methods.js'
 
 export default {
     name: 'PatientTable',
     components: {
         PatientRow
     },
+    mixins: [getters],
     data: () => {
         return {
             showPatients: [],
@@ -59,23 +59,23 @@ export default {
             phoneToggle: false,
         }
     },
+    mounted() {
+        this.showPatients = this.$store.getters['patients/getAllPatients']
+    },
     computed: {
         patients() {
-            return this.$store.state.patients
+            return this.$store.getters['patients/getAllPatients']
         }
     },
-    async mounted() {
-        await this.$store.dispatch('loadPatients')
-        this.showPatients = this.patients
+    watch: {
+        patients(newVal) {
+            this.showPatients = newVal
+        }
     },
     methods: {
-        getPatientID: patientGetters.getPatientID,
-        getLastName: patientGetters.getLastName,
-        getDate: patientGetters.getDate,
-        getProgressNum: patientGetters.getProgressNum,
-        getPhoneNum: patientGetters.getPhoneNum,
         filter(type) {
             if (type == 'name') {
+                console.log("called!")
                 this.showPatients = this.showPatients.sort(this.compareNames)
             } else if (type == 'date') {
                 this.showPatients = this.showPatients.sort(this.compareDates)
@@ -87,13 +87,13 @@ export default {
         },
         compareNames(pat1, pat2) {
             if(this.nameToggle) {
-                if(this.getLastName(pat1) < this.getLastName(pat2)) {
+                if(this.gettersHelper(pat1, 'last_name') < this.gettersHelper(pat2, 'last_name')) {
                     return 1
                 } else {
                     return -1
                 }
             } else {
-                if(this.getLastName(pat1) < this.getLastName(pat2)) {
+                if(this.gettersHelper(pat1, 'last_name') < this.gettersHelper(pat2, 'last_name')) {
                     return -1
                 } else {
                     return 1
@@ -101,8 +101,8 @@ export default {
             }
         },
         compareDates(pat1, pat2) {
-            let date1 = this.getDate(pat1)
-            let date2 = this.getDate(pat2)
+            let date1 = this.gettersHelper(pat1, 'diagnosis_date')
+            let date2 = this.gettersHelper(pat2, 'diagnosis_date')
             if(this.dateToggle) {
                 if(date1.isAfter(date2)) {
                 return 1
@@ -123,16 +123,16 @@ export default {
         },
         compareStatuses(pat1, pat2) {
             if(this.statusToggle) {
-                return (this.getProgressNum(pat1) - this.getProgressNum(pat2))
+                return (this.gettersHelper(pat1, 'progress') - this.gettersHelper(pat2, 'progress'))
             } else {
-                return (this.getProgressNum(pat2) - this.getProgressNum(pat1))
+                return (this.gettersHelper(pat2, 'progress') - this.gettersHelper(pat1, 'progress'))
             }
         }, 
         comparePhones(pat1, pat2) {
             if(this.phoneToggle) {
-                return (this.getPhoneNum(pat1) - this.getPhoneNum(pat2))
+                return (this.gettersHelper(pat1, 'phone') - this.gettersHelper(pat2, 'phone'))
             } else {
-                return (this.getPhoneNum(pat2) - this.getPhoneNum(pat1))
+                return (this.gettersHelper(pat2, 'phone') - this.gettersHelper(pat1, 'phone'))
             }
         }
     }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app-bar flat color="#e8f5ff" class="sticky shadow">
-            <v-row class="d-flex" align="center" justify="left">
+            <v-row class="d-flex" align="center">
                 <v-col cols="4"> 
                     <b class="large">Oasis Interviewer Portal</b>
                 </v-col>
@@ -11,14 +11,9 @@
         </v-app-bar>
         <v-container>
         <v-row class="mt-5">
-            <h1> Patients to Contact</h1>
+            <h1> Cases to Interview</h1>
         </v-row>
-        <v-row class="mb-5">
-            <v-spacer></v-spacer>
-            <v-btn color="primary" outlined>
-                get more patients
-            </v-btn>
-        </v-row>
+        
         <v-row>
             <PatientTable />
         </v-row>
@@ -36,7 +31,7 @@ export default {
     },
     methods: {
         logout() {
-            this.$store.commit('logOut')
+            this.$store.dispatch('logOut')
             this.$router.push({name: 'Login'})
         }
     }

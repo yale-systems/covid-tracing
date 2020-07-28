@@ -3,16 +3,6 @@
 		<v-container fluid class="my-3" style="max-width:95%;">
 			<v-row>
 				<h1> Case Interview Assignments </h1>
-				<v-spacer>
-				</v-spacer>
-				<v-btn class="mx-2"
-					to='add'>
-					Add Cases
-				</v-btn>
-				<v-btn
-					to='reassign'>
-					Assign Cases
-				</v-btn>
 			</v-row>
 			<DataTable 
 				:people="patients" 
@@ -45,18 +35,23 @@ export default {
 	},
 	computed: {
 		headers() {
-			return this.$store.getters.activePatientFields
+			return this.$store.getters['view/activePatientFields']
 		},
 		patients() {
-			return this.$store.getters.patientsAsArray
+			return this.$store.getters['patients/getAllPatients']
 		}
 	},
 	async mounted() {
 		// console.log(patients);
-		this.$store.commit('clearSelect')
-		await this.$store.dispatch('loadPatients')
-		await this.$store.dispatch('loadVolunteers')
-		this.active = this.patients[0]
+		this.$store.commit('view/clearSelect')
+		if(this.patients) {
+			this.active = this.patients[0]
+		}
+	},
+	watch: {
+		patients() {
+			this.active = this.patients[0]
+		}
 	}
 };
 </script>

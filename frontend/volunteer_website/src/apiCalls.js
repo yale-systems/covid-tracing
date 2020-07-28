@@ -3,7 +3,6 @@ import axios from 'axios'
 import { baseurl } from '@/constants/baseurl.js'
 import geocoder from '@/geocoder.js'
 
-
 export default {
     // returns patient information if valid, null otherwise
     async patientCheckLogin(credentials) {
@@ -51,9 +50,9 @@ export default {
             patient.onset_date = moment(patient.onset_date)
             patient.last_worked_date = moment(patient.last_worked_date)
             if(patient.symptomatic == 0) {
-                patient.symptomatic = 1
+                patient.symptomatic = true
             } else if (patient.symptomatic == 2) {
-                patient.symptomatic = 0
+                patient.symptomatic = false
             }
             // return patient, links
             return {
@@ -66,9 +65,9 @@ export default {
         }
     },
     async updatePatient(url, patient) {
-        if(patient.symptomatic == 0) {
+        if(patient.symptomatic == false) {
             patient.symptomatic = 2
-        } else if (patient.symptomatic == 1) {
+        } else if (patient.symptomatic == true) {
             patient.symptomatic = 0
         }
         try {
@@ -80,37 +79,35 @@ export default {
         }
     },
     // get all patients associated with a volunteer
-    async getPatients(url, id) {
+    async getPatientsForVol(url) {
       let res = []
-      let link = `${url}${id}`
-      await axios.get(link)
+      await axios.get(url)
         .then((response) => {
           if(response.data) {
-            for(let patient in response.data) {
-              if(patient.diagnosis_date) {
+            for(let patient of response.data) {
                 patient.diagnosis_date = moment(patient.diagnosis_date)
-              }
-              if(patient.onset_date) {
                 patient.onset_date = moment(patient.onset_date)
-              }
-              if(patient.last_worked_date) {
                 patient.last_worked_date = moment(patient.last_worked_date)
-              }
-              if(patient.dob) {
-                patient.dob = moment(patient.dob)
-              }
-              delete patient._links
-              delete patient.enums
-              res.push(patient)
+                patient.date_of_birth = moment(patient.date_of_birth)
+                if(patient.symptomatic == 0) {
+                    patient.symptomatic = true
+                } else if (patient.symptomatic == 2) {
+                    patient.symptomatic = false
+                }
+                delete patient._links
+                delete patient.enums
+                res.push(patient)
             }
           }
         })
         .catch(error => {console.error(error)})
-      return res
+        console.log(res)
+        return res
     },
     
     //EVENT API CALLS
     async getEvents(url) {
+        console.log(URL)
         let res = {
             events: [],
             links: {}
@@ -145,7 +142,7 @@ export default {
                         lng: event.geom.coordinates[0], 
                         lat: event.geom.coordinates[1]
                     }
-                    placeholder = await geocoder.getStreetName(position, geocoderThing)
+                    placeholder = await geocoder.getStreetName(position, geocoderThing, function(response) {placeholder = response})
                 }
                 event.location = {
                     streetName: placeholder,
@@ -154,6 +151,8 @@ export default {
                 delete event.links
                 res.events.push(event)
             }
+            console.log("yeah so i got here")
+            console.log(res)
             return res
         } catch(error) {
             console.error(error)
@@ -266,19 +265,21 @@ export default {
     },
 
     
-    //ENUM API CALLS
+    //ENUM API CALLS -- NOTE, UPDATE THIS
     async getEnums(patientURL) {
         let enums = {}
         
         //get enums
         await axios.get(patientURL).then(async (res) => {
             enums = Object.assign(enums, res.data.enums)
-            await axios.get(res.data._links.get_contacts.href).then(res => {
-                if (res.length == 0) {return} 
-                enums = Object.assign(enums, res.data[0].enums)
-            }).catch(e => {
-                console.log(e)
-            })
+            if (res.data._links.get_contacts) {
+                await axios.get(res.data._links.get_contacts.href).then(res => {
+                    if (res.length == 0) {return} 
+                    enums = Object.assign(enums, res.data[0].enums)
+                }).catch(e => {
+                    console.log(e)
+                })
+            }
         }).catch(e => {
             console.log(e)
         })
@@ -304,6 +305,20 @@ export default {
         })
         .catch(error => console.error(error))
       return res
+    },
+
+    async updateVolunteer(link, volunteer) {
+        let res = {}
+        await axios.put(link, volunteer)
+            .then(response => {
+                if(response.data) {
+                    res = response.data
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            })
+        return res
     }
 
 };
