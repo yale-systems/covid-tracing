@@ -48,8 +48,9 @@
 							<h3>
 								Select a volunteer to assign these patients to.
 							</h3><br>
-							<p> Selected patients are {{selectedNames}}. They speak {{ gettersHelper(item, 'languages') }} </p>
-							<p> Selected volunteer is {{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}, who speaks {{ activeVolunteer ? gettersHelper(activeVolunteer, 'languages') : ''}}. </p>
+							<p> Selected patients: {{selectedNames}} </p>
+							<p> Common languages: {{ gettersHelper(item, 'languages') }} </p>
+							<p> Selected volunteer: {{ activeVolunteer ? `${gettersHelper(activeVolunteer, 'name')}, who speaks `  : ''}}{{ activeVolunteer ? gettersHelper(activeVolunteer, 'languages') : ''}} </p>
 						</v-col>
 						<v-col cols="4">
 							<v-row class="mx-3">
@@ -57,7 +58,7 @@
 								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
 									Previous
 								</v-btn>
-								<v-btn color="primary" @click="currentTable++" :disabled="!activeVolunteer">
+								<v-btn color="primary" @click="currentTable++; activePatient = undefined" :disabled="!activeVolunteer">
 									Next
 								</v-btn>
 							</v-row>
@@ -76,14 +77,14 @@
 							<v-col cols="5">
 								<h3> Please confirm your assignment. </h3>
 							</v-col><v-spacer></v-spacer>
-							<v-col-auto>
+							<v-col auto>
 								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
 									Previous
 								</v-btn>
 								<v-btn color="primary" @click="handleAssign">
 									Confirm Assignment
 								</v-btn>
-							</v-col-auto>
+							</v-col>
 						</v-row><br>
 						<v-row>
 							<v-col>
@@ -91,9 +92,8 @@
 							</v-col>
 						</v-row>
 						<v-row>
-							<v-col v-for="name in selectedNames"
-								:key="name">
-									<h3 style="font-weight:normal;"> {{name}} </h3>
+							<v-col>
+								<h3 style="font-weight:normal;"> {{selectedNames}} </h3>
 							</v-col>
 						</v-row>
 						<v-row>
@@ -113,17 +113,20 @@
 						</v-alert>
 					</v-container>
 					<v-container v-else>
-						<v-alert>
-							Patients successfully assigned.
-						</v-alert>
-						<p v-if="priorityPatients.length > 0">
-							Redirecting you to more patients...
-						</p>
+						<h3 v-if="priorityPatients.length > 0">
+							Patients successfully assigned. Redirecting you to more patients...
+						</h3>
 						<div v-else>
-							<p> There are no other priority patients to assign. </p>
-							<v-btn outlined color="primary" @click="seeAllPatients">
-								Go to all other patients 
-							</v-btn> 
+							<v-row>
+								<v-col cols="7">
+									<h3> Patients successfully assigned. There are no other priority patients to assign. </h3>
+								</v-col><v-spacer></v-spacer>
+								<v-col-auto>
+									<v-btn color="primary" @click="seeAllPatients">
+										Go to all other patients 
+									</v-btn>
+								</v-col-auto>
+							</v-row>
 						</div>
 					</v-container>
 				</v-stepper-content>
@@ -165,7 +168,7 @@ export default {
             ],
             items: ["joe", "lizzie", "tom", "ivy fan"],
             activeVolunteer: null,
-            activePatient: null,
+            activePatient: undefined,
             volNotes: '',
             item: {
                 languages: []
@@ -201,11 +204,11 @@ export default {
                 ]
             },
             volFilter: 0,
-		  patFilter: 0,
-		  currentTable: 1,
-		  submitted: false,
-		  seeAll: false,
-		  error: false
+			patFilter: 0,
+			currentTable: 1,
+			submitted: false,
+			seeAll: false,
+			error: false
         }
     },
     async mounted() {
@@ -241,11 +244,13 @@ export default {
 	   },
         selectedNames() {
             let selected = this.$store.state.view.selected
-            let names = []
+            let names = ''
             for (let s of selected) {
                 let person = this.$store.state.data.patients[s]
-                names.push(this.gettersHelper(person, 'name'))
-            }
+				names += (this.gettersHelper(person, 'name'))
+				names += ', '
+			}
+			names = names.substring(0, names.length - 2)
             return names
         },
     },
@@ -281,6 +286,7 @@ export default {
 				if (response) {
 					this.error = false
 					this.submitted = true
+					this.activePatient = (this.seeAll ? this.unassignedPatients[0] : this.priorityPatients[0])
 					let curr = this
 					if(this.priorityPatients.length > 0) {
 						setTimeout(() => {curr.currentTable = 1}, 1000)
@@ -295,6 +301,7 @@ export default {
 	   seeAllPatients() {
 		   this.seeAll = true
 		   this.currentTable = 1
+		   this.activePatient = (this.seeAll ? this.unassignedPatients[0] : this.priorityPatients[0])
 	   }
     }
 }

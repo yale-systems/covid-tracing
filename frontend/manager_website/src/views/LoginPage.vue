@@ -2,7 +2,7 @@
   <!-- controlling the size of the container will control the size of the stepper -->
   <v-container fluid class="px-9 login-spacing">
     <v-card>
-      <v-container fluid>
+      <v-container fluid class="pa-5 pt-2">
         <v-card-title>
           Welcome
         </v-card-title>
