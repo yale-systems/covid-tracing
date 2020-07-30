@@ -81,7 +81,7 @@ public class PatientEntity implements Serializable {
 
     private Long times_called;
 
-    private Long phone_number;
+    private String phone_number;
 
     private Boolean symptomatic;
 
@@ -191,7 +191,7 @@ public class PatientEntity implements Serializable {
 
     public PatientEntity(){}
 
-    public PatientEntity(Long patient_id, String username, String password, String first_name, String last_name, Language language, Date diagnosis_date, Date onset_date, Date last_worked_date, CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor, Boolean knows_status, Insurance insurance, Long times_called, Long phone_number, Boolean symptomatic, List<Symptom> symptoms, Gender gender, Race race, SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions, Employment employment, List<SuspectedExposure> suspected_exposures, Point home_location, Boolean housing_insecure, String shelter_name, List<Assistance> assistances, Date date_of_birth, Boolean referral, Boolean flagged, List<ReasonFlagged> reasons_flagged, Boolean requested_interview, String notes, String email, Long manager_id, Long volunteer_id) {
+    public PatientEntity(Long patient_id, String username, String password, String first_name, String last_name, Language language, Date diagnosis_date, Date onset_date, Date last_worked_date, CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor, Boolean knows_status, Insurance insurance, Long times_called, String phone_number, Boolean symptomatic, List<Symptom> symptoms, Gender gender, Race race, SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions, Employment employment, List<SuspectedExposure> suspected_exposures, Point home_location, Boolean housing_insecure, String shelter_name, List<Assistance> assistances, Date date_of_birth, Boolean referral, Boolean flagged, List<ReasonFlagged> reasons_flagged, Boolean requested_interview, String notes, String email, Long manager_id, Long volunteer_id) {
         this.patient_id = patient_id;
         this.username = username;
         this.password = password;
@@ -235,7 +235,7 @@ public class PatientEntity implements Serializable {
                          String last_name, Language language, Date diagnosis_date,
                          Date onset_date, Date last_worked_date, CaseCallStatus case_call_status,
                          Boolean travelled, SawDoctor saw_doctor, Boolean knows_status,
-                         Insurance insurance, Long times_called, Long phone_number,
+                         Insurance insurance, Long times_called, String phone_number,
                          Boolean symptomatic, List<Symptom> symptoms, Gender gender,
                          Race race, SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions,
                          Employment employment, List<SuspectedExposure> suspected_exposures,
@@ -482,11 +482,11 @@ public class PatientEntity implements Serializable {
         this.times_called = times_called;
     }
 
-    public Long getPhone_number() {
+    public String getPhone_number() {
         return phone_number;
     }
 
-    public void setPhone_number(Long phone_number) {
+    public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
 
