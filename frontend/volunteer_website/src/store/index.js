@@ -1,7 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import apiCalls from '@/apiCalls.js'
-import moment from 'moment'
+import apiCalls from '@/apiCalls.js';
+import moment from 'moment';
+import createPersistedState from "vuex-persistedstate";
+import CryptoJS from 'crypto-js';
+import SecureStorage from 'secure-web-storage';
 
 Vue.use(Vuex);
 
@@ -190,8 +193,10 @@ const patients = {
         id: (state) => (patientId) => {
             return state.patients.find(patient => patient.patient_id === patientId)
         },
-        criticalDate: (state, getters, rootState) => {
+        criticalDate(state, getters, rootState) {
+            state.touched
             let patient = state.patients.find(patient => patient.patient_id === rootState.activePatientId)
+            console.log(patient.symptomatic)
             if(patient && patient.symptomatic) {
                 return patient.onset_date
             } else {
@@ -202,11 +207,24 @@ const patients = {
             let startDate = getters.criticalDate.clone()
             return startDate.subtract(2, 'days').format('MMMM Do, YYYY')
         },
+        startDate: (state, getters) => {
+            let startDate = getters.criticalDate.clone()
+            return startDate.subtract(2, 'days').format('YYYY-MM-DD')
+        },
         readableEndDate: (state, getters) => {
             let endDate = getters.criticalDate.clone()
             let today = moment()
             endDate.add(10,'days')
             return (endDate.isAfter(today) ? today.format('MMMM Do, YYYY') : endDate.format('MMMM Do, YYYY'))
+        },
+        endDate: (state, getters) => {
+            let endDate = getters.criticalDate.clone()
+            let today = moment()
+            endDate.add(10,'days')
+            return (endDate.isAfter(today) ? today.format('YYYY-MM-DD') : endDate.format('YYYY-MM-DD'))
+        },
+        getAllPatients: (state) => {
+            return state.patients
         }
     },
     mutations: {
@@ -220,8 +238,9 @@ const patients = {
             }
         },
         setLinks(state, links) {
-            Object.keys(links).forEach(key => {
-                state.links[key] = links[key]["href"].replace(/\d+$/, "")
+            Object.keys(links).forEach(index => {
+                // console.log(link)
+                state.links[links[index]['rel']] = links[index]['href'].replace(/\d+$/, "")
             })
         }, 
         updatePatient(state, data) {
@@ -229,6 +248,7 @@ const patients = {
             if (pid >= 0) {
                 state.patients[pid] = data
             }
+            state.touched = !state.touched
         },
         resetState(state) { Object.assign(state, getPatientDefaultState())}
     },
@@ -246,7 +266,7 @@ const patients = {
             return res
         },
         resetState({commit}) { commit('resetState') },
-        load({commit}, patients) {
+        load({commit, dispatch}, patients) {
             if(patients.length == 0) {
                 return
             }
@@ -255,6 +275,11 @@ const patients = {
             let firstPatient = {
                 patient: patients[0],
                 links: links
+            }
+            dispatch('initializePatient', firstPatient)
+            patients.splice(0, 1)
+            for(let patient of patients) {
+                commit('setPatients', patient)
             }
         }
     }
@@ -273,14 +298,25 @@ const contacts = {
     namespaced: true,
     state: getContactDefaultState(),
     getters: {
+        newContactId(state) {
+            if (state.contacts.length == 0) { return undefined }
+            return state.contacts[state.contacts.length-1].contact_id
+        },
         id: (state) => (id) => {
             state.touched
             return state.contacts.find(contact => contact.contact_id === id)
         },
         householdContacts: (state) => {
-            return state.contacts.filter(contact => contact.household == true)
+            console.log()
+            return state.contacts.filter(contact => contact.household === true)
         },
-        contacts: (state) => { return state.contacts },
+        outsideContacts: (state) => {
+            return state.contacts.filter(contact => contact.household === false)
+        },
+        contacts: (state) => { 
+            state.touched 
+            return state.contacts 
+        },
         fullName: (state) => (id) => {
             state.touched
             let contact = state.contacts.find(contact => contact.contact_id === id)
@@ -295,6 +331,7 @@ const contacts = {
                 value.contact_date = moment(value.contact_date)
             }
             state.contacts.push(value)
+            state.touched = !state.touched
         },
         setLinks(state, value) {
             state.links = value
@@ -312,6 +349,7 @@ const contacts = {
         //loads in all contacts associated with a given patient
         async load({commit, rootState}, patientId) {
             let link = `${rootState.patients.links.get_contacts}${patientId}`
+            console.log(rootState)
             let response = await apiCalls.getContacts(link)
             if(response.contacts) {
                 for(let contact of response.contacts) {
@@ -322,6 +360,21 @@ const contacts = {
                 commit('setLinks', response.links)
             }
         },
+        //loads in all contacts associated with a given volunteer
+        async loadVol({commit, rootState}) {
+            let link=rootState.volunteers.links.get_contacts
+            let response = await apiCalls.getContacts(link)
+            if(response.contacts) {
+                for(let contact of response.contacts) {
+                    delete contact.enums
+                    delete contact.links
+                    commit('setContact', contact)
+                }
+                commit('setLinks', response.links)
+            }
+        },
+
+        // COMMON METHODS
         async update({commit, state}, contact) {
             let link = state.links.update
             let response = await apiCalls.updateContact(link, contact) 
@@ -344,14 +397,6 @@ const contacts = {
                 return -1
             }
         },
-        //loads in all contacts associated with a given volunteer
-        async loadVol({commit, rootState}, volunteerId) {
-            
-        },
-        //updates all contacts associated with a given volunteer
-        async updateVol({commit, rootState}, volunteerId) {
-
-        },
         resetState({commit}) { commit('resetState') }
     }
 }
@@ -361,7 +406,8 @@ const getVolunteerDefaultState = () => {
     return {
         volunteers: [],
         links: {}, 
-        touched: true
+        touched: true,
+        active: null
     }
 }
 
@@ -373,6 +419,14 @@ const volunteers = {
             state.touched
             return state.volunteers.find(volunteer => volunteer.contact_id === id)
         },
+        active: (state) => {
+            if(state.active != null) {
+                console.log()
+                return state.volunteers.find(volunteer => volunteer.volunteer_id === state.active)
+            } else {
+                return null
+            }   
+        }
     },
     mutations: {
         setVolunteer(state, value) {
@@ -382,24 +436,39 @@ const volunteers = {
             state.links = value
         },
         updateVolunteer(state, value) {
-            let volId = state.volunteers.findIndex(volunteer => volunteer.contact_id === value.contact_id)
+            let volId = state.volunteers.findIndex(volunteer => volunteer.volunteer_id === value.volunteer_id)
             if(volId >= 0) {
-                state.contacts[volId] = value
+                state.volunteers[volId] = value
             }
             state.touched = !state.touched
+        },
+        setActive(state, value) {
+            state.active = value
         },
         resetState(state) { Object.assign(state, getVolunteerDefaultState()) }
     },
     actions: {
         //loads in all information associated with a given volunteer
-        async initializeVolunteer({commit, rootState}, volunteer) {
+        async initializeVolunteer({commit, rootState}, data) {
             //sets the links associated with a volunteer
-
+            commit('setVolunteer', data.volunteer)
+            commit('setLinks', data.links)
+            commit('setActive', data.volunteer.volunteer_id)
         },
         
         // we should def be calling this... but when ????  
         async update({commit, state}, volunteer) {
-            
+            let res = false
+            let link = state.links.update
+            await apiCalls.updateVolunteer(link, volunteer)
+                .then(function(response) {
+                    if(response != {}) {
+                        commit('updateVolunteer', response)
+                        res = true
+                    }
+                })
+                .catch(function(error) { console.error(error) })
+            return res
         },
         resetState({commit}) { commit('resetState') }
     }
@@ -414,16 +483,90 @@ const getRootDefaultState = () => {
         activeVolunteerId: undefined,
         activeContactId: undefined,
         enums: {},
-        userType: undefined
+        userType: undefined,
+        openPID: undefined,
+        dialogClosed: true
     }
 }
 
+const SECRET_KEY = 'cats'
+
+let secureStorage = new SecureStorage(sessionStorage, {
+    hash: function hash(key) {
+        key = CryptoJS.SHA256(key, SECRET_KEY);
+
+        return key.toString();
+    },
+    encrypt: function encrypt(data) {
+        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+
+        data = data.toString();
+
+        return data;
+    },
+    decrypt: function decrypt(data) {
+        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+
+        data = data.toString(CryptoJS.enc.Utf8);
+
+        return data;
+    }
+});
+
 export default new Vuex.Store({
     state: getRootDefaultState(),
+    plugins: [createPersistedState({
+        storage: secureStorage,
+        setState: function(key, state, storage) {
+            return storage.setItem(key, state)
+        },
+        getState: function(key, storage) {
+            let value;
+            try {
+              (value = storage.getItem(key))
+              if(value == undefined) {
+                  return undefined
+              } else {
+                
+                if (value.contacts.contacts) {
+                    value.contacts.contacts = value.contacts.contacts.map((contact) => {
+                        contact.contact_date = moment(contact.contact_date)
+                        contact.update_date = moment(contact.update_date)
+                        return contact
+                    })
+                }
+                if (value.patients.patients) {
+                    value.patients.patients = value.patients.patients.map((patient) => {
+                        patient.diagnosis_date = moment(patient.diagnosis_date)
+                        patient.onset_date = moment(patient.onset_date)
+                        patient.last_worked_date = moment(patient.last_worked_date)
+                        patient.date_of_birth = moment(patient.date_of_birth)
+                        return patient
+                    })
+                }
+                if (value.events.events) {
+                    value.events.events = value.events.events.map((event) => {
+                        event.start_time = moment(event.start_time)
+                        return event
+                    })
+                }
+                console.log(value)
+                return value
+              }
+            } catch (err) {
+                console.log(err)
+            }
+            
+            return undefined;
+          }
+    })],
     getters: {
         activePatientId: (state) => {return state.activePatientId}
     },
     mutations: {
+        closeDialog(state) {
+            state.dialogClosed = !state.dialogClosed
+        },
         logOut(state) {
             state.loggedIn = false
         },
@@ -439,43 +582,71 @@ export default new Vuex.Store({
         setActivePatient(state, value) {
             state.activePatientId = value
         },
-        setEnums(state, enums) {
-            state.enums = enums
+        setActiveVol(state, value) {
+            state.activeVolunteerId = value
         },
-        resetState(state) { Object.assign(state, getRootDefaultState()) }
+        setEnums(state, enums) {
+            state.enums = Object.assign({}, enums)
+        },
+        resetState(state) { Object.assign(state, getRootDefaultState()) },
+        setOpenPID(state, value) {
+            state.openPID = value
+        }
     },
     actions: {
-        async volunteerLogin({state, dispatch, commit}, credentials) {
-            let response = await apiCalls.volunteerCheckLogin(credentials)
-            if (response != null) {
-                commit('logIn')
-                // load in the volunteer using volunteer
-                let res = {
-                    volunteer: response[0],
-                    links: response[0]._links
-                }
-                await dispatch('volunteers/initializeVolunteer', res)
+        async volunteerLogin({state, dispatch, commit}, data) {
+            await dispatch('logOut')
+            let response = await apiCalls.volunteerCheckLogin(data.credentials)
+            if (response == null) { return false }
+            commit('logIn')
+            commit('setActiveVol', response.volunteer_id)
+            let links = {}
+            Object.keys(response._links).map((key) => {
+                links[key] = response._links[key].href 
+            })
+            // load in the volunteer using volunteer
+            let res = { volunteer: response, links: links }
+            await dispatch('volunteers/initializeVolunteer', res)
+            console.log(data.userType)
+            if (data.userType == 'patient') {
+                let link = response._links.get_patients.href
                 // then get the patients
-                await                 
+                let patients = await apiCalls.getPatientsForVol(link)
                 // do this for the first patient but not the other ones
-                await dispatch('patients/initializePatient', response)
-
-                
+                await dispatch('patients/load', patients)
                 if(state.patients.patients.length > 0) {
+                    console.log(state)
                     let enums = await apiCalls.getEnums(state.patients.links.self + state.patients.patients[0].patient_id)
                     commit('setEnums', enums)
                 }
                 return true
             } else {
-                return false
-            }  
+                await dispatch('contacts/loadVol')
+                if(state.contacts.contacts.length > 0) {
+                    let enums = await apiCalls.getEnums(state.contacts.links.self + state.contacts.contacts[0].contact_id)
+                    commit('setEnums', enums)
+                }
+                return true
+            }
         },
-        logOut({commit, dispatch}) {
+        async logOut({commit, dispatch}) {
+            secureStorage.clear()
             dispatch('patients/resetState')
             dispatch('contacts/resetState')
             dispatch('events/resetState')
+            dispatch('volunteers/resetState')
             commit('resetState')
             commit('logOut')
+        },
+        clearFormData({dispatch}) {
+            dispatch('contacts/resetState')
+            dispatch('events/resetState')
+        },
+        loadFormData({commit, dispatch}, pid) {
+            commit('setActivePatient', pid)
+            commit('patients/setActivePatient', pid)
+            dispatch('contacts/load', pid)
+            dispatch('events/load', pid)
         }
     },
     modules: {

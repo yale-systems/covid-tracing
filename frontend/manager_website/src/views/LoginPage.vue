@@ -2,7 +2,7 @@
   <!-- controlling the size of the container will control the size of the stepper -->
   <v-container fluid class="px-9 login-spacing">
     <v-card>
-      <v-container fluid>
+      <v-container fluid class="pa-5 pt-2">
         <v-card-title>
           Welcome
         </v-card-title>
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import apiCalls from "@/apiCalls";
 
 export default {
   name: "LoginPage",
@@ -75,20 +74,19 @@ export default {
         };
         let curr = this;
         // if it passes, send to welcome screen
-        apiCalls.checkLogin(credentials).then(function(response) {
-          if (response) {
-            curr.$store.commit("logIn");
-            curr.$router.push({ name: "PDash" });
-          } else {
-            // give feedback that something was wrong
-            curr.password = "";
-            curr.showAlert = true;
-          }
-        });
+        let response = await this.$store.dispatch('managerLogin', credentials)
+        if (response) {
+          curr.$store.commit("logIn");
+          curr.$router.push({ name: "PDash" });
+        } else {
+          // give feedback that something was wrong
+          curr.password = "";
+          curr.showAlert = true;
+        }
       }
     },
     handleDemo() {
-      this.username = "username";
+      this.username = "username1";
       this.password = "password";
       this.$nextTick(() => {
         this.handleSubmit();

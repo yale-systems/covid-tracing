@@ -18,7 +18,7 @@
                 <v-container class="pb-1 pt-0">
                     <v-container fluid class="pt-0">
                         <v-row class="my-0">
-                            <h1> {{getFullName(patient)}} </h1>
+                            <h1> {{gettersHelper(patient, 'name')}} </h1>
                         </v-row>
                         
                     <v-item-group v-model="selectedIndex" class="mt-2">
@@ -69,15 +69,15 @@
                 <v-container fluid class="my-0 py-0">
                     <v-textarea filled class ="ml-1 mb-5" auto-grow hide-details rows="20" row-height="14" placeholder="Scratchpad - use this space to take notes during the interview.">
                     </v-textarea>
-                    <v-btn block class="ml-1 mt-0 mr-5 mb-0" outlined color='primary'> Save </v-btn>
+                    <v-btn block class="ml-1 mt-0 mr-5 mb-0" outlined color='primary' @click="submit"> Save </v-btn>
                     <v-dialog v-model="dialog" width="500">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn block class="ml-1 mr-5 mt-3" color='primary' v-bind="attrs" v-on="on"> Save and Exit </v-btn>
                         </template>
                         <v-card>
-                            <v-container fluid>
+                            <v-container fluid v-if="!showError">
                                 <v-card-title primary-title>
-                                    Were you able to reach {{getFullName(patient)}}?
+                                    Were you able to reach {{gettersHelper(patient, 'name')}}?
                                 </v-card-title>
                                     <v-container fluid class="mx-4 px-4" style="max-width:93%;">
                                         <v-row>
@@ -85,7 +85,7 @@
                                         </v-row>
                                         <v-row>
                                             <v-select class="mt-0 pt-0"
-                                            v-model="patient.callStatus"
+                                            v-model="case_call_status"
                                             :items="callStatuses"
                                             item-value="key"
                                             item-text="status">
@@ -95,12 +95,12 @@
                                             <p> Notes: </p>
                                         </v-row>
                                         <v-row>
-                                            <v-textarea rows="2" auto-grow class="mt-0 pt-0"></v-textarea>
+                                            <v-textarea rows="2" auto-grow class="mt-0 pt-0" v-model="notes"></v-textarea>
                                         </v-row>
                                         <v-row>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="primary" @click="handleBack">
-                                                save and exit
+                                            <v-btn color="primary" @click="saveAndExit">
+                                               {{ showProgress ? 'saving...' : 'save and exit' }}
                                             </v-btn>
                                         </v-row>
                                     </v-container>             
@@ -115,6 +115,10 @@
                                     </v-btn>
                                 </v-card-actions> -->
                             </v-container>
+                            <v-container v-else fluid>
+                                <v-icon color="warning"> mdi-warning </v-icon>
+                                <h2> Sorry, we were unable to submit your data. Please try again. </h2>
+                            </v-container>
                         </v-card>
                     </v-dialog>
                 </v-container>
@@ -125,6 +129,7 @@
                 </v-container> 
             </v-col>
         </v-row>
+        <v-btn v-if="selectedIndex < 2" class="next" @click="handleNext"> next </v-btn>
     </div>
 </template>
 
@@ -133,15 +138,17 @@ import circleicon from "@/sharedComponents/circleicon.vue"
 import PreliminaryDiv from "@/interviewerComponents/PreliminaryDiv.vue"
 import HouseholdContactDiv from "@/interviewerComponents/HouseholdContactDiv.vue"
 import EventsDiv from "@/interviewerComponents/EventsDiv.vue"
-import patientGetters from "@/patientGetters.js"
-import constants from '@/constants.js'
+import getters from "@/methods.js"
 
 export default {
     name: "InterviewFormView",
+    mixins: [ getters ],
     data: () => {
         return {
             selectedIndex: 0,
             dialog: false,
+            showProgress: false,
+            showError: false
         }
     },
     components: {
@@ -151,11 +158,32 @@ export default {
         EventsDiv
     },
     computed: {
+        callStatuses() {
+            return this.$store.state.enums.CaseCallStatus
+        },
         patientID() {
             return parseInt(this.$route.params.id)
         },
         patient() {
-            return this.$store.getters.getPatientById(this.patientID)
+            return this.$store.getters['patients/id'](this.patientID)
+        },
+        case_call_status: {
+            get() {
+                return this.patient.case_call_status
+            },
+            set(newVal) {
+                this.patient.case_call_status = newVal
+                this.$store.commit('patients/updatePatient', this.patient)
+            }
+        },
+        notes: {
+            get() {
+                return this.patient.notes
+            },
+            set(newVal) {
+                this.patient.notes = newVal
+                this.$store.commit('patients/updatePatient', this.patient)
+            }
         },
         formComponent() {
             if(this.selectedIndex == undefined) {
@@ -169,23 +197,11 @@ export default {
                 return 'EventsDiv'
             }
         },
-        formComponentProps() {
-            if (this.selectedIndex == 0) {
-                return {
-                    name: this.getFullName(this.patient),
-                    phone: this.getPhone(this.patient),
-                    age: this.getAge(this.patient),
-                    language: this.getLanguage(this.patient),
-                    symptomatic: this.getSymptomatic(this.patient)
-                }
-            } else {
-                return null
+        formComponentProps() {  
+            return {
+                patient_id: this.patientID
             }
-
         },
-        callStatuses() {
-            return constants.callStatuses;
-        }
     },
     watch: {
         selectedIndex(newVal, oldVal) {
@@ -195,21 +211,51 @@ export default {
                 })
             }
         },
+        showError() {
+            let curr = this
+            setTimeout(() => curr.showError = false, 1500)
+        }
     },
     mounted() {
-        this.$store.commit('setDate', this.patient.date)
+        // when the form is loaded, we need to load in the events and contacts associated with that patient
+        this.$store.dispatch('loadFormData', this.patientID)
     },
     methods: {
-        getFullName: patientGetters.getFullName,
-        getPhone: patientGetters.getPhone,
-        getAge: patientGetters.getAge,
-        getLanguage: patientGetters.getLanguage,
-        getSymptomatic: patientGetters.getSymptomatic,
-
         handleBack() {
             let pid = this.patientID;
             this.$store.commit('setOpenPID', pid)
+            this.$store.dispatch('clearFormData')
             this.$router.push({name: 'PDash'})
+        },
+        handleNext() {
+            if(this.selectedIndex < 2) {
+                this.selectedIndex++
+            } else {
+                this.submit()
+            }
+        },
+        async submit() {
+            let res1 = await this.$store.dispatch('events/submit')
+            let res2 = await this.$store.dispatch('patients/update', this.patient)
+            return (res1 && res2)
+        },
+        async saveAndExit() {
+            this.showProgress = true
+            let curr = this
+            this.submit()
+                .then(response => {
+                    if(response) {
+                        curr.handleBack()
+                    } else {
+                        curr.showProgress = false
+                        curr.showError = true
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                    curr.showProgress = false
+                    curr.showError = true
+                })
         }
     }
 }
@@ -258,5 +304,11 @@ export default {
 
 .shadow {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, .5);
+}
+
+.next {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
 }
 </style>

@@ -14,7 +14,7 @@
                             <br>
                             <v-row justify="center">
                                 <v-btn
-                                    @click="cardProgress=2, usertype='patient'"
+                                    @click="cardProgress=2, userType='patient'"
                                     color="primary"
                                     min-height=80px
                                     min-width=300px>
@@ -23,7 +23,7 @@
                             </v-row>
                             <v-row justify="center" class="button-spacing">
                                 <v-btn
-                                    @click="cardProgress=2; usertype='contact'"
+                                    @click="cardProgress=2; userType='contact'"
                                     color="primary"
                                     min-height=80px
                                     min-width=300px>
@@ -51,7 +51,9 @@
                                 label="Password"
                                 :rules="passwordRules"
                                 required
-                                password
+                                :type="showPassword ? 'text' : 'password'"
+                                :append-icon="showPassword ? 'mdi-eye': 'mdi-eye-off'"
+                                @click:append="showPassword = !showPassword"
                             ></v-text-field>
 
                             <v-alert
@@ -73,7 +75,7 @@
                             Back
                             </v-btn>
                             <v-btn
-                                :disabled="!valid"
+                                :disabled="!valid || loggingIn"
                                 color="primary"
                                 @click="handleSubmit"
                             >
@@ -81,11 +83,13 @@
                             </v-btn>
                             <v-btn
                                 @click="handleDemo"
+                                :disabled="loggingIn"
                                 
                                 >
                                 demo login
                             </v-btn>
-                        </v-card-actions>         
+                        </v-card-actions> 
+                        <v-progress-linear v-if="loggingIn" indeterminate color="primary"/>       
                 </v-stepper-content>
     </v-stepper-items>
     </v-stepper> 
@@ -112,7 +116,8 @@ export default {
             showPassword: false,
             showAlert: false,
             cardProgress: 1,
-            usertype: ''
+            userType: '',
+            loggingIn: false
         }
     },
     methods: {
@@ -120,33 +125,36 @@ export default {
             // if the input is valid
             let validate = this.$refs.form.validate()
             if (validate) {
+                this.loggingIn = true
                 // make call to API , and if that checks out, send to other page
                 let credentials = {
                     username: this.username,
                     password : this.password
                 }
-                let curr = this;
                 // if it passes, send to welcome screen
-                apiCalls.checkLogin(credentials)
-                    .then(function (response) {
-                        if (response) {
-                            curr.$store.commit('logIn')
-                            curr.$store.commit('setUserType', curr.usertype)
-                            if (curr.usertype == 'patient') {
+                let data = {
+                    credentials: credentials,
+                    userType: this.userType
+                }
+                let curr = this;
+                await this.$store.dispatch('volunteerLogin', data)
+                    .then(response => {
+                        if(response) {
+                            if (curr.userType == 'patient') {
                                 curr.$router.push({ name: "PDash" });
-                            } else if (curr.usertype == 'contact') {
+                            } else if (curr.userType == 'contact') {
                                 curr.$router.push({ name: "Dashboard" });
                             }
                         } else {
-                            // give feedback that something was wrong
                             curr.password = "";
-                            curr.showAlert = true;
+                            curr.showAlert = true; 
                         }
-                    }) ;
+                    })
+                    .catch((error) => console.error(error))
             }
         },
         handleDemo() {
-            this.username = 'username'
+            this.username = 'username1'
             this.password = 'password'
             this.$nextTick(() => {
                 this.handleSubmit()
