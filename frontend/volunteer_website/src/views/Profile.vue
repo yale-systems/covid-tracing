@@ -2,7 +2,7 @@
     <div>
         <Hamburger /> 
         <v-container>
-            <v-row class = "mt-6" justify="left">
+            <v-row class="mt-6">
                 <h1> 
                     <v-icon x-large>
                         mdi-cogs
@@ -14,42 +14,24 @@
                 <v-container fluid class="inside-card">
                     <v-row style="align-items:center;">
                         <v-col flex class="margin-right">
-                            <b> Name:</b> Full Name
-                        </v-col>
-                    </v-row>
-                    <v-row style="align-items:center;">
-                        <v-col flex class="margin-right">
-                            <b> Username:</b> Username
+                            <b> Name: </b> {{gettersHelper(volunteer, 'name')}}
                         </v-col>
                     </v-row>
                     <br>
-                    <v-row justify="left">
+                    <v-row>
                         <v-col cols="2">
                             <h4> Your Languages: </h4>
                         </v-col>
                         <v-col class="language">
-                                <v-combobox
-                                    v-model="volLanguages"
+                                <v-select
+                                    v-model="languages"
                                     :items="languageTypes"
-                                    item-value="key"
-                                    item-text="status"
-                                    chips
-                                    clearable
                                     multiple
-                                    solo
+                                    clearable
+                                    item-text="value"
+                                    item-value="key"
                                 >
-                                    <template v-slot:selection="{ attrs, item, select, selected }">
-                                        <v-chip
-                                        v-bind="attrs"
-                                        :input-value="selected"
-                                        close
-                                        @click="select"
-                                        @click:close="remove(item)"
-                                        >
-                                        <strong>{{ item.status }}</strong>&nbsp;
-                                        </v-chip>
-                                    </template>
-                                </v-combobox>
+                                </v-select>
                         </v-col>
                         <v-col>
                         </v-col>
@@ -93,7 +75,7 @@
                     </v-row>
                     
                     <v-row class="save-spacing">
-                        <v-btn color="primary">
+                        <v-btn color="primary" @click="handleSave">
                             Save
                         </v-btn>
                     </v-row>
@@ -104,15 +86,15 @@
 </template>
 
 <script>
-import constants from "../constants.js"
 import Hamburger from "@/sharedComponents/Hamburger"
+import getters from '@/methods.js'
+
 export default {
     name: "Profile",
     data: () => {
        return {
-           volLanguages: [],
-           languageTypes: constants.languages,
-           capacity: 3,
+           languages: [],
+           capacity: 0,
            MAX_CAPACITY: 10,
            editPW : false,
            currentPassword: '',
@@ -122,10 +104,11 @@ export default {
     components: {
         Hamburger
     },
+    mixins: [ getters ],
     methods: {
         remove (item) {
-        this.volLanguages.splice(this.volLanguages.indexOf(item), 1)
-        this.volLanguages = [...this.volLanguages]
+        this.languages.splice(this.languages.indexOf(item), 1)
+        this.languages = [...this.languages]
         },
         addCapacity() {
             if (this.capacity == this.MAX_CAPACITY) {
@@ -142,10 +125,34 @@ export default {
             if (this.capacity > 0) {
                 this.capacity--;
             }
+        },
+        async handleSave() {
+            let newVol = this.volunteer
+            newVol.languages = this.languages
+            newVol.total_capacity = this.capacity
+            let res = await this.$store.dispatch('volunteers/update', newVol)
+            if(res) {
+                // show that it was saved
+            } else {
+                //give feedback
+            }
+        }
+    },
+    computed: {
+        volunteer() {
+            return this.$store.getters['volunteers/active']
+        },
+        languageTypes() {
+            return this.$store.state.enums.Lanuages
         }
     },
     mounted() {
-        console.log(constants)
+        if(this.volunteer.languages != null) {
+            this.languages = this.volunteer.languages
+        }
+        if(this.volunteer.capacity != null) {
+            this.capacity = this.volunteer.total_capacity
+        }
     }
 }
 </script>

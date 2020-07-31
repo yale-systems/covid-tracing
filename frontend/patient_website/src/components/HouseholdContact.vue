@@ -25,7 +25,7 @@
                             <a @click="dialogToggle.showDialog = true"> want to add a phone number or email? </a>  
                         </p> 
                     </v-col>
-                    <spacer></spacer>
+                    <v-spacer></v-spacer>
                 </v-row>
             </v-list-item-content>
             <v-col cols="2" md="2">
@@ -76,25 +76,28 @@ export default {
             renderComponent: 0,
             dialogToggle: {
                 showDialog: false
-            }
+            },
         }
     },
     computed: {
+        contact() {
+            return this.$store.getters['contacts/id'](this.contactID)
+        },
         contactInfo() {
-            this.$store.state.fuckThis;
-            let contact = this.$store.state.contacts[this.contactID]
-            return { 
-                name: this.$store.getters.fullName(this.contactID),
-                phone: contact.phone,
-                date: contact.date,
-                email: contact.email
+            return {
+                name: this.$store.getters['contacts/fullName'](this.contactID),
+                phone: this.contact.phone_number,
+                date: this.contact.contact_date == undefined ? '' : this.contact.contact_date.format('MMMM Do, YYYY'),
+                email: this.contact.email
             }
         }
     },
    
     methods: {
         deleteContact() {
-            this.$store.commit('deleteContact', this.contactID)
+            let contact = this.$store.getters['contacts/id'](this.contactID)
+            contact.household = false
+            this.$store.dispatch('contacts/update', contact)
         },
     },
 

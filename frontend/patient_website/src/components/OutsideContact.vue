@@ -15,7 +15,11 @@
                 <v-select
                     label="Type of Contact"
                     :items="contactTypes"
-                    class="py-0">
+                    item-value="key"
+                    item-text="text"
+                    class="py-0"
+                    v-model="contact_type"
+                    >
                 </v-select>
             </v-col>
             <v-col cols="3" class="pt-6 mr-1">
@@ -50,8 +54,7 @@ export default {
     name: "OutsideContact",
     data () {
         return {
-            contactTypes: ["Minimal", "Close"],
-            selectedID: undefined,
+            contactTypes: [{key: 0, text: "Minimal"}, {key: 1, text: "Close"}],
             dialogForceOpen: {
                 showDialog: false
             }
@@ -61,6 +64,9 @@ export default {
         value: {
             Number,
             required: true
+        },
+        index: {
+            Number
         }
     },
     components: {
@@ -68,47 +74,70 @@ export default {
     },
     computed: {
         contactNames() {
-            this.$store.state.fuckThis
-            let contacts = this.$store.state.contacts
+            let contacts = this.$store.getters['contacts/contacts']
             var names = []
-            for (var key in contacts) {
-                names.push({
-                    id: parseInt(key, 10),
-                    name: this.$store.getters.fullName(key)
-                })
-            }
             names.push({
                 id: -1,
                 name: "Make New Contact"
             })
+            for (let contact of contacts) {
+                names.push({
+                    id: contact.contact_id,
+                    name: this.$store.getters['contacts/fullName'](contact.contact_id)
+                })
+            }
             return names
         },
         showView() {
-            if (this.selectedID == undefined || this.selectedID == -1) {
+            if (this.value == undefined || this.value == -1) {
                 return true
             } else {
                 return false
+            }
+        },
+        selectedID: {
+            get() {
+                return this.value
+            },
+            set(newVal) {
+                this.$emit('input', newVal)
+            }
+        },
+        contact_type: {
+            get() {
+                if(this.selectedID && this.selectedID >= 0) {
+                    return this.$store.getters['contacts/id'](this.selectedID).contact_type
+                } else {
+                    return undefined
+                }
+            },
+            set(newVal) {
+                if(this.selectedID) {
+                    let contact = this.$store.getters['contacts/id'](this.selectedID)
+                    contact.contact_type = newVal
+                    this.$store.dispatch('contacts/update', contact)
+                }
+
             }
         }
     },
     watch: {
         selectedID() {
             //toggle it just long enough to open the dialog... 
-            if(this.selectedID == -1) {
+            if(this.value == -1) {
                 this.dialogForceOpen.showDialog = true
             }
         }
     },
     methods: {
         deleteContact() {
-            this.$emit('splice-contact', this.value)
+            this.$emit('splice-contact', this.index)
         },
         getHousehold() {
-            console.log(this.selectedID)
             if(this.selectedID === -1 || this.selectedID === undefined) {
                 return false
             } else {
-                return this.$store.state.contacts[this.selectedID].household
+                return this.$store.getters['contacts/id'](this.selectedID).household
             }
         },
         setSelect(id) {

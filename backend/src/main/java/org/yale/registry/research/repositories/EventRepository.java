@@ -11,16 +11,16 @@ import java.util.Date;
 import java.util.List;
 
 public interface EventRepository extends PagingAndSortingRepository<EventEntity, Long> {
-    @Query("select t from EventEntity t where " +
-            "dwithin(transform(t.geom, 32618), transform(:point, 32618), :meters) = true " +
-            "and :check_start_time between t.start_time and t.end_time")
+    @Query("select e from EventEntity e where " +
+            "dwithin(transform(e.geom, 32618), transform(:point, 32618), :meters) = true " +
+            "and :check_start_time between e.start_time and e.end_time")
     public List<EventEntity> findWithinDistance(@Param("point")Point point, @Param("meters") Integer meters,
                                                 @Param("check_start_time") Date startTime);
 
-    @Query("SELECT p FROM EventEntity p where p.patient_id = :patient_id")
+    @Query("SELECT e FROM EventEntity e where e.patient_id = :patient_id ORDER BY e.event_id")
     public List<EventEntity> findEventEntitiesByPatientId(@Param("patient_id") Long patient_id);
 
-    @Query("DELETE FROM EventEntity p WHERE p.patient_id = :patient_id")
+    @Query("DELETE FROM EventEntity e WHERE e.patient_id = :patient_id")
     @Modifying
     public void deleteByPatientId(@Param("patient_id") Long patient_id);
 

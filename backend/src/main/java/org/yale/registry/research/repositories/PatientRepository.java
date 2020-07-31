@@ -14,12 +14,13 @@ public interface PatientRepository extends PagingAndSortingRepository<PatientEnt
     @Query("SELECT p from PatientEntity p WHERE p.patient_id = :patient_id")
     public Optional<PatientEntity> findPatientEntityByPatient_id(@Param("patient_id") Long patient_id);
 
-    @Query("SELECT p from PatientEntity p WHERE p.manager_id = :manager_id")
+    @Query("SELECT p from PatientEntity p WHERE p.manager_id = :manager_id ORDER BY p.patient_id")
     public List<PatientEntity> findPatientEntitiesByManager_id(@Param("manager_id") Long manager_id);
 
-    @Query("SELECT p from PatientEntity p WHERE p.manager_id = :manager_id AND p.volunteer_id IS NULL")
+    @Query("SELECT p from PatientEntity p WHERE p.manager_id = :manager_id AND p.volunteer_id IS NULL " +
+            "ORDER BY p.patient_id")
     public List<PatientEntity> findOrphanedPatientEntitiesByManager_id(@Param("manager_id") Long manager_id);
 
-    @Query("SELECT p from PatientEntity p WHERE p.volunteer_id = :volunteer_id")
+    @Query("SELECT p from PatientEntity p WHERE p.volunteer_id = :volunteer_id ORDER BY p.patient_id")
     public List<PatientEntity> findPatientEntitiesByVolunteer_id(@Param("volunteer_id") Long volunteer_id);
 }

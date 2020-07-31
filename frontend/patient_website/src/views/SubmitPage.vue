@@ -1,8 +1,8 @@
 <template>
     <v-container fluid>
         <v-card class="submit-margins align-center justify-center ma-10">
-            <v-card-title> Thank you for your time. </v-card-title>
-            <v-card-text>
+            <v-card-title style="font-size:22px;"> Thank you for your time. </v-card-title>
+            <v-card-text style="font-size: 18px;">
                     We appreciate and value the time you took to fill out this form. 
                 The information you provided us will be used to help slow the 
                 spread of COVID-19. We'll be reaching out to the contacts 
@@ -11,13 +11,13 @@
                 aid researchers and the greater New Haven community alike. 
                 Once again, thank you.
 
-                We know this is an incredibly hard time, and many of you are 
+                <br><br>We know this is an incredibly hard time, and many are
                 coping with significant loss — if you’re struggling during this time,
                 whether financially, mentally, or emotionally, and would like support, 
                 we’ve set up a list of resources to help. Click the "resources" button 
                 below to access these materials.
 
-                If you want to see your full submission, edit your response, or add 
+                <br><br>If you want to see your full submission, edit your response, or add 
                 more information, click the “edit submission” button.
             </v-card-text>
             <v-card-actions>
@@ -47,6 +47,6 @@ export default Vue.extend({
 <style scoped>
 
 .submit-margins {
-    padding: 1%;
+    padding: 2%;
 }
 </style>

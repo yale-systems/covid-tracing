@@ -2,7 +2,6 @@
     <v-container fluid class="event-spacing">
         <v-card class="mx-2 my-2">
             <v-card-title class="pt-6 mb-0 pb-0 ml-2">
-                
                 <h2 v-text="title"></h2>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -27,11 +26,11 @@
                             <template v-slot:activator="{ on }">
                                 <v-form
                                     ref="dateForm"
-                                    v-model="value.dateValid"
+                                    v-model="event.dateValid"
                                 >
                                 <v-text-field
                                     class="mr-4"
-                                    v-model="value.date"
+                                    v-model="readableDate"
                                     label="Date"
                                     prepend-icon="mdi-calendar"
                                     readonly
@@ -42,7 +41,7 @@
                                 </v-form>
                             </template>
                             <v-date-picker 
-                                v-model="value.date" 
+                                v-model="date" 
                                 :max="endDate"
                                 :min="startDate"
                                 no-title 
@@ -54,7 +53,7 @@
                     <v-col>
                         <v-text-field
                             class="pr-3"
-                            v-model="value.location.streetName"
+                            v-model="event.location.streetName"
                             label="Location"
                             prepend-icon="mdi-map"
                             placeholder="click the map icon to pick a location"
@@ -62,7 +61,7 @@
                             @click="showMap = true"
                             readonly
                             append-icon="mdi-close"
-                            @click:append="value.location = ''"
+                            @click:append="event.location = ''"
                         > </v-text-field>
                     </v-col>
                 </v-row>
@@ -74,7 +73,7 @@
                             label="Nature of Contact"       
                             prepend-icon="mdi-account"
                             placeholder="e.g. Dinner with Susan"
-                            v-model="value.contactNature"
+                            v-model="event.notes"
                             @blur="setTitle"
                         > </v-text-field>
                     </v-col>
@@ -90,9 +89,10 @@
                     </v-col>
                     <v-col style="margin-top:-25px;">
                         <OutsideContact 
-                            v-for="c of contacts"
-                            :key="c"
-                            :value="c"
+                            v-for="(c, i) of event.contact_ids"
+                            :key="i"
+                            v-model="event.contact_ids[i]"
+                            :index="returnNumber(i)"
                             v-on:splice-contact="deleteContact"
                             class= "pl-3"
                         />
@@ -136,74 +136,109 @@ export default {
         OutsideContact
     },
     props: {
-        value: {
-            type: Object,
+        id: {
+            type: Number,
             required: true
         },
-        noContacts: null,
         validate: Boolean
     },
     data () {
         return {
-            endDate: '',
-            startDate: '',
             menu: false,
             showMap : false,
-            contacts: [],
             // fields for the search bar, doesn't go directly into value
             addressInfo : {
                 adr: '',
                 ll: null
             },
-            contacts: [],
             dateRules: [
                 v => !!v || 'Date is required'
             ],
             editTitle: false,
             title: '',
-            incrementVal: 0,
+            event: Object.assign({}, this.$store.getters['events/id'](this.id))
         }
     },
     mounted() {
-        this.title = this.defaultTitle
-        this.startDate = this.$store.state.startDate 
-        this.endDate = this.$store.state.endDate 
+        this.event = Object.assign({}, this.$store.getters['events/id'](this.id))
+        this.setTitle()
     },
     computed: {
+        date: {
+            get() {
+                let date = this.event.start_time
+                if(date) {
+                    return date.format('YYYY-MM-DD')
+                } else {
+                    return ''
+                }
+            },
+            set(newVal) {
+                var moment = require('moment')
+                this.$set(this.event, 'start_time', moment(newVal))
+            }
+        },
+        readableDate() {
+            let date = this.event.start_time
+            if(date) {
+                return date.format('MMMM Do, YYYY')
+            } else {
+                return ''
+            }
+        },
         defaultTitle() {
-            let num = this.value.eventID + 1
+            let num = this.event.event_id
             return 'Event ' + num.toString()
         },
         titleID() {
             return 'title-' + this._uid
+        },
+        endDate() {
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().add(10, 'days').format('YYYY-MM-DD')
+            }
+        },
+        startDate() {
+            let date = this.$store.getters['patients/criticalDate']
+            if(date == null || date == undefined) {
+                return undefined
+            } else {
+                return date.clone().subtract(2, 'days').format('YYYY-MM-DD')
+            }
         }
     },
     methods: {
         handleOk() {
             this.showMap = !this.showMap
-            this.value.location.streetName = this.addressInfo.adr
-            this.value.location.coordinates = this.addressInfo.ll
+            this.event.location.streetName = this.addressInfo.adr
+            this.event.location.coordinates = this.addressInfo.ll
         },
         newContact() {
-            this.contacts.push(this.incrementVal)
-            this.incrementVal += 1
+            this.event.contact_ids.push(undefined)
         },
         deleteEvent() {
-            // if originally loaded in, queue the event to delete from the backend as well
-            if (this.value.add == false) {
-                this.$store.commit('qDeleteLocation', this.value.eventID)
+            // if we just added it, remove it
+            if(this.event.add) {
+                this.$store.commit('events/removeEvent', this.event.event_id)
+            } else {
+                this.$store.commit('events/deleteEvent', this.event.event_id)
             }
-            this.$emit('splice', this.value.eventID)
         },
-        deleteContact(deleteMe) {
-            for(var c in this.contacts) {
-                if (this.contacts[c] == deleteMe) {
-                    this.contacts.splice(c, 1)
-                }
-            }
+        deleteContact(deleteIndex) {
+            console.log(deleteIndex, this.event.contact_ids)
+            this.event.contact_ids.splice(deleteIndex, 1)
+            this.event = Object.assign({}, this.event)
+            console.log(this.event.contact_ids)
         },
         setTitle() {
-            var res = this.value.contactNature.split(" ")
+            if (this.event.notes == undefined) { 
+                this.title = this.defaultTitle
+                return
+            }
+            var res = this.event.notes.split(" ")
             if (res.length == 1 && res[0] == "") {
                 this.title = this.defaultTitle
                 return
@@ -216,9 +251,16 @@ export default {
             if (res.length > 5) {
                 this.title += "..."
             }
-        }
+        },
+        returnNumber(i) { return i}
     },
-    watch : {
+    watch: {
+        event: {
+            deep: true,
+            handler() {
+                this.$store.commit('events/updateEvent', this.event)
+            }
+        },
         validate: function() {
             this.$refs.dateForm.validate()
         }

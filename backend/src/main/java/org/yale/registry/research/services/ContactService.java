@@ -53,6 +53,17 @@ public class ContactService {
         return contactDTOS;
     }
 
+    public List<ContactDTO> getContactDTOForVolunteer(Long volunteer_id){
+        List<ContactDTO> contactDTOS = new ArrayList<>();
+        List<ContactEntity> contactEntities =
+                contactRepository.findContactEntitiesForVolunteer(volunteer_id);
+        for(ContactEntity contactEntity: contactEntities){
+            contactDTOS.add(new ContactDTO(contactEntity));
+        }
+        RESTfulUtility.addRestToContactDTOs(contactDTOS);
+        return contactDTOS;
+    }
+
     public ContactDTO insert(ContactDTO contactDTO){
         ContactEntity contactEntity = new ContactEntity(contactDTO);
         contactRepository.save(contactEntity);

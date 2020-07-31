@@ -16,10 +16,21 @@
 			</v-stepper-header>
 			<v-stepper-items>
 				<v-stepper-content step="1">
-					<div v-if="priorityPatients.length > 0">
-						<h3>
-							Select patients to assign to one volunteer.
-						</h3>
+					<div>
+						<v-row class="mx-3" v-if="priorityPatients.length > 0">
+							<h3>
+								Select priority and foreign language patients to assign.
+							</h3>
+							<v-spacer>
+							</v-spacer>
+							<v-btn color="primary" class="mr-2" outlined @click="seeAllPatients"> skip to see all unassigned patients </v-btn>
+							<v-btn color="primary" @click="currentTable++" :disabled="selectedNames.length == 0">
+								Next
+							</v-btn>
+						</v-row>
+						<v-row v-else class="mx-3">
+							<h3> Select patients to assign. </h3>
+						</v-row>
 						<DataTable class="ma-3" 
 							v-model="activePatient"
 							type="patient" 
@@ -27,17 +38,8 @@
 							:people="seeAll ? unassignedPatients : priorityPatients" 
 							:showSelect="true"
 						/>
-						<v-row class="mx-3 d-flex align-end">
-							<v-btn @click="currentTable++">
-								Next
-							</v-btn>
-						</v-row>
 						<v-divider></v-divider>
 						<PatientCard :patient="activePatient" />
-					</div>
-					<div v-else>
-						<h4> There are no priority patients to assign at this time. </h4>
-						<v-btn @click="seeAllPatients"> Continue to all other patients </v-btn>
 					</div>
 				</v-stepper-content>
 				<v-stepper-content step="2">
@@ -45,17 +47,18 @@
 						<v-col cols="8">
 							<h3>
 								Select a volunteer to assign these patients to.
-							</h3>
-							<p> Selected patients are {{selectedNames}}. They speak {{ gettersHelper(item, 'languages') }} </p>
-							<p> Selected volunteer is {{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}, who speaks {{ activeVolunteer ? gettersHelper(activeVolunteer, 'languages') : ''}}. </p>
+							</h3><br>
+							<p> Selected patients: {{selectedNames}} </p>
+							<p> Common languages: {{ gettersHelper(item, 'languages') }} </p>
+							<p> Selected volunteer: {{ activeVolunteer ? `${gettersHelper(activeVolunteer, 'name')}, who speaks `  : ''}}{{ activeVolunteer ? gettersHelper(activeVolunteer, 'languages') : ''}} </p>
 						</v-col>
 						<v-col cols="4">
 							<v-row class="mx-3">
 								<v-spacer></v-spacer>
-								<v-btn @click="currentTable--">
+								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
 									Previous
 								</v-btn>
-								<v-btn @click="currentTable++" :disabled="!activeVolunteer">
+								<v-btn color="primary" @click="currentTable++; activePatient = undefined" :disabled="!activeVolunteer">
 									Next
 								</v-btn>
 							</v-row>
@@ -71,55 +74,65 @@
 				<v-stepper-content step="3">
 					<v-container v-if="!submitted">
 						<v-row>
-							<h3> Please confirm your assignment. </h3>
-						</v-row>
+							<v-col cols="5">
+								<h3> Please confirm your assignment. </h3>
+							</v-col><v-spacer></v-spacer>
+							<v-col auto>
+								<v-btn outlined color="primary" class="mr-2" @click="currentTable--">
+									Previous
+								</v-btn>
+								<v-btn color="primary" @click="handleAssign">
+									Confirm Assignment
+								</v-btn>
+							</v-col>
+						</v-row><br>
 						<v-row>
-							<h3> Patients </h3>
 							<v-col>
-								<v-row v-for="name in selectedNames"
-								:key="name">
-									<h4> {{name}} </h4>
-								</v-row>
+								<h3 class="mr-1"> Patients </h3>
 							</v-col>
 						</v-row>
 						<v-row>
-							<h3> will be assigned to volunteer </h3>
+							<v-col>
+								<h3 style="font-weight:normal;"> {{selectedNames}} </h3>
+							</v-col>
 						</v-row>
 						<v-row>
-							<h4>
-								{{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}
-							</h4>
+							<v-col>
+								<h3> Will be assigned to volunteer </h3>
+							</v-col>
 						</v-row>
 						<v-row>
-							<v-btn @click="currentTable--">
-								Previous
-							</v-btn>
-							<v-btn @click="handleAssign">
-								Confirm Assignment
-							</v-btn>
+							<v-col>
+								<h3 style="font-weight:normal;">
+									{{ activeVolunteer ? gettersHelper(activeVolunteer, 'name') : ''}}
+								</h3>
+							</v-col>
 						</v-row>
 						<v-alert color="error" v-if="error">
 							There was an error submitting the assignment. Please try again. 
 						</v-alert>
 					</v-container>
 					<v-container v-else>
-						<v-alert>
-							Patients successfully assigned.
-						</v-alert>
-						<p v-if="priorityPatients.length > 0">
-							Redirecting you to more patients...
-						</p>
+						<h3 v-if="priorityPatients.length > 0">
+							Patients successfully assigned. Redirecting you to more patients...
+						</h3>
 						<div v-else>
-							<p> There are no other priority patients to assign. </p>
-							<v-btn text @click="seeAll">
-								Go to all other patients 
-							</v-btn> 
+							<v-row>
+								<v-col cols="7">
+									<h3> Patients successfully assigned. There are no other priority patients to assign. </h3>
+								</v-col><v-spacer></v-spacer>
+								<v-col-auto>
+									<v-btn color="primary" @click="seeAllPatients">
+										Go to all other patients 
+									</v-btn>
+								</v-col-auto>
+							</v-row>
 						</div>
 					</v-container>
 				</v-stepper-content>
 			</v-stepper-items>
 		</v-stepper>
-		<v-btn @click="handleBack">
+		<v-btn  class="mt-4" @click="handleBack">
 			<v-icon>"mdi-arrow-left"</v-icon>
 			back to dashboard
 		</v-btn>
@@ -155,7 +168,7 @@ export default {
             ],
             items: ["joe", "lizzie", "tom", "ivy fan"],
             activeVolunteer: null,
-            activePatient: null,
+            activePatient: undefined,
             volNotes: '',
             item: {
                 languages: []
@@ -191,21 +204,21 @@ export default {
                 ]
             },
             volFilter: 0,
-		  patFilter: 0,
-		  currentTable: 1,
-		  submitted: false,
-		  seeAll: false,
-		  error: false
+			patFilter: 0,
+			currentTable: 1,
+			submitted: false,
+			seeAll: false,
+			error: false
         }
     },
     async mounted() {
-        await this.$store.dispatch('loadVolunteers')
-        await this.$store.dispatch('loadPatients')
-        this.activePatient = this.patients[0]
+		if (this.patients.length > 0) {
+			this.activePatient = this.patients[0]
+		}
     },
     computed: {
         volunteers() {
-            return this.$store.getters.volunteersAsArray
+            return this.$store.state.volunteers.volunteers
         },
         fullVolunteers() {
             return this.volunteers.filter(volunteer => volunteer.remaining_capacity == 0)
@@ -214,7 +227,7 @@ export default {
             return this.volunteers.filter(volunteer => volunteer.remaining_capacity > 0)
         },
         patients() {
-            let v = this.$store.getters.patientsAsArray
+            let v = this.$store.getters['patients/getAllPatients']
             for (let patient of v) {
 				patient.check = false
 			}
@@ -225,17 +238,19 @@ export default {
         },
         assignedPatients() {
             return this.patients.filter(patient => patient.volunteer_id != null)
-	   },
-	   priorityPatients() {
-		   return this.patients.filter(patient => patient.volunteer_id == null && patient.language != 0)
-	   },
+		},
+		priorityPatients() {
+			return this.patients.filter(patient => patient.volunteer_id == null && patient.language != 0)
+		},
         selectedNames() {
             let selected = this.$store.state.view.selected
-            let names = []
+            let names = ''
             for (let s of selected) {
                 let person = this.$store.state.data.patients[s]
-                names.push(this.gettersHelper(person, 'name'))
-            }
+				names += (this.gettersHelper(person, 'name'))
+				names += ', '
+			}
+			names = names.substring(0, names.length - 2)
             return names
         },
     },
@@ -255,6 +270,7 @@ export default {
     },
     methods: {
         handleBack() {
+			this.$store.commit('clearSelect')
             this.$router.push({name: 'PDash'})
         },
         customFilter(item, queryText) {
@@ -263,13 +279,14 @@ export default {
             return text.indexOf(searchText) > -1 ||
                 text.indexOf(searchText) > -1
         },
-	   async handleAssign() {
-		   // dispatch here to both reassign in backend and fronten
-		   await this.$store.dispatch('reassignPatient', this.activeVolunteer.volunteer_id)
-		   	.then(response => {
+		async handleAssign() {
+			// dispatch here to both reassign in backend and fronten
+			await this.$store.dispatch('reassignPatient', this.activeVolunteer.volunteer_id)
+			.then(response => {
 				if (response) {
 					this.error = false
 					this.submitted = true
+					this.activePatient = (this.seeAll ? this.unassignedPatients[0] : this.priorityPatients[0])
 					let curr = this
 					if(this.priorityPatients.length > 0) {
 						setTimeout(() => {curr.currentTable = 1}, 1000)
@@ -279,12 +296,13 @@ export default {
 				}
 			})
 		//    console.log("sucess???")	
-	   },
-	   // switch to normal view with all patients, could just be a boolean
-	   seeAllPatients() {
-		   this.seeAll = true
-		   this.currentTable = 1
-	   }
+		},
+		// switch to normal view with all patients, could just be a boolean
+		seeAllPatients() {
+			this.seeAll = true
+			this.currentTable = 1
+			this.activePatient = (this.seeAll ? this.unassignedPatients[0] : this.priorityPatients[0])
+		}
     }
 }
 </script>

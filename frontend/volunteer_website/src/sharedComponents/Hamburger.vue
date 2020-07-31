@@ -57,7 +57,7 @@ export default {
       drawer: null,
       items: [
         { title: 'Notify Contacts', icon: 'mdi-phone', function: 1 },
-        { title: 'Self-Assign Contacts', icon: 'mdi-account-multiple-plus', function: 2 },
+        // { title: 'Self-Assign Contacts', icon: 'mdi-account-multiple-plus', function: 2 },
         { title: 'Profile', icon: 'mdi-account-circle', function: 3},
         { title: 'Logout', icon: 'mdi-exit-to-app', function: 4},
       ],
@@ -77,7 +77,7 @@ export default {
       } else if (i == 3 && this.$router.currentRoute.path != "/profile") { //go to profile
         this.$router.push({ path: "/profile" });
       } else if (i == 4 && this.$router.currentRoute.path != "/login") { //logout
-        this.$store.commit('logOut')
+        this.$store.dispatch('logOut')
         this.$router.push({path: "/login"})
       }
       this.drawer = false

@@ -31,7 +31,7 @@
                     small
                     outlined
                     class="mb-1 ml-1"
-                    @click="$emit('showDialog', selectedID)" 
+                    @click="emitThing" 
                     >
                     {{viewMessage}}
                 </v-btn>
@@ -42,39 +42,46 @@
 
 <script>
 // import ContactCard from '@/interviewerComponents/ContactCard.vue'
+import get from '@/methods.js'
 export default {
     name: "OutsideContact",
     data () {
         return {
             contactTypes: ["Minimal", "Close"],
-            selectedID: undefined,
             
         }
     },
+    mixins: [get],
     props: {
         value: {
             Number,
             required: true
         }
     },
-    // components: {
-    //     ContactCard
-    // },
     computed: {
-        stateChange() {
-            return this.$store.state.fuckThis;
+        selectedID: {
+            get() {
+                return this.value
+            },
+            set(newVal) {
+                this.$emit('input', newVal)
+            }
         },
+        //update this as well! 
+        stateChange() {
+            return this.$store.state.contacts.touched;
+        },
+        //and this too
         closed() {
             return this.$store.state.dialogClosed;
         },
         contactNames() {
-            this.$store.state.fuckThis
-            let contacts = this.$store.state.contacts
+            let contacts = this.$store.getters['contacts/contacts']
             var names = []
-            for (var key in contacts) {
+            for (var contact of contacts) {
                 names.push({
-                    id: parseInt(key, 10),
-                    name: this.$store.getters.fullName(key)
+                    id: contact.contact_id,
+                    name: this.gettersHelper(contact, 'name')
                 })
             }
             names.push({
@@ -104,8 +111,9 @@ export default {
             }
         },
         stateChange() {
+            console.log("oh look i was called")
             if (this.selectedID == -1) {
-                this.selectedID = this.$store.state.contactID - 1
+                this.selectedID = this.$store.getters['contacts/newContactId']
             }
         },
         selectedID() {
@@ -118,10 +126,12 @@ export default {
         deleteContact() {
             this.$emit('splice-contact', this.value)
         },
+        emitThing() {
+            if (this.selectedID == undefined) {
+                this.selectedID = -1
+            }
+            this.$emit('showDialog', this.selectedID)
+        }
     }
 }
 </script>
-
-<style>
-    
-</style>

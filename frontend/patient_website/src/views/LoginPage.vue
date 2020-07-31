@@ -104,25 +104,18 @@ export default Vue.extend({
                 // console.log("valid input")
                 // make call to API , and if that checks out, send to other page
                 let credentials = {
-                    username : this.username,
-                    password  : this.password
+                    username: this.username,
+                    password: this.password
                 }
                 let curr = this;
-                // if it passes, send to welcome screen
-                apiCalls.checkLogin(credentials)
-                    .then(function (response) {
-                        console.log(response)
-                        if (response.login == true) {
-                            curr.$store.commit('logIn')
-                            curr.$store.commit('instantiatePatient', response)
-                            curr.$router.push({ name : "welcome" });
-                        } else {
-                            console.log("not accepted")
-                            // give feedback that something was wrong
-                            curr.password = "";
-                            curr.showAlert = true;
-                        }
-                    }) ;
+                // this should be a dispatch to a store
+                let response = await this.$store.dispatch("logIn", credentials)
+                if (response) {
+                    curr.$router.push({ name : "welcome" });
+                } else {
+                    curr.password = "";
+                    curr.showAlert = true;
+                }
             }
         },
     }
