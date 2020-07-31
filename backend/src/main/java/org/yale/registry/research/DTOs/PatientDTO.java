@@ -116,8 +116,6 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
     private Map<String, Map<String, Integer>> enums;
 
 
-    public PatientDTO(){}
-
     public PatientDTO(Long patient_id, String username, String password,
                       String first_name, String last_name, Language language,
                       Date diagnosis_date, Date onset_date, Date last_worked_date,

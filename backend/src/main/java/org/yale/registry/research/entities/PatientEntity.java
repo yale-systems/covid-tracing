@@ -22,7 +22,6 @@ import org.yale.registry.research.enums.EnumTypes.PreexistingCondition;
 import org.yale.registry.research.enums.EnumTypes.Employment;
 import org.yale.registry.research.enums.EnumTypes.SuspectedExposure;
 import org.yale.registry.research.enums.EnumTypes.Assistance;
-import org.yale.registry.research.enums.EnumTypes.Symptomatic;
 import org.yale.registry.research.enums.PostgreSQLEnumType;
 
 import javax.persistence.*;

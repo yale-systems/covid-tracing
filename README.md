@@ -45,6 +45,7 @@ Current Members
 * Tom Coile (frontend and design)
 * Ivy Fan (frontend and design)
 * David Foster (design)
+* Max Perrello (backend and marketing)
 
 Past Members
 * Alex Briasco-Stewart
