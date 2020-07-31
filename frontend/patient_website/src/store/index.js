@@ -86,7 +86,12 @@ const events = {
     },
     actions: {
         addBlankEvent({commit, state, rootState}) {
-            let newID = state.events[state.events.length - 1].event_id + 1
+            let newID = null
+            if(state.events.length > 0) {
+                newID = state.events[state.events.length - 1].event_id + 1
+            } else {
+                newID = 1
+            }
             let newEvent = {
                 event_id: newID,
                 patient_id: rootState.activePatientId,
@@ -110,6 +115,7 @@ const events = {
             // get the link from the patients namespace
             let link = `${rootState.patients.links.get_events}${patientId}`
             let response = await apiCalls.getEvents(link)
+            console.log(response)
             for(let event of response.events) {
                 commit('setEvent', event)
             }
@@ -141,7 +147,10 @@ const events = {
                 toAdd[index] = massageLocation(toAdd[index])
             }
             let addSuccess = await apiCalls.addEvents(aLink, toAdd)
-            for(let oldId of Object.keys(addSuccess)) {
+            if(state.links == {}) {
+                commit('setLinks', addSuccess.links)
+            }
+            for(let oldId of Object.keys(addSuccess.success)) {
                 commit('addedEvent', { old: oldId, new: addSuccess[oldId]})
             }
 
@@ -239,7 +248,7 @@ const patients = {
         },
         async update({state, commit}, patient) {
             let link = state.links.update
-            let res = await apiCalls.updatePatient(link, patient)
+            let res = await apiCalls.updatePatient(link, Object.assign({}, patient))
             if (res) {
                 commit('updatePatient', patient)
             }
@@ -273,8 +282,8 @@ const contacts = {
         fullName: (state) => (id) => {
             state.touched
             let contact = state.contacts.find(contact => contact.contact_id === id)
-            let firstName = contact.first_name == undefined ? '' : contact.first_name
-            let lastName = contact.last_name == undefined ? '' : contact.last_name
+            let firstName = (contact.first_name == undefined  || contact.first_name == null) ? '' : contact.first_name
+            let lastName = (contact.last_name == undefined || contact.last_name == null) ? '' : contact.last_name
             return firstName + ' ' + lastName
         }
     },
@@ -321,13 +330,16 @@ const contacts = {
                 return false
             }
         },
-        async add({commit, rootState}, contact) {
+        async add({commit, state, rootState}, contact) {
             let link = rootState.patients.links.insert_contact
             let pid = rootState.activePatientId
             contact.patient_id = pid
             let response = await apiCalls.addContact(link, contact)
             if(response != {}) {
-                commit('setContact', response)
+                commit('setContact', response.success)
+                if(state.links == {}) {
+                    commit('setLinks', response.links)
+                }
                 return response.contact_id
             } else {
                 return -1
@@ -374,11 +386,15 @@ export default new Vuex.Store({
         async logIn({state, dispatch, commit}, credentials) {
             let response = await apiCalls.checkLogin(credentials)
             if (response != null) {
+                dispatch('patients/resetState')
+                dispatch('contacts/resetState')
+                dispatch('events/resetState')
+                commit('resetState')
                 commit('logIn')
                 commit('setActivePatient', response.patient.patient_id)
                 await dispatch('patients/initializePatient', response)
                 commit('patients/setActivePatient', response.patient.patient_id)
-                let enums = await apiCalls.getEnums(state.patients.links.self + state.activePatientId)
+                let enums = await apiCalls.getEnums(`${state.patients.links.self}1`)
                 commit('setEnums', enums)
                 return true
             } else {

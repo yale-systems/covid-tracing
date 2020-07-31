@@ -37,6 +37,7 @@
                 </tr>
                 <template v-for="contactID in householdContacts">
                     <ContactRow 
+                        :showDate="true"
                         :key="'house'+contactID"
                         :contactID="contactID" 
                         v-on:open="openDialog($event, true)"
@@ -73,12 +74,14 @@
                 </tr>
                 <template v-for="contactID in outsideContacts">
                     <ContactRow 
+                        :showDate="false"
                         :key="contactID"
                         :contactID="contactID" 
                         v-on:open="openDialog($event, false)"
                     />
                 </template>
             </table>
+            <v-row class="mt-6"></v-row>
         </v-container>
         </v-container>
     </div>
@@ -97,10 +100,20 @@ export default {
     },
     computed: {
         householdContacts() {
-            return this.$store.state.householdContactIDArray
+            let list = []
+            let contacts = this.$store.getters['contacts/householdContacts']
+            for(let contact of contacts) {
+                list.push(contact.contact_id)
+            }
+            return list;
         },
         outsideContacts() {
-            return this.$store.getters.outsideContacts
+            let list = []
+            let contacts = this.$store.getters['contacts/outsideContacts']
+            for(let contact of contacts) {
+                list.push(contact.contact_id)
+            }
+            return list;
         }
     },
     data: () => {
@@ -116,8 +129,8 @@ export default {
         openDialog(id, house) {
             this.openID = id
             this.household = house
-            console.log(this.household)
-            this.$nextTick(()=>{this.formToggle.viewContact = true})
+            console.log(this.openID)
+            this.$nextTick(()=> {this.formToggle.viewContact = true})
         }
     }
 }

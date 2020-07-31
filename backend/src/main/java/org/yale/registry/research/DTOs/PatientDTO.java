@@ -66,9 +66,9 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
 
     private Long times_called;
 
-    private Long phone_number;
+    private String phone_number;
 
-    private Symptomatic symptomatic;
+    private Boolean symptomatic;
 
     private List<Symptom> symptoms;
 
@@ -116,12 +116,14 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
     private Map<String, Map<String, Integer>> enums;
 
 
+    public PatientDTO(){}
+
     public PatientDTO(Long patient_id, String username, String password,
                       String first_name, String last_name, Language language,
                       Date diagnosis_date, Date onset_date, Date last_worked_date,
                       CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
                       Boolean knows_status, Insurance insurance, Long times_called,
-                      Long phone_number, Symptomatic symptomatic, List<Symptom> symptoms,
+                      String phone_number, Boolean symptomatic, List<Symptom> symptoms,
                       Gender gender, Race race, SelfIsolate self_isolate,
                       List<PreexistingCondition> preexisting_conditions, Employment employment,
                       List<SuspectedExposure> suspected_exposures, Point home_location, Boolean housing_insecure,
@@ -174,8 +176,8 @@ public class PatientDTO extends RepresentationModel<PatientDTO> {
     public PatientDTO(String username, String password, String first_name, String last_name,
                       Language language, Date diagnosis_date, Date onset_date, Date last_worked_date,
                       CaseCallStatus case_call_status, Boolean travelled, SawDoctor saw_doctor,
-                      Boolean knows_status, Insurance insurance, Long times_called, Long phone_number,
-                      Symptomatic symptomatic, List<Symptom> symptoms, Gender gender, Race race,
+                      Boolean knows_status, Insurance insurance, Long times_called, String phone_number,
+                      Boolean symptomatic, List<Symptom> symptoms, Gender gender, Race race,
                       SelfIsolate self_isolate, List<PreexistingCondition> preexisting_conditions,
                       Employment employment, List<SuspectedExposure> suspected_exposures,
                       Point home_location, Boolean housing_insecure, String shelter_name,

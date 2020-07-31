@@ -54,21 +54,17 @@ export default {
     methods: {
         closeAndReload() {
             this.value.viewContact = false
-            this.$store.commit('dialogClose')
-            this.$emit('reload', this.id)
+            this.$store.commit('closeDialog')
         },
         submitAndReload(data) {
-            console.log(this.household)
+            console.log("data from contact form is: ")
+            console.log(data)
             this.value.viewContact = false
             // when opened, was new contact
             if (this.id == -1) {
-                this.$store.commit('addContact', data)
-                this.$nextTick(() => {
-                    this.$emit('reload', this.$store.state.contactID - 1)
-                })
+                this.$store.dispatch('contacts/add', data)
             } else {
-                this.$store.commit('modifyContact', data)
-                this.$emit('reload', this.id)
+                this.$store.dispatch('contacts/update', data)
             }
         }
     }

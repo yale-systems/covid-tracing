@@ -11,18 +11,19 @@
                     single-line
                     hide-details
                 ></v-text-field>
-            </v-col><v-spacer></v-spacer>
-            <v-col-auto>
-                <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
-                    add fields 
-                </v-btn>
-				<v-btn color="primary" class="mx-2">
-					Add Cases
-				</v-btn>
-				<v-btn color="primary" to='reassign'>
-					Assign Cases
-				</v-btn>
-            </v-col-auto>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col auto>
+                    <v-btn outlined color="primary" @click.stop="dialogToggle=true"> 
+                        add fields 
+                    </v-btn>
+                    <v-btn outlined color="primary" to='add' class="mx-2">
+                        Add Cases
+                    </v-btn>
+                    <v-btn color="primary" to='reassign'>
+                        Assign Cases
+                    </v-btn>
+            </v-col>
         </v-row>
         <v-data-table
             :headers="headers"
@@ -112,13 +113,13 @@ export default {
             if (this.numberSelected == 0) {
                 for (let person of this.people) {
                     person.check = true
-                    this.$store.commit('setSelect', person[`${this.type}_id`])
+                    this.$store.commit('view/setSelect', person[`${this.type}_id`])
                 }
             // some selected, then clear all
             } else {
                 for (let person of this.people) {
                     person.check = false
-                    this.$store.commit('clearSelect')
+                    this.$store.commit('view/clearSelect')
                 }
             // all selected
             }

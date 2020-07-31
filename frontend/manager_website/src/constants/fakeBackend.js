@@ -63,7 +63,7 @@ export const patients = [
       // admin information
       requested_interview: false,
       manager_id: 1,
-      volunteer_id: 3,
+      volunteer_id: null,
       notes: '',
       case_call_status: 4,
       times_called: 0,
