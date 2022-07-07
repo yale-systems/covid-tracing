@@ -12,7 +12,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "lodash": "^4.17.15",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "secure-web-storage": "^1.0.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
